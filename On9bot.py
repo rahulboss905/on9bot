@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton,\
-    InlineQueryResultArticle, ParseMode, InputTextMessageContent
-from telegram.ext import Updater, CommandHandler, MessageHandler, InlineQueryHandler, Filters, run_async
-from random import choice
+from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
+from telegram.error import BadRequest
 from time import sleep
-from uuid import uuid4
 import logging
 import re
 import os
@@ -92,17 +90,16 @@ def tag9(bot, update, args):
                     update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
                 else:
                     update.message.reply_text("Tag唔到，佢無username。")
-            except
+            except BadRequest:
+                update.message.reply_text("呢個群組有呢個人咩？定根本無呢個人？Zzz...")
     else:
         update.message.reply_text("咪亂用Trainer Jono專用嘅指令啦。")
 
 
 def remove_keyboard(bot, update):
     if update.message.chat_id < 0:  # if this chat is a group
-        bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
         update.message.reply_text("我已經整走咗個鍵盤啦（如有）。", reply_markup=ReplyKeyboardRemove())
     else:
-        bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
         update.message.reply_text("我唔會整鍵盤比你撳，移乜除姐。")
 
 
@@ -211,17 +208,18 @@ def echo(bot, update, args):
                                           quote=False)
                 update.message.delete()
                 return
-            update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
             update.message.delete()
-        except(IndexError, ValueError):
+            update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
+
+        except ValueError:
             update.message.reply_text("唔識用就咪撚用啦柒頭睇 /help 啦。。")
     else:
         try:
             if args == "":
                 raise ValueError
-            update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
             update.message.delete()
-        except(IndexError, ValueError):
+            update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
+        except ValueError:
             update.message.reply_text("唔識用就咪撚用啦柒頭睇 /help 啦。。")
 
 
