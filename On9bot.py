@@ -281,6 +281,16 @@ def get_message_link(bot, update):
         update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
 
 
+def get_voice_id(bot, update):
+    if update.message.reply_to_message:
+        if update.message.reply_to_message.voice:
+            update.message.reply_text("The file id for this voice file is {}".format(update.message.reply_to_message.voice.file_id))
+        else:
+            update.message.reply_text("唔係voice file(.ogg)就收皮啦。")
+    else:
+        update.message.reply_text("覆住個voice file(.ogg)嚟用啦大佬。")
+
+
 def ping(bot, update):
     update.message.reply_text("收到要屌你老母指令所需時間︰00:00.01\n999 MAX IN | 1 MAX OUT\n 屌你老母所需時間︰00:00.01\n\n"
                               "Sorry this took long to send but Telegram said I was too popular and wouldn't let me "
@@ -306,6 +316,7 @@ if __name__ == "__main__":
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
     dp.add_handler(CommandHandler("id", get_id))
     dp.add_handler(CommandHandler("link", get_message_link))
+    dp.add_handler(CommandHandler("voice_id", get_voice_id))
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
     dp.add_handler(CommandHandler("r", echo, pass_args=True))
