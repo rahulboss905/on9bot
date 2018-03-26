@@ -202,6 +202,9 @@ def text_responses(bot, update):
             update.message.reply_text("主人你好！")
         if u == "good dog":
             update.message.reply_text("屌你老母")
+    if "trainer jono is rubbish" == u:
+        update.messsage.reply_voice("AwADBQADTAADJOWZVG-uvdRTjVALAg",
+                                    caption="Chai娜 Jono is a wubbish. Tot肚ly wubbish. Dammit.")
     if "cough" in u:
         update.message.reply_text("Do you need some cough medicine?")
     if u == "js is very on9":
