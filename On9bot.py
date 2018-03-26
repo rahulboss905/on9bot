@@ -277,7 +277,7 @@ def error(bot, update, error):
 
 if __name__ == "__main__":
     TOKEN = "506548905:AAH2pKTKJKjQ2RPh8ysEqyNNYQ-oQGKDkK0"
-    NAME = "polar-shelf-31726"
+    NAME = "on9bot"
     PORT = os.environ.get('PORT')
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         level=logging.INFO)
