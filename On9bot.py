@@ -304,6 +304,7 @@ if __name__ == "__main__":
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
     dp.add_handler(CommandHandler("id", get_id))
     dp.add_handler(CommandHandler("link", get_message_link))
+    dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
     dp.add_handler(CommandHandler("r", echo, pass_args=True))
     dp.add_handler(CommandHandler("r3", echo3, pass_args=True))
