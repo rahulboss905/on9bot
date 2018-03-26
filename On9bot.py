@@ -82,6 +82,8 @@ def tag9(bot, update, args):
         else:
             try:
                 args = int(args[0])
+                if args == "":
+                    raise ValueError
             except ValueError:
                 update.message.reply_text("打錯嘢喎。咁用先啱： /tag9 <user id>。 唔知user id係咩就死開。Zzz...")
                 return
