@@ -281,6 +281,16 @@ def get_message_link(bot, update):
         update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
 
 
+def get_audio_id(bot, update):
+    if update.message.reply_to_message:
+        if update.message.reply_to_message.audio:
+            update.message.reply_markdown("File id for this audio file: ```{}```".format(update.message.reply_to_message.audio.file_id))
+        else:
+            update.message.reply_text("唔係audio file(.mp3)就收皮啦。")
+    else:
+        update.message.reply_text("覆住個audio file(.mp3)嚟用啦大佬。")
+
+
 def get_voice_id(bot, update):
     if update.message.reply_to_message:
         if update.message.reply_to_message.voice:
@@ -295,6 +305,10 @@ def ping(bot, update):
     update.message.reply_text("收到要屌你老母需時: 00:00.01\n999 MAX IN | 1 MAX OUT\n屌你老母需時︰00:00.01\n\n"
                               "Sorry this took long to send but Telegram said I was too popular and wouldn't let me "
                               "send messages for a bit...")
+
+
+def poto(bot, update):
+    update.message.reply_audio()
 
 
 def error(bot, update, error):
@@ -316,6 +330,7 @@ if __name__ == "__main__":
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
     dp.add_handler(CommandHandler("id", get_id))
     dp.add_handler(CommandHandler("link", get_message_link))
+    dp.add_handler(CommandHandler("audio_id", get_audio_id))
     dp.add_handler(CommandHandler("voice_id", get_voice_id))
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
