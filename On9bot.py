@@ -6,7 +6,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_a
 from telegram.error import BadRequest
 from time import sleep
 import logging
-import re
+from re import match
 import os
 
 # Enable logging
@@ -71,6 +71,9 @@ def tag9(bot, update, args):
         return
     if update.message.reply_to_message:
         try:
+            if update.message.reply_to_message.from_user.id == 463998526:
+                update.message.reply_text("收皮啦tag我主人，唔幫你。")
+                return
             user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
             if user_info.user.username:
                 update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
@@ -86,6 +89,8 @@ def tag9(bot, update, args):
             args = int(args[0])
             if args == "":
                 raise ValueError
+            if args == 463998526:
+                update.message.reply_text("收皮啦tag我主人，唔幫你。")
         except ValueError:
             update.message.reply_text("打錯嘢喎。咁用先啱： /tag9 <user id>。 唔知user id係咩就死開。Zzz...")
             return
@@ -176,14 +181,14 @@ def swear_word_detector(bot, update):
 def text_responses(bot, update):
     if update.message.new_chat_members:
         for on9user in update.message.new_chat_members:
-            if re.match(r'\d\d\d\d\d\d\d\d', on9user.first_name):
-                if re.match(r'\d\d\d\d\d\d\d\d', on9user.last_name):
+            if match(r'\d\d\d\d\d\d\d\d', on9user.first_name):
+                if match(r'\d\d\d\d\d\d\d\d', on9user.last_name):
                     update.message.reply_text("又係數字人？我屌！我ban 9數字人啦。")
                     bot.kick_chat_member(update.message.chat_id, on9user.id)
                     return
     y = update.message.from_user
-    if re.match(r'\d\d\d\d\d\d\d\d', y.first_name):
-        if re.match(r'\d\d\d\d\d\d\d\d', y.last_name):
+    if match(r'\d\d\d\d\d\d\d\d', y.first_name):
+        if match(r'\d\d\d\d\d\d\d\d', y.last_name):
             update.message.reply_text("又係數字人？我屌！我ban 9數字人啦。", quote=False)
             update.message.delete()
             bot.kick_chat_member(update.message.chat_id, update.message.from_user.id)
