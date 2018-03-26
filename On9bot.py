@@ -204,7 +204,7 @@ def text_responses(bot, update):
             update.message.reply_text("屌你老母")
     if u == "trainer jono is rubbish":
         update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg",
-                                   caption="Chai娜 Jono is a wubbish. Tot肚ly wubbish. Dammit.")
+                                   caption="車娜 Jono is a wubbish. Tot肚ly wubbish. Dammit.")
     if "cough" in u:
         update.message.reply_text("Do you need some cough medicine?")
     if u == "js is very on9":
@@ -292,7 +292,7 @@ def get_voice_id(bot, update):
 
 
 def ping(bot, update):
-    update.message.reply_text("收到要屌你老母指令所需時間︰00:00.01\n999 MAX IN | 1 MAX OUT\n 屌你老母所需時間︰00:00.01\n\n"
+    update.message.reply_text("收到要屌你老母需時: 00:00.01\n999 MAX IN | 1 MAX OUT\n屌你老母需時︰00:00.01\n\n"
                               "Sorry this took long to send but Telegram said I was too popular and wouldn't let me "
                               "send messages for a bit...")
 
