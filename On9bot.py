@@ -278,6 +278,13 @@ def get_message_link(bot, update):
         update.message.reply_text("唔識用就咪撚用啦柒頭。睇 /help 啦。")
 
 
+def ping(bot, update):
+    update.message.reply_text("收到要屌你老母指令所需時間︰00:00.01\n每秒接收訊息︰\n999 MAX IN | 1 MAX OUT\n"
+                              "IN last min: 99999\nOUT last min: 1\n屌你老母所需時間︰00:00.01\n\n"
+                              "Sorry this took long to send but Telegram said I was too popular and wouldn't let me "
+                              "send messages for a bit...")
+
+
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
