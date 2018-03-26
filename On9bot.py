@@ -62,19 +62,23 @@ def tag9js(bot, update):
 @run_async
 def tag9(bot, update, args):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    if update.effective_user.id == 463998526 or update.effective_user.id == 190726372:
+    if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and
+                                                 update.message.chat_id == -1001295361187):
         if update.message.chat_id > 0:
             update.message.reply_text("PM點tag9人姐？")
             return
         if update.message.reply_to_message:
-            user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
-            if user_info.user.username:
-                update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
-                                              reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
-                sleep(15)
-                update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-            else:
-                update.message.reply_text("Tag唔到，佢無username。")
+            try:
+                user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
+                if user_info.user.username:
+                    update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
+                                                  reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
+                    sleep(15)
+                    update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
+                else:
+                    update.message.reply_text("Tag唔到，佢無username。")
+            except BadRequest:
+                update.message.reply_text("呢個群組有呢個人咩？定根本無呢個人？Zzz...")
         else:
             try:
                 args = int(args[0])
