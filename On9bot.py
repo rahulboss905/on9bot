@@ -308,7 +308,7 @@ def ping(bot, update):
 
 
 def poto(bot, update):
-    update.message.reply_audio()
+    update.message.reply_audio("CQADBQADOAADYv7JVYZTkCHv01_4Ag")
 
 
 def error(bot, update, error):
@@ -333,6 +333,7 @@ if __name__ == "__main__":
     dp.add_handler(CommandHandler("audio_id", get_audio_id))
     dp.add_handler(CommandHandler("voice_id", get_voice_id))
     dp.add_handler(CommandHandler("ping", ping))
+    dp.add_handler(CommandHandler("x", poto))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
     dp.add_handler(CommandHandler("r", echo, pass_args=True))
     dp.add_handler(CommandHandler("r3", echo3, pass_args=True))
