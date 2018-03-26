@@ -193,6 +193,9 @@ def text_responses(bot, update):
             update.message.reply_text("Trainer Jono pin嘢啊，係咪有人有意見？")
         else:
             update.message.reply_text("屌你老母咩 " + update.message.from_user.name + " ，pin嘢嘈醒全谷人。")
+    if update.message.sticker:
+        if update.message.sticker.set_name == "payize2" or update.message.sticker.set_name == "FPbabydukeredition":
+            update.message.delete()
     u = update.message.text.lower()
     if update.effective_user.id == 463998526:
         if u == "hello":
