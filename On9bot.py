@@ -62,44 +62,44 @@ def tag9js(bot, update):
 @run_async
 def tag9(bot, update, args):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and
-                                                 update.message.chat_id == -1001295361187):
-        if update.message.chat_id > 0:
-            update.message.reply_text("PM點tag9人姐？")
-            return
-        if update.message.reply_to_message:
-            try:
-                user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
-                if user_info.user.username:
-                    update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
-                                                  reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
-                    sleep(15)
-                    update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-                else:
-                    update.message.reply_text("Tag唔到，佢無username。")
-            except BadRequest:
-                update.message.reply_text("呢個群組有呢個人咩？定根本無呢個人？Zzz...")
-        else:
-            try:
-                args = int(args[0])
-                if args == "":
-                    raise ValueError
-            except ValueError:
-                update.message.reply_text("打錯嘢喎。咁用先啱： /tag9 <user id>。 唔知user id係咩就死開。Zzz...")
-                return
-            try:
-                user_info = bot.get_chat_member(update.message.chat_id, args)
-                if user_info.user.username:
-                    update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
-                                                  reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
-                    sleep(15)
-                    update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-                else:
-                    update.message.reply_text("Tag唔到，佢無username。")
-            except BadRequest:
-                update.message.reply_text("呢個群組有呢個人咩？定根本無呢個人？Zzz...")
-    else:
+    if update.effective_user.id != 463998526 and (update.effective_user.id != 190726372 and
+                                                  update.message.chat_id != -1001295361187):
         update.message.reply_text("咪亂用Trainer Jono專用嘅指令啦。")
+        return
+    if update.message.chat_id > 0:
+        update.message.reply_text("PM點tag9人姐？")
+        return
+    if update.message.reply_to_message:
+        try:
+            user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
+            if user_info.user.username:
+                update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
+                                              reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
+                sleep(15)
+                update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
+            else:
+                update.message.reply_markdown("Tag唔到，佢無username。我tag lor。[7](tg://user?id={})".format(user_info.user.id))
+        except BadRequest:
+            update.message.reply_text("呢個群組有呢個人咩？定根本無呢個人？Zzz...")
+    else:
+        try:
+            args = int(args[0])
+            if args == "":
+                raise ValueError
+        except ValueError:
+            update.message.reply_text("打錯嘢喎。咁用先啱： /tag9 <user id>。 唔知user id係咩就死開。Zzz...")
+            return
+        try:
+            user_info = bot.get_chat_member(update.message.chat_id, args)
+            if user_info.user.username:
+                update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
+                                              reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
+                sleep(15)
+                update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
+            else:
+                update.message.reply_text("Tag唔到，佢無username。")
+        except BadRequest:
+            update.message.reply_text("呢個群組有呢個人咩？定根本無呢個人？Zzz...")
 
 
 def remove_keyboard(bot, update):
@@ -218,7 +218,7 @@ def echo(bot, update, args):
             update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
 
         except ValueError:
-            update.message.reply_text("唔識用就咪撚用啦柒頭睇 /help 啦。。")
+            update.message.reply_text("唔識用就咪撚用啦柒頭睇 /help 啦。")
     else:
         try:
             if args == "":
@@ -226,7 +226,7 @@ def echo(bot, update, args):
             update.message.delete()
             update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
         except ValueError:
-            update.message.reply_text("唔識用就咪撚用啦柒頭睇 /help 啦。。")
+            update.message.reply_text("唔識用就咪撚用啦柒頭睇 /help 啦。")
 
 
 def echo3(bot, update, args):
