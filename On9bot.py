@@ -221,7 +221,7 @@ def echo(bot, update, args):
             update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
 
         except ValueError:
-            update.message.reply_text("唔識用就咪撚用啦柒頭睇 /help 啦。")
+            update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
     else:
         try:
             if args == "":
@@ -229,7 +229,7 @@ def echo(bot, update, args):
             update.message.delete()
             update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
         except ValueError:
-            update.message.reply_text("唔識用就咪撚用啦柒頭睇 /help 啦。")
+            update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
 
 
 def echo3(bot, update, args):
@@ -244,7 +244,7 @@ def echo3(bot, update, args):
             for i in range(0, 3):
                 update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
         except ValueError:
-            update.message.reply_text("唔識用就咪撚用啦柒頭。睇 /help 啦。")
+            update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
     else:
         try:
             if args == "":
@@ -252,7 +252,7 @@ def echo3(bot, update, args):
             for i in range(0, 3):
                 update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
         except ValueError:
-            update.message.reply_text("唔識用就咪撚用啦柒頭。睇 /help 啦。")
+            update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
 
 
 def get_id(bot, update):
@@ -275,7 +275,7 @@ def get_message_link(bot, update):
         else:
             update.message.reply_text("Public supergroup先用得架柒頭。")
     else:
-        update.message.reply_text("唔識用就咪撚用啦柒頭。睇 /help 啦。")
+        update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
 
 
 def ping(bot, update):
