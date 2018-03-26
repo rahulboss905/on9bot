@@ -284,7 +284,7 @@ def get_message_link(bot, update):
 def get_voice_id(bot, update):
     if update.message.reply_to_message:
         if update.message.reply_to_message.voice:
-            update.message.reply_text("The file id for this voice file is {}".format(update.message.reply_to_message.voice.file_id))
+            update.message.reply_text("File id for this voice file: ```{}```".format(update.message.reply_to_message.voice.file_id))
         else:
             update.message.reply_text("唔係voice file(.ogg)就收皮啦。")
     else:
