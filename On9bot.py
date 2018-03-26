@@ -84,7 +84,7 @@ def tag9(bot, update, args):
                 update.message.reply_text("呢個群組有呢個人咩？定Telegram入面根本無呢個人？Zzz...")
         else:
             try:
-                if args == "":
+                if args is None:
                     raise ValueError
                 args = int(args[0])
                 if args == 463998526:
