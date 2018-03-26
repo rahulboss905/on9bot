@@ -1,0 +1,29 @@
+
+markdownlist = ("_", "*")
+
+
+def markdownable(string):
+    if "\\"" in string:
+        for char in string:
+            if char == "\\":
+                
+                if string[string.index("\\") + 1] in markdownlist:
+                    del string[string.index("\\"):string.index("\\") + 1]
+                    markdownable(string)
+                else:
+                    
+
+
+def inlinequery(bot, update):
+    query = update.inline_query.query
+    fquery = markdownable(query)
+
+    if fquery.count("_") % 2 == 0 and fquery.count("") % 2 == 0 and fquery.count("`") % 2 == 0:
+        results = [
+            InlineQueryResultArticle(
+                id=uuid4(),
+                title="Parse mode: Markdown",
+                input_message_content=InputTextMessageContent(query),
+                parse_mode = ParseMode.MARKDOWN),
+
+    dp.add_handler(InlineQueryHandler(inlinequery))
