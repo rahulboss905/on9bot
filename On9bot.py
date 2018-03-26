@@ -279,8 +279,7 @@ def get_message_link(bot, update):
 
 
 def ping(bot, update):
-    update.message.reply_text("收到要屌你老母指令所需時間︰00:00.01\n每秒接收訊息︰\n999 MAX IN | 1 MAX OUT\n"
-                              "IN last min: 99999\nOUT last min: 1\n屌你老母所需時間︰00:00.01\n\n"
+    update.message.reply_text("收到要屌你老母指令所需時間︰00:00.01\n999 MAX IN | 1 MAX OUT\n 屌你老母所需時間︰00:00.01\n\n"
                               "Sorry this took long to send but Telegram said I was too popular and wouldn't let me "
                               "send messages for a bit...")
 
