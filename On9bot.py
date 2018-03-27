@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# On9Bot code. Zzz...
 
 from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
@@ -12,55 +11,57 @@ import os
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
-
 logger = logging.getLogger(__name__)
 
 
-def start(bot, update):
-    bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    update.message.reply_markdown("我係全Telegram最On9嘅bot。有咩事可以揾我主人[Trainer Jono](tg://user?id=463998526)。")
+#  Defining all the commands below. Added lots of comments to explain how the code works.
 
 
-def bot_help(bot, update):
-    bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25)")
+def start(bot, update):  # /start command
+    update.message.reply_markdown("我係全Telegram最On9嘅bot。"
+                                  "有咩事可以揾我主人[Trainer Jono](tg://user?id=463998526)。")
 
 
-def tag9js_text():
+def bot_help(bot, update):  # /help command
+    update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25)")  # Gives link to help article
+
+
+def tag9js_text():  # Text used below, quite long
     text = '''一齊撳掣tag死[JS](tg://user?id=190726372)啦！限時15秒，現在開始！JS受死啦！
 呢個群組個Enforcer好鬼煩，flood小小就會踢走你。你要注意下，五秒唔好撳個掣多過七次，否則你會被踢走。
-萬一你唔小心撳掣太快，比Grey Wolf Enforcer踢走左去火星，你可以global search [HK Duker](t.me/hkduker) 即刻入返嚟繼續撳掣tag JS。
+萬一你撳掣太快，比Grey Wolf Enforcer踢走左去火星，你可以global search [HK Duker](t.me/hkduker) 即刻入返嚟繼續撳掣tag JS。
 你可以隨時撳 /remove\_keyboard 整走個keyboard。'''
     return text
 
 
-@run_async
-def tag9js(bot, update):
+@run_async  # Allows bot to keep working while sleeping
+def tag9js(bot, update):  # /tag9js command, only available in HK Duker
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    if update.message.chat_id == -1001295361187:
-        js_info = bot.get_chat_member(-1001295361187, 190726372)
-        if js_info.user.username:
-            update.message.reply_markdown(tag9js_text(),
-                                          reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]),
-                                          disable_web_page_preview=True)
-            sleep(15)
-            update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-        else:
-            update.message.reply_text("你條死JS，del咗username？！豈有此理，等本大爺親自tag你啦！")
-            for i in range(0, 3):
-                update.message.reply_markdown("[JS](tg://user?id=190726372)上水啦！", quote=False)
-                sleep(2)
-            update.message.reply_text("算啦，再tag JS我會攰死，今次放過你啦唉。", quote=False)
-    elif update.message.chat_id < 0:
-        update.message.reply_markdown("為咗減少對[JS](tg://user?id=190726372)嘅騷擾，呢個指令本群組用唔到㗎。")
-    else:
+    if update.message.chat_id == -1001295361187:  # If the chat is HK Duker
+        js_info = bot.get_chat_member(-1001295361187, 190726372)  # Gets JS's newest username
+        if js_info.user.username:  # If JS has a username
+            update.message.reply_markdown(tag9js_text(),  # Gets the long text from above
+                                          reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]),  # Reply keyboard
+                                          disable_web_page_preview=True)  # Disables web page preview
+            sleep(15)  # Sleeps for 15 sec, zzz...
+            update.message.reply_text("我已經整走咗個鍵盤啦。",
+                                      reply_markup=ReplyKeyboardRemove(), quote=False)  # Remove reply keyboard
+        else:  # If JS has no username
+            update.message.reply_text("你條死JS，del咗username？！豈有此理，等本大爺親自tag你啦！")  # Insult starts
+            for i in range(0, 3):  # Repeat 3 times
+                update.message.reply_markdown("[JS](tg://user?id=190726372)上水啦！", quote=False)  # Tags JS
+                sleep(2)  # Sleeps for 3 sec, zzz...
+            update.message.reply_text("算啦，再tag JS我會攰死，今次放過你啦唉。", quote=False)  # Ends tagging
+    elif update.message.chat_id < 0:  # If the chat is a group other than HK Duker
+        update.message.reply_markdown("為咗減少對[JS](tg://user?id=190726372)嘅騷擾，呢個指令本群組用唔到㗎。")  # Can't tag
+    else:  # If the chat is pm
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
-        update.message.reply_text("呢個指令只可以喺HK Duker用到，歡迎撳下面個掣入嚟HK Duker一齊tag死JS。",
+        update.message.reply_text("呢個指令只可以喺HK Duker用到，歡迎撳下面個掣入嚟HK Duker一齊tag死JS。",  # Ads lol
                                   reply_markup=reply_markup)
 
 
-@run_async
-def tag9(bot, update, args):
+@run_async  # Allows bot to keep working while sleeping
+def tag9(bot, update, args):  # /tag9 command, you can't use it so I won't comment below lol
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and
                                                   update.message.chat_id == -1001295361187):
@@ -79,7 +80,8 @@ def tag9(bot, update, args):
                     sleep(15)
                     update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
                 else:
-                   update.message.reply_markdown("Tag唔到，佢無username。我tag lor。[7](tg://user?id={})".format(user_info.user.id))
+                   update.message.reply_markdown("Tag唔到，佢無username。我tag lor。"
+                                                 "[柒頭](tg://user?id={})".format(user_info.user.id))
             except BadRequest:
                 update.message.reply_text("呢個群組有呢個人咩？定Telegram入面根本無呢個人？Zzz...")
         else:
@@ -89,6 +91,7 @@ def tag9(bot, update, args):
                 args = int(args[0])
                 if args == 463998526:
                     update.message.reply_text("收皮啦tag我主人，唔幫你。")
+                    return
             except ValueError:
                 update.message.reply_text("打錯嘢喎。咁用先啱： /tag9 <user id>。 唔知user id係咩就死開。Zzz...")
                 return
@@ -107,7 +110,7 @@ def tag9(bot, update, args):
         update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
 
 
-def remove_keyboard(bot, update):
+def remove_keyboard(bot, update):  # /remove_keyboard command
     if update.message.chat_id < 0:  # if this chat is a group
         update.message.reply_text("我已經整走咗個鍵盤啦（如有）。", reply_markup=ReplyKeyboardRemove())
     else:
