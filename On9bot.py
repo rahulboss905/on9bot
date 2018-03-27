@@ -23,7 +23,8 @@ def start(bot, update):
 
 
 def bot_help(bot, update):
-    update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25)")
+    update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25)"
+                                  "[Source code](https://www.codepile.net/pile/3aD3DPkD)")
 
 
 def tag9js_text():
