@@ -13,16 +13,16 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
-def start(bot, update):  # /start command
+def start(bot, update):
     update.message.reply_markdown("我係全Telegram最On9嘅bot。"
                                   "有咩事可以揾我主人[Trainer Jono](tg://user?id=463998526)。"
-                                  "Sorry, but this bot is only available in Cantonese, since this bot is designed to "
+                                  "Sorry, but this bot is only available in Cantonese since this bot is designed to "
                                   "annoy members in a public Cantonese group [HK Duker](t.me/hkduker).",
                                   disable_web_page_preview=True)
 
 
 def bot_help(bot, update):
-    update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25)")  # Gives link to help article
+    update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25)")
 
 
 def tag9js_text():
@@ -133,6 +133,11 @@ def remove_keyboard(bot, update):
         update.message.reply_text("我唔會整鍵盤比你撳，移乜除姐。")
 
 
+# WARNING! PLEASE IGNORE THE FOLLOWING OFFENSIVE WORDS.
+# THESE WORDS ARE ONLY FOR DETECTING OFFENSIVE WORDS IN TELEGRAM MESSAGES
+# AND NOT INSULTING USERS OR OTHER PEOPLE.
+
+
 cn_swear_words = ("屌", "閪", "柒", "撚", "鳩", "𨳒", "屄", "𨶙", "𨳊", "㞗", "𨳍", "杘")
 cn_swear_words_in_eng = ("diu", "dllm", "dnlm", "diuneinomo", "diuneilomo")
 eng_swear_words = ("anus", "arse", "ass", "axwound", "bampot", "bastard", "beaner", "bitch", "blowjob", "bollocks",
@@ -148,7 +153,7 @@ eng_swear_words = ("anus", "arse", "ass", "axwound", "bampot", "bastard", "beane
                    "punta", "pussy", "pussies", "puto", "queef", "queer", "renob", "rimjob", "ruski", "schlong",
                    "scrote", "shit", "shiz", "skank", "skeet", "slut", "smeg", "snatch", "spic", "splooge", "spook",
                    "tard", "thot", "testicle", "tit", "twat", "vajj", "vag", "vajayjay", "vjayjay", "wank", "wetback",
-                   "whore", "wop", "wtf", "fk", "asshole")
+                   "whore", "wop", "wtf", "fk", "asshole", "bullshit")
 
 
 def cn_swear_word_detector():
@@ -347,7 +352,7 @@ def error(bot, update, error):
 
 
 if __name__ == "__main__":
-    TOKEN = "506548905:AAH2pKTKJKjQ2RPh8ysEqyNNYQ-oQGKDkK0"
+    TOKEN = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
     NAME = "on9bot"
     PORT = os.environ.get('PORT')
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
