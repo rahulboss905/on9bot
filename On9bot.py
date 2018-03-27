@@ -73,7 +73,11 @@ def tag9(bot, update, args):
                     update.message.reply_text("收皮啦tag我主人，唔幫你。")
                     return
                 if update.message.reply_to_message.from_user.id <= 0:
-                    raise BadRequest("¯\_(ツ)_/¯")
+                    update.message.reply_text("唔知user id係咩就死開。Zzz...")
+                    return
+                if update.message.reply_to_message.from_user.is_bot:
+                    update.message.reply_text("Tag乜撚bot啊？")
+                    return
                 user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
                 if user_info.user.username and user_info.status in ("administrator", "creator", "member"):
                     update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
@@ -86,21 +90,26 @@ def tag9(bot, update, args):
                 else:
                     raise BadRequest("¯\_(ツ)_/¯")
             except BadRequest:
-                update.message.reply_text("呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
+                update.message.reply_text("乜呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
         else:
             try:
                 args = " ".join(args)
                 if args == "":
                     raise ValueError("¯\_(ツ)_/¯")
-                args = int(args[0])
+                args = int(args)
                 if args == 463998526:
                     update.message.reply_text("收皮啦tag我主人，唔幫你。")
+                if args <= 0:
+                    update.message.reply_text("唔知user id係咩就死開。Zzz...")
                     return
             except ValueError:
                 update.message.reply_text("打錯嘢喎。咁用先啱： /tag9 <user id>。 唔知user id係咩就死開。Zzz...")
                 return
             try:
                 user_info = bot.get_chat_member(update.message.chat_id, args)
+                if user_info.user.is_bot:
+                    update.message.reply_text("Tag乜撚bot啊？")
+                    return
                 if user_info.user.username and user_info.status in ("administrator", "creator", "member"):
                     update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
                                                   reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
@@ -112,7 +121,7 @@ def tag9(bot, update, args):
                 else:
                     raise BadRequest("¯\_(ツ)_/¯")
             except BadRequest:
-                update.message.reply_text("呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
+                update.message.reply_text("乜呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
     else:
         update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
 
