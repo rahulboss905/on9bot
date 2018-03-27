@@ -80,8 +80,8 @@ def tag9(bot, update, args):  # /tag9 command, you can't use it so I won't comme
                     sleep(15)
                     update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
                 else:
-                   update.message.reply_markdown("Tag唔到，佢無username。我tag lor。"
-                                                 "[柒頭](tg://user?id={})".format(user_info.user.id))
+                   update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
+                                                 "[柒頭](tg://user?id={})。".format(user_info.user.id))
             except BadRequest:
                 update.message.reply_text("呢個群組有呢個人咩？定Telegram入面根本無呢個人？Zzz...")
         else:
