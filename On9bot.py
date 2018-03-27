@@ -19,7 +19,9 @@ logger = logging.getLogger(__name__)
 
 def start(bot, update):  # /start command
     update.message.reply_markdown("我係全Telegram最On9嘅bot。"
-                                  "有咩事可以揾我主人[Trainer Jono](tg://user?id=463998526)。")
+                                  "有咩事可以揾我主人[Trainer Jono](tg://user?id=463998526)。"
+                                  "Sorry, but this bot is only available in Cantonese, since this bot is designed to"
+                                  "annoy members in a public Cantonese group [HK Duker](t.me/hkduker).")
 
 
 def bot_help(bot, update):  # /help command
@@ -40,28 +42,28 @@ def tag9js(bot, update):  # /tag9js command, only available in HK Duker
     if update.message.chat_id == -1001295361187:  # If the chat is HK Duker
         js_info = bot.get_chat_member(-1001295361187, 190726372)  # Gets JS's newest username
         if js_info.user.username:  # If JS has a username
-            update.message.reply_markdown(tag9js_text(),  # Gets the long text from above
-                                          reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]),  # Reply keyboard
+            update.message.reply_markdown(tag9js_text(),
+                                          reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]),
                                           disable_web_page_preview=True)  # Disables web page preview
             sleep(15)  # Sleeps for 15 sec, zzz...
             update.message.reply_text("我已經整走咗個鍵盤啦。",
-                                      reply_markup=ReplyKeyboardRemove(), quote=False)  # Remove reply keyboard
+                                      reply_markup=ReplyKeyboardRemove(), quote=False)
         else:  # If JS has no username
-            update.message.reply_text("你條死JS，del咗username？！豈有此理，等本大爺親自tag你啦！")  # Insult starts
+            update.message.reply_text("你條死JS，del咗username？！豈有此理，等本大爺親自tag你啦！")
             for i in range(0, 3):  # Repeat 3 times
-                update.message.reply_markdown("[JS](tg://user?id=190726372)上水啦！", quote=False)  # Tags JS
+                update.message.reply_markdown("[JS](tg://user?id=190726372)上水啦！", quote=False)
                 sleep(2)  # Sleeps for 3 sec, zzz...
-            update.message.reply_text("算啦，再tag JS我會攰死，今次放過你啦唉。", quote=False)  # Ends tagging
-    elif update.message.chat_id < 0:  # If the chat is a group other than HK Duker
-        update.message.reply_markdown("為咗減少對[JS](tg://user?id=190726372)嘅騷擾，呢個指令本群組用唔到㗎。")  # Can't tag
+            update.message.reply_text("算啦，再tag JS我會攰死，今次放過你啦唉。", quote=False)
+    elif update.message.chat_id < 0:
+        update.message.reply_markdown("為咗減少對[JS](tg://user?id=190726372)嘅騷擾，呢個指令本群組用唔到㗎。")
     else:  # If the chat is pm
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
-        update.message.reply_text("呢個指令只可以喺HK Duker用到，歡迎撳下面個掣入嚟HK Duker一齊tag死JS。",  # Ads lol
+        update.message.reply_text("呢個指令只可以喺HK Duker用到，歡迎撳下面個掣入嚟HK Duker一齊tag死JS。",
                                   reply_markup=reply_markup)
 
 
-@run_async  # Allows bot to keep working while sleeping
-def tag9(bot, update, args):  # /tag9 command, you can't use it so I won't comment below lol
+@run_async
+def tag9(bot, update, args):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and
                                                   update.message.chat_id == -1001295361187):
@@ -110,8 +112,8 @@ def tag9(bot, update, args):  # /tag9 command, you can't use it so I won't comme
         update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
 
 
-def remove_keyboard(bot, update):  # /remove_keyboard command
-    if update.message.chat_id < 0:  # if this chat is a group
+def remove_keyboard(bot, update):
+    if update.message.chat_id < 0:
         update.message.reply_text("我已經整走咗個鍵盤啦（如有）。", reply_markup=ReplyKeyboardRemove())
     else:
         update.message.reply_text("我唔會整鍵盤比你撳，移乜除姐。")
@@ -210,7 +212,7 @@ def text_responses(bot, update):
             update.message.reply_text("主人你好！")
         if u == "good dog":
             update.message.reply_text("屌你老母")
-    if u == "trainer jono is rubbish":
+    if "trainer jono is rubbish" in u:
         update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg",
                                    caption="車娜 Jono is a wubbish. Tot肚ly wubbish. Dammit.")
     if "cough" in u:
