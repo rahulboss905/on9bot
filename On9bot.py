@@ -72,6 +72,8 @@ def tag9(bot, update, args):
                 if update.message.reply_to_message.from_user.id == 463998526:
                     update.message.reply_text("收皮啦tag我主人，唔幫你。")
                     return
+                if update.message.reply_to_message.from_user.id <= 0:
+                    raise BadRequest("¯\_(ツ)_/¯")
                 user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
                 if user_info.user.username and user_info.status in ("administrator", "creator", "member"):
                     update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
@@ -215,6 +217,8 @@ def text_responses(bot, update):
             update.message.reply_text("主人你好！")
         if u == "good dog":
             update.message.reply_text("屌你老母")
+    if update.effective_user != 463998526 and update.effective_chat.chat.type in ("group", "supergroup") and "@trainer_jono" in u:
+        update.message.reply_text("Tag我主人jm9？")
     if "trainer jono is rubbish" in u:
         update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg",
                                    caption="車娜 Jono is a wubbish. Tot肚ly wubbish. Dammit.")
@@ -325,6 +329,10 @@ def poto(bot, update):
     update.message.reply_audio("CQADBQADOAADYv7JVYZTkCHv01_4Ag")
 
 
+def beefball_christ(bot, update):
+    update.message.reply_audio("CQADBQADHgADkXfRVcsnDoGOjnChAg")
+
+
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
@@ -348,6 +356,7 @@ if __name__ == "__main__":
     dp.add_handler(CommandHandler("voice_id", get_voice_id))
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("x", poto))
+    dp.add_handler(CommandHandler("y", beefball_christ))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
     dp.add_handler(CommandHandler("r", echo, pass_args=True))
     dp.add_handler(CommandHandler("r3", echo3, pass_args=True))
