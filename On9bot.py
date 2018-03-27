@@ -1,4 +1,5 @@
-# On9Bot code. Zzz...
+# On9Bot (an annoying Telegram bot) code, uses Python 3 and the python-telegram-bot library, hosted on Heroku
+# Nothing to hide except my bot token, lol
 
 from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
