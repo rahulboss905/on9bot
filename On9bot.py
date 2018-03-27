@@ -217,7 +217,7 @@ def text_responses(bot, update):
             update.message.reply_text("主人你好！")
         if u == "good dog":
             update.message.reply_text("屌你老母")
-    if update.effective_user != 463998526 and update.effective_chat.chat.type in ("group", "supergroup") and "@trainer_jono" in u:
+    if update.effective_user != 463998526 and update.effective_chat.type in ("group", "supergroup") and "@trainer_jono" in u:
         update.message.reply_text("Tag我主人jm9？")
     if "trainer jono is rubbish" in u:
         update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg",
