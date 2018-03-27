@@ -230,17 +230,16 @@ def echo(bot, update, args):
                                           quote=False)
                 update.message.delete()
                 return
-            update.message.delete()
             update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
-
+            update.message.delete()
         except ValueError:
             update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
     else:
         try:
             if args == "":
                 raise ValueError
-            update.message.delete()
             update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
+            update.message.delete()
         except ValueError:
             update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
 
