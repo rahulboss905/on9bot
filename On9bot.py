@@ -63,7 +63,7 @@ def tag9js(bot, update):
 def tag9(bot, update, args):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and
-                                                  update.message.chat_id == -1001295361187):
+                                                 update.message.chat_id == -1001295361187):
         if update.message.chat_id > 0:
             update.message.reply_text("PM點tag9人姐？")
             return
@@ -73,21 +73,23 @@ def tag9(bot, update, args):
                     update.message.reply_text("收皮啦tag我主人，唔幫你。")
                     return
                 user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
-                if user_info.user.username and user_info.status == ("administrator" or "creator" or "member"):
+                if user_info.user.username and user_info.status in ("administrator", "creator", "member"):
                     update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
                                                   reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
                     sleep(15)
                     update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-                else:
+                elif user_info.status in ("administrator", "creator", "member"):
                     update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
                                                   "[柒頭](tg://user?id={})。".format(user_info.user.id))
+                else:
+                    raise BadRequest("¯\_(ツ)_/¯")
             except BadRequest:
                 update.message.reply_text("呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
         else:
             try:
                 args = " ".join(args)
                 if args == "":
-                    raise ValueError
+                    raise ValueError("¯\_(ツ)_/¯")
                 args = int(args[0])
                 if args == 463998526:
                     update.message.reply_text("收皮啦tag我主人，唔幫你。")
@@ -97,13 +99,16 @@ def tag9(bot, update, args):
                 return
             try:
                 user_info = bot.get_chat_member(update.message.chat_id, args)
-                if user_info.user.username:
+                if user_info.user.username and user_info.status in ("administrator", "creator", "member"):
                     update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
                                                   reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
                     sleep(15)
                     update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
+                elif user_info.status in ("administrator", "creator", "member"):
+                    update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
+                                                  "[柒頭](tg://user?id={})。".format(user_info.user.id))
                 else:
-                    update.message.reply_text("Tag唔到，佢無username。")
+                    raise BadRequest("¯\_(ツ)_/¯")
             except BadRequest:
                 update.message.reply_text("呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
     else:
@@ -235,7 +240,7 @@ def echo(bot, update, args):
     else:
         try:
             if args == "":
-                raise ValueError
+                raise ValueError("¯\_(ツ)_/¯")
             update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
             update.message.delete()
         except ValueError:
@@ -258,7 +263,7 @@ def echo3(bot, update, args):
     else:
         try:
             if args == "":
-                raise ValueError
+                raise ValueError("¯\_(ツ)_/¯")
             for i in range(0, 3):
                 update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
         except ValueError:
@@ -291,7 +296,8 @@ def get_message_link(bot, update):
 def get_audio_id(bot, update):
     if update.message.reply_to_message:
         if update.message.reply_to_message.audio:
-            update.message.reply_markdown("File id for this audio file: ```{}```".format(update.message.reply_to_message.audio.file_id))
+            update.message.reply_markdown("File id for this audio file: ```{}```"
+                                          .format(update.message.reply_to_message.audio.file_id))
         else:
             update.message.reply_text("唔係audio file(.mp3)就收皮啦。")
     else:
@@ -301,7 +307,8 @@ def get_audio_id(bot, update):
 def get_voice_id(bot, update):
     if update.message.reply_to_message:
         if update.message.reply_to_message.voice:
-            update.message.reply_markdown("File id for this voice file: ```{}```".format(update.message.reply_to_message.voice.file_id))
+            update.message.reply_markdown("File id for this voice file: ```{}```"
+                                          .format(update.message.reply_to_message.voice.file_id))
         else:
             update.message.reply_text("唔係voice file(.ogg)就收皮啦。")
     else:
