@@ -1,12 +1,13 @@
-# On9Bot (an annoying Telegram bot) code, uses Python 3 and the python-telegram-bot library, hosted on Heroku
-# Nothing to hide except my bot token, lol
+# On9Bot (an annoying Cantonese Telegram bot) source code
+# Uses Python 3 and the python-telegram-bot library, hosted on Heroku
 
 from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
 from telegram.error import BadRequest
 from time import sleep
-import logging
 from re import match
+import psycopg2
+import logging
 import os
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -14,12 +15,18 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
+# conn = psycopg2.connect(host="ec2-23-21-121-220.compute-1.amazonaws.com",
+#                         database="ddqe8lueaue1pl", user="fttveeezgekmvf",
+#                         password="948fc928d48ed553c738617c8a906b5efc5b86e97ceb42cbbc55839a92057889")
+# cur = conn.cursor()
+
+
 def start(bot, update):
-    update.message.reply_markdown("我係全Telegram最On9嘅bot。"
-                                  "有咩事可以揾我主人[Trainer Jono](tg://user?id=463998526)。"
-                                  "Sorry, but this bot is only available in Cantonese since this bot is designed to "
-                                  "annoy members in a public Cantonese group [HK Duker](t.me/hkduker).",
-                                  disable_web_page_preview=True)
+    if update.message.chat_id > 0:
+        update.message.reply_markdown("你好，我係全Telegram最On9嘅bot。用 /help 睇點用。Zzz...\n\n"
+                                      "I am only available in Cantonese for now since this bot is specifically "
+                                      "designed to annoy members in a public Cantonese group [HK Duker](t.me/hkduker).",
+                                      disable_web_page_preview=True)
 
 
 def bot_help(bot, update):
@@ -40,7 +47,7 @@ def tag9js(bot, update):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     if update.message.chat_id == -1001295361187:
         js_info = bot.get_chat_member(-1001295361187, 190726372)
-        if js_info.user.username:  # If JS has a username
+        if js_info.user.username:
             update.message.reply_markdown(tag9js_text(),
                                           reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]),
                                           disable_web_page_preview=True)
@@ -128,6 +135,21 @@ def tag9(bot, update, args):
         update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
 
 
+# Ah, how boring it is after writing such a damn large function. raise BoredError("¯\_(ツ)_/¯")
+# I wouldn't mind some drawings here, you know.
+#   ____                       ____
+#  |    \                     |    \                    |
+#  |     \ ____ _____ ____    |     \ ____ ____ .  ____ |
+#  |     | |  | | | | |  |    |     | |  | |  | | |___| |
+#  |_____/ \_/\ | | | |  |    |_____/ \_/\ |  | | |___  |
+#
+#  _____ ____    ____
+#    |  |       |                 |  /
+#    |  |____   |____         ___ |/   ____
+#    |      |       | |   |  |    |\  |____
+# |__|  ____|   ____| |___|\ |___ | \ ____|
+
+
 def remove_keyboard(bot, update):
     if update.message.chat_id < 0:
         update.message.reply_text("我已經整走咗個鍵盤啦（如有）。", reply_markup=ReplyKeyboardRemove())
@@ -135,7 +157,7 @@ def remove_keyboard(bot, update):
         update.message.reply_text("我唔會整鍵盤比你撳，移乜除姐。")
 
 
-# WARNING! PLEASE IGNORE THE FOLLOWING OFFENSIVE WORDS.
+# YOU ARE ADVISED TO IGNORE THE FOLLOWING OFFENSIVE WORDS.
 # THESE WORDS ARE ONLY FOR DETECTING OFFENSIVE WORDS IN TELEGRAM MESSAGES
 # AND NOT INSULTING USERS OR OTHER PEOPLE.
 
@@ -207,6 +229,10 @@ def swear_word_detector(bot, update):
 def text_responses(bot, update):
     if update.message.new_chat_members:
         for on9user in update.message.new_chat_members:
+            if on9user.id == 175844556:
+                update.message.reply_text("嘩，邊撚到嚟㗎？")
+                update.message.reply_text("大家好，我係全Telegram最On9嘅bot。用 /help 睇點用。")
+                continue
             if match(r'\d\d\d\d\d\d\d\d', on9user.first_name):
                 if match(r'\d\d\d\d\d\d\d\d', on9user.last_name):
                     update.message.reply_text("又係數字人？我屌！我ban 9數字人啦。")
@@ -249,12 +275,16 @@ def echo(bot, update, args):
     if update.message.reply_to_message:
         try:
             if args == "":
-                update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
-                                          quote=False)
+                if update.message.reply_to_message.text:
+                    update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
+                                              quote=False)
+                    update.message.delete()
+                    return
+                else:
+                    raise ValueError("¯\_(ツ)_/¯")
+            else:
+                update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
                 update.message.delete()
-                return
-            update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
-            update.message.delete()
         except ValueError:
             update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
     else:
@@ -276,8 +306,9 @@ def echo3(bot, update, args):
                     update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
                                               quote=False)
                 return
-            for i in range(0, 3):
-                update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
+            else:
+                for i in range(0, 3):
+                    update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
         except ValueError:
             update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
     else:
