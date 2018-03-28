@@ -16,8 +16,8 @@
       <file leaf-file-name="On9bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/On9bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="329">
-              <caret line="400" column="39" lean-forward="false" selection-start-line="400" selection-start-column="39" selection-end-line="400" selection-end-column="39" />
+            <state relative-caret-position="6902">
+              <caret line="413" column="75" lean-forward="false" selection-start-line="413" selection-start-column="75" selection-end-line="413" selection-end-column="75" />
               <folding />
             </state>
           </provider>
@@ -36,7 +36,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="792" />
     <option name="width" value="809" />
     <option name="height" value="867" />
@@ -94,7 +94,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="876" extended-state="7" />
+    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24968314" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -134,8 +134,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/On9bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="400" column="39" lean-forward="false" selection-start-line="400" selection-start-column="39" selection-end-line="400" selection-end-column="39" />
+        <state relative-caret-position="6902">
+          <caret line="413" column="75" lean-forward="false" selection-start-line="413" selection-start-column="75" selection-end-line="413" selection-end-column="75" />
           <folding />
         </state>
       </provider>

@@ -385,9 +385,9 @@ def error(bot, update, error):
 
 
 def main():
-    TOKEN = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
-    NAME = "on9bot"
-    PORT = os.environ.get('PORT')
+    token = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
+    name = "on9bot"
+    port = os.environ.get('PORT')
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -410,8 +410,8 @@ def main():
     dp.add_handler(MessageHandler(Filters.all, swear_word_detector))
     dp.add_handler(MessageHandler(Filters.all, text_responses), group=1)
     dp.add_error_handler(error)
-    updater.start_webhook(listen="0.0.0.0", port=int(PORT), url_path=TOKEN, clean=True)
-    updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(NAME, TOKEN))
+    updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=token, clean=True)
+    updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(name, token))
     updater.idle()
 
 
