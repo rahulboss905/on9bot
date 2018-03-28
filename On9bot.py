@@ -384,7 +384,7 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 
-if __name__ == "__main__":
+def main():
     TOKEN = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
     NAME = "on9bot"
     PORT = os.environ.get('PORT')
@@ -413,3 +413,7 @@ if __name__ == "__main__":
     updater.start_webhook(listen="0.0.0.0", port=int(PORT), url_path=TOKEN, clean=True)
     updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(NAME, TOKEN))
     updater.idle()
+
+
+if __name__ == "__main__":
+    main()
