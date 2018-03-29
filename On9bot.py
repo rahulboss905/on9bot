@@ -214,33 +214,34 @@ def eng_swear_word_detector():
 
 def swear_word_detector(bot, update):
     try:
-        global t
-        t = update.message.text
-        if cn_swear_word_detector():
-            if update.message.chat_id < 0:
-                update.message.reply_text("豈有此理，講粗口？！我最撚憎人講粗口，記你一次大過！")
+        if update.message.text:
+            global t
+            t = update.message.text
+            if cn_swear_word_detector():
+                if update.message.chat_id < 0:
+                    update.message.reply_text("豈有此理，講粗口？！我最撚憎人講粗口，記你一次大過！")
+                    return
+                else:
+                    update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
+                    return
+            t = t.lower().split(" ")
+            if cn_swear_word_in_eng_detector():
+                if update.message.chat_id < 0:
+                    update.message.reply_text("廣東話粗口嘅英文縮寫我睇得明㗎，柒頭。我最撚憎人講粗口，記你一次大過！")
+                else:
+                    update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
+            elif eng_swear_word_detector():
+                if update.message.chat_id < 0:
+                    update.message.reply_text("英文粗口我都明㗎，柒頭。我最撚憎人講粗口，記你一次大過！")
+                else:
+                    update.message.reply_text("It's pm, I don't care if you swear, zzz.")
+            else:
                 return
-            else:
-                update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-                return
-        t = t.lower().split(" ")
-        if cn_swear_word_in_eng_detector():
-            if update.message.chat_id < 0:
-                update.message.reply_text("廣東話粗口嘅英文縮寫我睇得明㗎，柒頭。我最撚憎人講粗口，記你一次大過！")
-            else:
-                update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-        elif eng_swear_word_detector():
-            if update.message.chat_id < 0:
-                update.message.reply_text("英文粗口我都明㗎，柒頭。我最撚憎人講粗口，記你一次大過！")
-            else:
-                update.message.reply_text("It's pm, I don't care if you swear, zzz.")
-        else:
-            return
     except Exception as e:
         update.message.reply_text(e)
 
 
-def text_responses(bot, update):
+def general_responses(bot, update):
     try:
         if update.message.new_chat_members:
             for on9user in update.message.new_chat_members:
@@ -252,44 +253,37 @@ def text_responses(bot, update):
                         update.message.reply_text("又係數字人？我屌！我ban 9數字人啦。")
                         bot.kick_chat_member(update.message.chat_id, on9user.id)
                 elif on9user.is_bot:
-                    update.message.reply_text("Zzz...哦？第個bot喎，乜水？")
-                else:
-                    update.message.reply_text("你好啊{}！歡迎嚟到{}！"
-                                              .format(on9user.full_name,))
-            return
+                    update.message.reply_text("Zzz...哦？新bot喎，乜水？")
         elif update.message.left_chat_member:
             update.message.reply_text(update.message.left_chat_member.full_name + "離開左群組。")
-            return
-        y = update.message.from_user
-        if match(r'\d\d\d\d\d\d\d\d', y.first_name):
-            if match(r'\d\d\d\d\d\d\d\d', y.last_name):
-                update.message.reply_text("又係數字人？我屌！我ban 9數字人啦。", quote=False)
-                update.message.delete()
-                bot.kick_chat_member(update.message.chat_id, update.message.from_user.id)
-                return
-        if update.message.pinned_message:
+        elif match(r'\d\d\d\d\d\d\d\d', update.message.from_user.first_name) and match(r'\d\d\d\d\d\d\d\d', update.from_user.last_name):
+            update.message.reply_text("又係數字人？我屌！我ban 9數字人啦。", quote=False)
+            update.message.delete()
+            bot.kick_chat_member(update.message.chat_id, update.message.from_user.id)
+        elif update.message.pinned_message:
             if update.message.from_user.id == 463998526:
                 update.message.reply_text("Trainer Jono pin嘢啊，係咪有人有意見？")
             else:
-                update.message.reply_text("屌你老母咩 " + update.message.from_user.name + " ，pin嘢嘈醒全谷人。")
-        if update.message.sticker:
+                update.message.reply_text("屌你咩 " + update.message.from_user.name + " ，pin嘢嘈醒全谷人。")
+        elif update.message.sticker:
             if update.message.sticker.set_name == "payize2" or update.message.sticker.set_name == "FPbabydukeredition":
-                update.message.reply_text("屌你老母，Send乜撚bb啊，阻住個地球轉。")
-        u = update.message.text.lower()
-        if update.effective_user.id == 463998526:
-            if u == "hello":
-                update.message.reply_text("主人你好！")
-            if u == "good dog":
-                update.message.reply_text("屌你老母")
-        if update.effective_user.id != 463998526 and update.effective_chat.type in ("group", "supergroup") and "@trainer_jono" in u:
-            update.message.reply_text("Tag我主人jm9？")
-        if "trainer jono is rubbish" in u:
-            update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg",
-                                       caption="車娜 Jono is a wubbish. Tot肚ly wubbish. Dammit.")
-        if "cough" in u:
-            update.message.reply_text("Do you need some cough medicine?")
-        if u == "js is very on9":
-            update.message.reply_text("Your IQ is 500")
+                update.message.reply_text("屌你，Send乜撚bb啊，阻住個地球轉。")
+        elif update.message.text:
+            u = update.message.text.lower()
+            if update.effective_user.id == 463998526:
+                if u == "hello":
+                    update.message.reply_text("主人你好！")
+                elif u == "good dog":
+                    update.message.reply_text("屌你老母")
+            if update.effective_user.id != 463998526 and update.effective_chat.type in ("group", "supergroup") and "@trainer_jono" in u:
+                update.message.reply_text("Tag我主人jm9？")
+            if "trainer jono is rubbish" in u:
+                update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg",
+                                           caption="車娜 Jono is a wubbish. Tot肚ly wubbish. Dammit.")
+            if "cough" in u:
+                update.message.reply_text("Do you need some cough medicine?")
+            if u == "js is very on9":
+                update.message.reply_text("Your IQ is 500")
     except Exception as e:
         update.message.reply_text(e)
 
@@ -311,8 +305,6 @@ def echo(bot, update, args):
                 update.message.delete()
         except ValueError:
             update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
-        except BadRequest:
-            update.message.reply_text("Markdown都唔識用？！睇左 /help 未？")
         except Exception as e:
             update.message.reply_text(e)
     else:
@@ -463,7 +455,7 @@ def main():
     dp.add_handler(CommandHandler("r", echo, pass_args=True))
     dp.add_handler(CommandHandler("r3", echo3, pass_args=True))
     dp.add_handler(MessageHandler(Filters.text, swear_word_detector))
-    dp.add_handler(MessageHandler(Filters.all, text_responses), group=1)
+    dp.add_handler(MessageHandler(Filters.all, general_responses), group=1)
     dp.add_error_handler(error)
     updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=token, clean=True)
     updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(name, token))
