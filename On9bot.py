@@ -6,9 +6,10 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_a
 from telegram.error import BadRequest
 from time import sleep
 from re import match
-import psycopg2
 import logging
 import os
+
+# import psycopg2
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -265,6 +266,7 @@ def general_responses(bot, update):
             if update.message.sticker.set_name == "payize2" or update.message.sticker.set_name == "FPbabydukeredition":
                 update.message.reply_text("屌你，Send乜撚bb啊，阻住個地球轉。")
         elif update.message.text:
+            swear_word_detector(bot, update)
             u = update.message.text.lower()
             if u == "hello" and update.effective_user.id == 463998526:
                 update.message.reply_text("主人你好！")
@@ -396,7 +398,7 @@ def get_voice_id(bot, update):
 
 def ping(bot, update):
     try:
-        update.message.reply_text("Pong...?\n\nSorry this took long to send but Telegram said I was too popular and"
+        update.message.reply_text("Pong...?\n\nSorry this took long to send but Telegram said I was too popular and "
                                   "wouldn't let me send messages for a bit...")
     except Exception as e:
         update.message.reply_text(e)
@@ -440,8 +442,7 @@ def main():
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
     dp.add_handler(CommandHandler("r", echo, pass_args=True))
     dp.add_handler(CommandHandler("r3", echo3, pass_args=True))
-    dp.add_handler(MessageHandler(Filters.text, swear_word_detector))
-    dp.add_handler(MessageHandler(Filters.all, general_responses), group=1)
+    dp.add_handler(MessageHandler(Filters.all, general_responses))
     dp.add_error_handler(error)
     updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=token, clean=True)
     updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(name, token))
