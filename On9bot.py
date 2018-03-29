@@ -108,6 +108,7 @@ def tag9(bot, update, args):
                 args = int(args)
                 if args == 463998526:
                     update.message.reply_text("收皮啦tag我主人，唔幫你。")
+                    return
                 if args <= 0:
                     update.message.reply_text("唔知user id係咩就死開。Zzz...")
                     return
@@ -388,9 +389,6 @@ def main():
     token = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
     name = "on9bot"
     port = os.environ.get('PORT')
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        level=logging.INFO)
-    logger = logging.getLogger(__name__)
     updater = Updater(token)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
