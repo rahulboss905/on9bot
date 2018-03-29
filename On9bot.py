@@ -261,7 +261,8 @@ def general_responses(bot, update):
             if update.message.from_user.id == 463998526:
                 update.message.reply_text("Trainer Jono pin嘢啊，係咪有人有意見？")
             else:
-                update.message.reply_text("屌你咩 " + update.message.from_user.name + " ，pin嘢嘈醒全谷人。")
+                update.message.reply_text("[{}](tg://user?id={})又pin嘢嘈醒全谷人。"
+                                          .format(update.message.from_user.full_name, update.message.from_user.id))
         elif update.message.sticker:
             if update.message.sticker.set_name == "payize2" or update.message.sticker.set_name == "FPbabydukeredition":
                 update.message.reply_text("屌你，Send乜撚bb啊，阻住個地球轉。")
