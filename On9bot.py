@@ -23,9 +23,7 @@ logger = logging.getLogger(__name__)
 
 def start(bot, update):
     if update.message.chat_id > 0:
-        update.message.reply_markdown("你好，我係全Telegram最On9嘅bot。用 /help 睇點用。Zzz...\n\n"
-                                      "I am only available in Cantonese for now since this bot is specifically "
-                                      "designed to annoy members in a public Cantonese group [HK Duker](t.me/hkduker).",
+        update.message.reply_markdown("你好，我係全Telegram最On9嘅bot。撳 /help 睇點用。Zzz...",
                                       disable_web_page_preview=True)
 
 
@@ -35,9 +33,8 @@ def bot_help(bot, update):
 
 
 def tag9js_text():
-    text = '''一齊撳掣tag死[JS](tg://user?id=190726372)啦！限時15秒，現在開始！JS受死啦！
-呢個群組個Enforcer好鬼煩，flood小小就會踢走你。你要注意下，五秒唔好撳個掣多過七次，否則你會被踢走。
-萬一你撳掣太快，比Grey Wolf Enforcer踢走左去火星，你可以global search [HK Duker](t.me/hkduker) 即刻入返嚟繼續撳掣tag JS。
+    text = '''限時十五秒，一齊撳掣tag死[JS](tg://user?id=190726372)啦！受死啦JS！
+五秒唔好撳個掣多過七次，如果唔係GH Bot會話你flood，mute左你，到時本bot幫你唔到㗎。
 你可以隨時撳 /remove\_keyboard 整走個keyboard。'''
     return text
 
@@ -49,7 +46,7 @@ def tag9js(bot, update):
         if update.message.chat_id == -1001295361187:
             js_info = bot.get_chat_member(-1001295361187, 190726372)
             if js_info.status != "creator":
-                update.message.reply_markdown("一齊撳掣tag死[JS](tg://user?id=190726372)—— 吓？！JS唔")
+                update.message.reply_markdown("一齊撳掣tag死—— 吓？！[JS](tg://user?id=190726372)去左邊？？？")
             if js_info.user.username:
                 update.message.reply_markdown(tag9js_text(),
                                               reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]),
@@ -60,14 +57,14 @@ def tag9js(bot, update):
             else:
                 update.message.reply_text("你條死JS，del咗username？！豈有此理，等本大爺親自tag你啦！")
                 for i in range(3):
-                    update.message.reply_markdown("[JS](tg://user?id=190726372)上水啦！", quote=False)
+                    update.message.reply_markdown("[JS](tg://user?id=190726372)！", quote=False)
                     sleep(2)
-                update.message.reply_text("算啦，再tag JS我會攰死，今次放過你啦唉。", quote=False)
+                update.message.reply_text("算啦，再tag JS我會攰死，今次放過佢啦。", quote=False)
         elif update.message.chat_id < 0:
-            update.message.reply_markdown("為咗減少對[JS](tg://user?id=190726372)嘅騷擾，呢個指令本群組用唔到㗎。")
+            update.message.reply_markdown("呢個群組用唔到呢個指令㗎。")
         else:
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
-            update.message.reply_text("呢個指令只可以喺HK Duker用到，歡迎撳下面個掣入嚟HK Duker一齊tag死JS。",
+            update.message.reply_text("呢個指令只可以喺HK Duker度用，歡迎撳下面個掣入嚟HK Duker一齊tag死JS。",
                                       reply_markup=reply_markup)
     except Exception as e:
         update.message.reply_text(e)
@@ -80,32 +77,33 @@ def tag9(bot, update, args):
         if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and
                                                      update.message.chat_id == -1001295361187):
             if update.message.chat_id > 0:
-                update.message.reply_text("PM點tag9人姐？")
+                update.message.reply_text("PM無得tag9人喎。")
                 return
             if update.message.reply_to_message:
                 try:
                     if update.message.reply_to_message.from_user.id == 463998526:
-                        update.message.reply_text("收皮啦tag我主人，唔幫你。")
-                        return
-                    if update.message.reply_to_message.from_user.id <= 0:
-                        update.message.reply_text("唔知user id係咩就死開。Zzz...")
+                        update.message.reply_text("吓？Tag9我主人？我我——我好似突然之間盲咗，睇睇——睇唔到你條訊息喎。")
                         return
                     if update.message.reply_to_message.from_user.is_bot:
-                        update.message.reply_text("Tag乜撚bot啊？")
+                        update.message.reply_text("Tag9 bot？咁無聊？")
                         return
                     user_info = bot.get_chat_member(update.message.chat_id, update.message.reply_to_message.from_user.id)
-                    if user_info.user.username and user_info.status in ("administrator", "creator", "member"):
-                        update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
-                                                      reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
-                        sleep(15)
-                        update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-                    elif user_info.status in ("administrator", "creator", "member"):
-                        update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
-                                                      "[柒頭](tg://user?id={})。".format(user_info.user.id))
+                    if user_info.status == "restricted":
+                        if not user_info.status.can_send_messages:
+                            update.message.reply_text("吓？人地無得講嘢都要tag9？")
+                    if user_info.status in ("administrator", "creator", "member", "restricted"):
+                        if user_info.user.username:
+                            update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
+                                                          reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
+                            sleep(15)
+                            update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
+                        else:
+                            update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
+                                                          "喂啊[{}](tg://user?id={})。".format(user_info.full_name, user_info.user.id))
                     else:
-                        raise BadRequest("¯\_(ツ)_/¯")
-                except BadRequest:
-                    update.message.reply_text("乜呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
+                        update.message.reply_text("吓？人地唔喺呢個群組都要tag9？")
+                except Exception as e:
+                    update.message.reply_text(e)
             else:
                 try:
                     args = " ".join(args)
@@ -113,31 +111,37 @@ def tag9(bot, update, args):
                         raise ValueError("¯\_(ツ)_/¯")
                     args = int(args)
                     if args == 463998526:
-                        update.message.reply_text("收皮啦tag我主人，唔幫你。")
+                        update.message.reply_text("吓？Tag9我主人？我我——我好似突然之間盲咗，睇睇——睇唔到你條訊息喎。")
                         return
                     if args <= 0:
-                        update.message.reply_text("唔知user id係咩就死開。Zzz...")
+                        update.message.reply_text("我又唔至於唔知user id係正整數嘅。Zzz...")
                         return
                 except ValueError:
-                    update.message.reply_text("打錯嘢喎。咁用先啱： /tag9 <user id>。 唔知user id係咩就死開。Zzz...")
+                    update.message.reply_text("咁用先啱喎： /tag9 <user id>。你應該知道user id係咩掛。")
                     return
                 try:
                     user_info = bot.get_chat_member(update.message.chat_id, args)
                     if user_info.user.is_bot:
                         update.message.reply_text("Tag乜撚bot啊？")
                         return
-                    if user_info.user.username and user_info.status in ("administrator", "creator", "member"):
-                        update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
-                                                      reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
-                        sleep(15)
-                        update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-                    elif user_info.status in ("administrator", "creator", "member"):
-                        update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
-                                                      "[柒頭](tg://user?id={})。".format(user_info.user.id))
+                    if user_info.status == "restricted":
+                        if not user_info.status.can_send_messages:
+                            update.message.reply_text("吓？人地無得講嘢都要tag9？")
+                    if user_info.status in ("administrator", "creator", "member"):
+                        if user_info.user.username:
+                            update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
+                                                          reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
+                            sleep(15)
+                            update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
+                        else:
+                            update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
+                                                          "[柒頭](tg://user?id={})。".format(user_info.user.id))
                     else:
-                        raise BadRequest("¯\_(ツ)_/¯")
+                        update.message.reply_text("吓？人地唔喺呢個群組都要tag9？")
                 except BadRequest:
                     update.message.reply_text("乜呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
+                except Exception as e:
+                    update.message.reply_text(e)
         else:
             update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
     except Exception as e:
@@ -219,24 +223,16 @@ def swear_word_detector(bot, update):
             t = update.message.text
             if cn_swear_word_detector():
                 if update.message.chat_id < 0:
-                    update.message.reply_text("豈有此理，講粗口？！我最撚憎人講粗口，記你一次大過！")
-                    return
+                    update.message.reply_text("我最撚憎人講粗口，記你一次大過！")
                 else:
                     update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-                    return
-            t = t.lower().split(" ")
-            if cn_swear_word_in_eng_detector():
-                if update.message.chat_id < 0:
-                    update.message.reply_text("廣東話粗口嘅英文縮寫我睇得明㗎，柒頭。我最撚憎人講粗口，記你一次大過！")
-                else:
-                    update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-            elif eng_swear_word_detector():
-                if update.message.chat_id < 0:
-                    update.message.reply_text("英文粗口我都明㗎，柒頭。我最撚憎人講粗口，記你一次大過！")
-                else:
-                    update.message.reply_text("It's pm, I don't care if you swear, zzz.")
-            else:
                 return
+            t = t.lower().split(" ")
+            if cn_swear_word_in_eng_detector() or eng_swear_word_detector():
+                if update.message.chat_id < 0:
+                    update.message.reply_text("我最撚憎人講粗口，記你一次大過！")
+                else:
+                    update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
     except Exception as e:
         update.message.reply_text(e)
 
@@ -270,20 +266,14 @@ def general_responses(bot, update):
                 update.message.reply_text("屌你，Send乜撚bb啊，阻住個地球轉。")
         elif update.message.text:
             u = update.message.text.lower()
-            if update.effective_user.id == 463998526:
-                if u == "hello":
-                    update.message.reply_text("主人你好！")
-                elif u == "good dog":
-                    update.message.reply_text("屌你老母")
+            if u == "hello" and update.effective_user.id == 463998526:
+                update.message.reply_text("主人你好！")
             if update.effective_user.id != 463998526 and update.effective_chat.type in ("group", "supergroup") and "@trainer_jono" in u:
-                update.message.reply_text("Tag我主人jm9？")
-            if "trainer jono is rubbish" in u:
-                update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg",
-                                           caption="車娜 Jono is a wubbish. Tot肚ly wubbish. Dammit.")
-            if "cough" in u:
-                update.message.reply_text("Do you need some cough medicine?")
+                update.message.reply_text("唔好tag我主人，乖。")
             if u == "js is very on9":
                 update.message.reply_text("Your IQ is 500")
+            if "trainer jono is rubbish" in u:
+                update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
     except Exception as e:
         update.message.reply_text(e)
 
@@ -325,14 +315,14 @@ def echo3(bot, update, args):
         try:
             if args == "":
                 if update.message.text:
-                    for i in range(0, 3):
+                    for i in range(3):
                         update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
-                                              quote=False)
+                                                  quote=False)
                     return
                 else:
                     raise ValueError
             else:
-                for i in range(0, 3):
+                for i in range(3):
                     update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
         except ValueError:
             update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
@@ -365,12 +355,9 @@ def get_message_link(bot, update):
     try:
         if update.message.reply_to_message:
             group_info = bot.get_chat(update.message.chat_id)
-            if group_info.type == "supergroup":
-                if group_info.username:
+            if group_info.type == "supergroup" and group_info.username:
                     update.message.reply_text("t.me/{}/{}".format(group_info.username,
                                                                   update.message.reply_to_message.message_id))
-                else:
-                    update.message.reply_text("Public supergroup先用得架柒頭。")
             else:
                 update.message.reply_text("Public supergroup先用得架柒頭。")
         else:
@@ -386,9 +373,9 @@ def get_audio_id(bot, update):
                 update.message.reply_markdown("File id for this audio file: ```{}```"
                                               .format(update.message.reply_to_message.audio.file_id))
             else:
-                update.message.reply_text("唔係audio file(.mp3)就收皮啦。")
+                update.message.reply_text("唔係audio file(.mp3)喎。")
         else:
-            update.message.reply_text("覆住個audio file(.mp3)嚟用啦大佬。")
+            update.message.reply_text("覆住個audio file(.mp3)嚟用啦。")
     except Exception as e:
         update.message.reply_text(e)
 
@@ -409,9 +396,8 @@ def get_voice_id(bot, update):
 
 def ping(bot, update):
     try:
-        update.message.reply_text("收到要屌你老母需時: 00:00.01\n999 MAX IN | 1 MAX OUT\n屌你老母需時︰00:00.01\n\n"
-                                  "Sorry this took long to send but Telegram said I was too popular and wouldn't let me "
-                                  "send messages for a bit...")
+        update.message.reply_text("Pong...?\n\nSorry this took long to send but Telegram said I was too popular and"
+                                  "wouldn't let me send messages for a bit...")
     except Exception as e:
         update.message.reply_text(e)
 
