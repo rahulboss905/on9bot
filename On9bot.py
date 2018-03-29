@@ -254,8 +254,8 @@ def text_responses(bot, update):
                 elif on9user.is_bot:
                     update.message.reply_text("Zzz...哦？第個bot喎，乜水？")
                 else:
-                    update.message.reply_text("你好啊{}！歡迎嚟到{}陪我地一齊柒！"
-                                              .format(on9user.full_name, update.effective_chat.title))
+                    update.message.reply_text("你好啊{}！歡迎嚟到{}！"
+                                              .format(on9user.full_name,))
             return
         elif update.message.left_chat_member:
             update.message.reply_text(update.message.left_chat_member.full_name + "離開左群組。")
