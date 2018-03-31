@@ -340,7 +340,7 @@ def echo3(bot, update):
                     break
                 sleep(1)
         else:
-            for i in range (3):
+            for i in range(3):
                 update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
                 if i == 3:
                     break
