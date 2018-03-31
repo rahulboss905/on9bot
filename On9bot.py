@@ -71,7 +71,7 @@ def tag9js(bot, update):
             update.message.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。",
                                       reply_markup=reply_markup)
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 @run_async
@@ -112,7 +112,7 @@ def tag9(bot, update, args):
                     else:
                         update.message.reply_text("吓？人地唔喺呢個群組都要tag9？")
                 except Exception as e:
-                    update.message.reply_text(e)
+                    update.message.reply_text(str(e))
             else:
                 try:
                     args = int(args[0])
@@ -148,11 +148,11 @@ def tag9(bot, update, args):
                 except BadRequest:
                     update.message.reply_text("乜呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
                 except Exception as e:
-                    update.message.reply_text(e)
+                    update.message.reply_text(str(e))
         else:
             update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 # Ah, how boring it is after writing such a damn large function. raise BoredError("¯\_(ツ)_/¯")
@@ -177,7 +177,7 @@ def remove_keyboard(bot, update):
         else:
             update.message.reply_text("我唔會整鍵盤比你撳，移乜除姐。")
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 # YOU ARE ADVISED TO IGNORE THE FOLLOWING OFFENSIVE WORDS.
@@ -241,7 +241,7 @@ def swear_word_detector(bot, update):
                 else:
                     update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 # maybe change to be use handler and groups
@@ -286,7 +286,7 @@ def general_responses(bot, update):
             if "trainer jono is rubbish" in u:
                 update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 def echo(bot, update):
@@ -310,9 +310,9 @@ def echo(bot, update):
             else:
                 update.message.reply_text("Dis is da wae: /r <text> and/or (reply to a message)\nMore info in /help.")
         except Exception as e:
-            update.message.reply_text(e)
+            update.message.reply_text(str(e))
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 # fix to use args = update.message.text.split(" ", 1)[1]
@@ -348,9 +348,9 @@ def echo3(bot, update):
             else:
                 update.message.reply_text("Dis is da wae: /r3 <text> and/or (reply to a message)\nMore info in /help.")
         except Exception as e:
-            update.message.reply_text(e)
+            update.message.reply_text(str(e))
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 # change to show all ChatMember and User info
@@ -364,7 +364,7 @@ def get_id(bot, update):
             update.message.reply_markdown("呢個對話嘅chat id: ```{}```\n你嘅user id: ```{}```"
                                           .format(update.message.chat_id, update.effective_user.id))
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 def get_message_link(bot, update):
@@ -379,62 +379,67 @@ def get_message_link(bot, update):
         else:
             update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
-# modify the two commands below to detect all files
-
-
-def get_audio_id(bot, update):
+def get_file_id(bot, update):
     try:
         if update.message.reply_to_message:
-            if update.message.reply_to_message.audio:
-                update.message.reply_markdown("File id for this audio file: ```{}```"
-                                              .format(update.message.reply_to_message.audio.file_id))
+            x = update.message.reply_to_message
+            if x.audio:
+                get_file_id_response(bot, update, "段音頻", x.audio.file_id)
+            elif x.photo:
+                get_file_id_response(bot, update, "張相", x.photo[-1].file_id)
+            elif x.sticker:
+                get_file_id_response(bot, update, "張貼紙", x.sticker.file_id)
+            elif x.video:
+                get_file_id_response(bot, update, "段影片", x.video.file_id)
+            elif x.voice:
+                get_file_id_response(bot, update, "段錄音", x.voice.file_id)
+            elif x.video_note:
+                get_file_id_response(bot, update, "段影片", x.video_note.file_id)
+            elif x.document:
+                get_file_id_response(bot, update, "份文件", x.document.file_id)
             else:
-                update.message.reply_text("唔係audio file(.mp3)喎。")
+                update.message.reply_text("Dis is da wae: /get_file_id [reply to message containing a supported file]\n"
+                                          "Supported file types include audios (.mp3), documents (general files), "
+                                          "photos (most image formats are supported), stickers (.webp), videos (.mp4), "
+                                          "voice recordings (.ogg) and video messages.")
         else:
-            update.message.reply_text("覆住個audio file(.mp3)嚟用啦。")
+            update.message.reply_text("Dis is da wae: /get_file_id [reply to message containing a supported file]\n"
+                                      "Supported file types include audios (.mp3), documents (general files), "
+                                      "photos (most image formats are supported), stickers (.webp), videos (.mp4), "
+                                      "voice recordings (.ogg) and video messages.")
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
-def get_voice_id(bot, update):
-    try:
-        if update.message.reply_to_message:
-            if update.message.reply_to_message.voice:
-                update.message.reply_markdown("File id for this voice file: ```{}```"
-                                              .format(update.message.reply_to_message.voice.file_id))
-            else:
-                update.message.reply_text("唔係voice file(.ogg)就收皮啦。")
-        else:
-            update.message.reply_text("覆住個voice file(.ogg)嚟用啦大佬。")
-    except Exception as e:
-        update.message.reply_text(e)
+def get_file_id_response(bot, update, file_type, file_id):
+    update.message.reply_markdown("呢{}嘅file id: ```{}```".format(file_type, file_id))
 
 
 def ping(bot, update):
     try:
-        update.message.reply_text("Pong...?\n0.001\n\nSorry this took long to send but Telegram said I was too popular and "
-                                  "wouldn't let me send messages for a bit...")
+        update.message.reply_markdown("Pong...?\n```0.001```\n\nSorry this took long to send but Telegram said I was "
+                                      "too popular and wouldn't let me send messages for a bit...")
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 # maybe change the two commands below to voice
 
-def poto(bot, update):
+def phantom_of_the_opera(bot, update):
     try:
-        update.message.reply_audio("CQADBQADOAADYv7JVYZTkCHv01_4Ag")
+        update.message.reply_audio("AwADBQADIgADsZ35Vf15qTeOTDR3Ag", quote=False)
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 def beefball_christ(bot, update):
     try:
-        update.message.reply_audio("CQADBQADHgADkXfRVcsnDoGOjnChAg")
+        update.message.reply_audio("AwADBQADIwADsZ35VVzG9kRL3IU8Ag", quote=False)
     except Exception as e:
-        update.message.reply_text(e)
+        update.message.reply_text(str(e))
 
 
 def error(bot, update, error):
@@ -453,10 +458,9 @@ def main():
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
     dp.add_handler(CommandHandler("id", get_id))
     dp.add_handler(CommandHandler("link", get_message_link))
-    dp.add_handler(CommandHandler("audio_id", get_audio_id))
-    dp.add_handler(CommandHandler("voice_id", get_voice_id))
+    dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("ping", ping))
-    dp.add_handler(CommandHandler("x", poto))
+    dp.add_handler(CommandHandler("x", phantom_of_the_opera))
     dp.add_handler(CommandHandler("r", echo))
     dp.add_handler(CommandHandler("r3", echo3))
     dp.add_handler(CommandHandler("y", beefball_christ))
