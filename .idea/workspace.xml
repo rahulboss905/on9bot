@@ -16,8 +16,8 @@
       <file leaf-file-name="On9bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/On9bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="296" column="46" lean-forward="true" selection-start-line="296" selection-start-column="46" selection-end-line="296" selection-end-column="46" />
+            <state relative-caret-position="390">
+              <caret line="388" column="25" lean-forward="true" selection-start-line="388" selection-start-column="25" selection-end-line="388" selection-end-column="25" />
               <folding>
                 <element signature="e#129#246#0" expanded="true" />
               </folding>
@@ -139,10 +139,18 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$USER_HOME$/.virtualenvs/On9Bot/Lib/site-packages/telegram/replykeyboardremove.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="51" column="8" lean-forward="false" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/On9bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="296" column="46" lean-forward="true" selection-start-line="296" selection-start-column="46" selection-end-line="296" selection-end-column="46" />
+        <state relative-caret-position="390">
+          <caret line="388" column="25" lean-forward="true" selection-start-line="388" selection-start-column="25" selection-end-line="388" selection-end-column="25" />
           <folding>
             <element signature="e#129#246#0" expanded="true" />
           </folding>

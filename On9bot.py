@@ -71,7 +71,7 @@ def tag9js(bot, update):
             update.message.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。",
                                       reply_markup=reply_markup)
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -113,7 +113,7 @@ def tag9(bot, update, args):
                     else:
                         update.message.reply_text("吓？人地唔喺呢個群組都要tag9？")
                 except Exception as e:
-                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                                   .format(str(e)))
             else:
                 try:
@@ -121,7 +121,7 @@ def tag9(bot, update, args):
                 except (ValueError, IndexError):
                     update.message.reply_text("咁用先啱喎： /tag9 <user id>。你應該知道user id係咩掛。")
                 except Exception as e:
-                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                                   .format(str(e)))
                 if args == 463998526:
                     update.message.reply_text("我我——我好似突然之間盲咗，睇睇——睇唔到你條訊息喎。")
@@ -134,7 +134,7 @@ def tag9(bot, update, args):
                 try:
                     user_info = bot.get_chat_member(update.message.chat_id, args)
                     if user_info.user.is_bot:
-                        update.message.reply_text("Tag乜撚bot啊？")
+                        update.message.reply_text("Tag9 bot？咁無聊？")
                         return
                     if user_info.status == "restricted":
                         if not user_info.status.can_send_messages:
@@ -153,12 +153,12 @@ def tag9(bot, update, args):
                 except BadRequest:
                     update.message.reply_text("乜呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
                 except Exception as e:
-                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                                   .format(str(e)))
         else:
             update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -184,7 +184,7 @@ def remove_keyboard(bot, update):
         else:
             update.message.reply_text("我唔會整鍵盤比你撳，移乜除姐。")
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -249,11 +249,8 @@ def swear_word_detector(bot, update):
                 else:
                     update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
-
-
-# maybe change to be use handler and groups
 
 
 def general_responses(bot, update):
@@ -297,7 +294,7 @@ def general_responses(bot, update):
             if "trainer jono is rubbish" in u:
                 update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -322,10 +319,10 @@ def echo(bot, update):
             else:
                 update.message.reply_text("Dis is da wae: /r <text> and/or (reply to a message)\nMore info in /help.")
         except Exception as e:
-            update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+            update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                           .format(str(e)))
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -360,14 +357,11 @@ def echo3(bot, update):
             else:
                 update.message.reply_text("Dis is da wae: /r3 <text> and/or (reply to a message)\nMore info in /help.")
         except Exception as e:
-            update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+            update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                           .format(str(e)))
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
-
-
-# change to show all ChatMember and User info
 
 
 def user_info(bot, update):
@@ -387,7 +381,7 @@ def user_info(bot, update):
                     text += "\nUsername: {}".format(user.username)
                 if user.language_code:
                     text += "\nLanguage code: {}".format(user.language_code)
-                nub = bot.get_chat_member(user.id, update.effective_chat)
+                nub = bot.get_chat_member(update.message.chat_id, user.id)
                 text += "\n\nUser's status in this {}: {}".format(update.effective_chat.type, nub.status)
                 if nub.status == "administrator":
                     if nub.can_change_info:
@@ -431,9 +425,9 @@ def user_info(bot, update):
             else:
                 update.message.reply_text("This command is currently only available in groups and supergroups.")
         else:
-            update.message.reply_text("Please reply to a message while using this command.")
+            update.message.reply_text("Dis is da wae: /user_info [reply to a message]")
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -445,7 +439,7 @@ def get_id(bot, update):
             update.message.reply_markdown("呢個對話嘅chat id: ```{}```\n你嘅user id: ```{}```"
                                           .format(update.message.chat_id, update.effective_user.id))
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -461,7 +455,7 @@ def get_message_link(bot, update):
         else:
             update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -494,7 +488,7 @@ def get_file_id(bot, update):
                                       "photos (most image formats are supported), stickers (.webp), videos (.mp4), "
                                       "voice recordings (.ogg) and video messages.")
     except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(str(e)))
 
 
@@ -507,7 +501,8 @@ def ping(bot, update):
         update.message.reply_markdown("Pong...?\n```0.001```\n\nSorry this took long to send but Telegram said I was "
                                       "too popular and wouldn't let me send messages for a bit...")
     except Exception as e:
-        update.message.reply_text(str(e))
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
+                                      .format(str(e)))
 
 
 # maybe change the two commands below to voice
@@ -516,14 +511,16 @@ def phantom_of_the_opera(bot, update):
     try:
         update.message.reply_audio("AwADBQADIgADsZ35Vf15qTeOTDR3Ag", quote=False)
     except Exception as e:
-        update.message.reply_text(str(e))
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
+                                      .format(str(e)))
 
 
 def beefball_christ(bot, update):
     try:
         update.message.reply_audio("AwADBQADIwADsZ35VVzG9kRL3IU8Ag", quote=False)
     except Exception as e:
-        update.message.reply_text(str(e))
+        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
+                                      .format(str(e)))
 
 
 def error(bot, update, error):
