@@ -420,7 +420,7 @@ def user_info(bot, update):
                             text += "\nCan add new admins: Yes"
                         else:
                             text += "\nCan add new admins: No"
-                    if nub.status in ("administrator", "member"):
+                    if nub.status == "restricted":
                         if nub.can_send_messages:
                             text += "\n\nCan send messages: Yes"
                             if nub.can_send_media_messages:
