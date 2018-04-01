@@ -382,47 +382,62 @@ def user_info(bot, update):
                     text += "\nUsername: @{}".format(helpers.escape_markdown(user.username))
                 if user.language_code:
                     text += "\nLanguage code: {}".format(user.language_code)
-                nub = bot.get_chat_member(update.message.chat_id, user.id)
-                text += "\n\nUser's status in this {}: {}".format(update.effective_chat.type, nub.status)
-                if nub.status == "administrator":
-                    if nub.can_change_info:
-                        text += "\nCan change group info: Yes"
-                    else:
-                        text += "\nCan change group info: No"
-                    if nub.can_delete_messages:
-                        text += "\nCan delete messages: Yes"
-                    else:
-                        text += "\nCan delete messages: No"
-                    if nub.can_restrict_members:
-                        text += "\nCan restrict, ban and unban members: Yes"
-                    else:
-                        text += "\nCan restrict, ban and unban members: No"
-                    if nub.can_pin_messages:
-                        text += "\nCan pin messages: Yes"
-                    else:
-                        text += "\nCan pin messages: No"
-                    if nub.can_promote_members:
-                        text += "\nCan add new admins: Yes"
-                    else:
-                        text += "\nCan add new admins: No"
-                if nub.status in ("administrator", "member"):
-                    if nub.can_send_messages:
-                        text += "\n\nCan send messages: Yes"
-                        if nub.can_send_media_messages:
-                            text += "\nCan send media: Yes"
-                            if nub.can_send_other_messages:
-                                text += "\nCan send stickers and GIFs: Yes"
-                            else:
-                                text += "\nCan send stickers and GIFs: No"
-                            if nub.add_send_web_page_previews:
-                                text += "\nCan send web page previews: Yes"
-                            else:
-                                text += "\nCan send web page previews: No"
+                try:
+                    nub = bot.get_chat_member(update.message.chat_id, user.id)
+                    if nub.status == "creator":
+                        text += "\n\n*Creator of {}*".format(update.effective_chat.title)
+                    elif nub.status == "administrator":
+                        text += "\n\n*Administrator of {}*".format(update.effective_chat.title)
+                    elif nub.status == "member":
+                        text += "\n\n*Member of {}*".format(update.effective_chat.title)
+                    elif nub.status == "restricted":
+                        text += "\n\n*Restricted member of {}*".format(update.effective_chat.title)
+                    elif nub.status == "left":
+                        text += "\n\n*User has left {}*".format(update.effective_chat.title)
+                    elif nub.status == "kicked":
+                        text += "*\n\nUser is banned in {}*".format(update.effective_chat.title)
+                except BadRequest:
+                    text += "\n\n*User has never joined {}*".format(update.effective_chat.title)
+                finally:
+                    if nub.status == "administrator":
+                        if nub.can_change_info:
+                            text += "\n\nCan change group info: Yes"
                         else:
-                            text += "\nCan send media: No"
-                    else:
-                        text += "\n\nCan send messages: No"
-                update.message.reply_markdown(text)
+                            text += "\n\nCan change group info: No"
+                        if nub.can_delete_messages:
+                            text += "\nCan delete messages: Yes"
+                        else:
+                            text += "\nCan delete messages: No"
+                        if nub.can_restrict_members:
+                            text += "\nCan restrict, ban and unban members: Yes"
+                        else:
+                            text += "\nCan restrict, ban and unban members: No"
+                        if nub.can_pin_messages:
+                            text += "\nCan pin messages: Yes"
+                        else:
+                            text += "\nCan pin messages: No"
+                        if nub.can_promote_members:
+                            text += "\nCan add new admins: Yes"
+                        else:
+                            text += "\nCan add new admins: No"
+                    if nub.status in ("administrator", "member"):
+                        if nub.can_send_messages:
+                            text += "\n\nCan send messages: Yes"
+                            if nub.can_send_media_messages:
+                                text += "\nCan send media: Yes"
+                                if nub.can_send_other_messages:
+                                    text += "\nCan send stickers and GIFs: Yes"
+                                else:
+                                    text += "\nCan send stickers and GIFs: No"
+                                if nub.add_send_web_page_previews:
+                                    text += "\nCan send web page previews: Yes"
+                                else:
+                                    text += "\nCan send web page previews: No"
+                            else:
+                                text += "\nCan send media: No"
+                        else:
+                            text += "\n\nCan send messages: No"
+                    update.message.reply_markdown(text)
             else:
                 update.message.reply_text("This command is currently only available in groups and supergroups.")
         else:
