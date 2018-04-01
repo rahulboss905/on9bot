@@ -278,11 +278,13 @@ def general_responses(bot, update):
             bot.kick_chat_member(update.message.chat_id, update.message.from_user.id)
         elif update.message.pinned_message:
             if update.message.from_user.id != 463998526:
-                update.message.reply_markdown("Zzz...電話又響啊...原來係[{}](tg://user?id={})又pin嘢...🙃".format(
-                    update.message.from_user.full_name,update.message.from_user.id), quote=False)
+                update.message.reply_markdown("Ding-a-ling-a-ling, ding-a-fucking-ling...\n"
+                                              "電話又響啊...原來係[{}](tg://user?id={})又pin嘢...🙃"
+                                              .format(update.message.from_user.full_name, update.message.from_user.id),
+                                              quote=False)
         elif update.message.sticker:
             if update.message.sticker.set_name == "payize2" or update.message.sticker.set_name == "FPbabydukeredition":
-                update.message.reply_text("嘩屌又係bb啊媽咪我好驚驚")
+                update.message.reply_text("嘩屌又係bb啊，媽咪我好驚驚！！！")
         elif update.message.text:
             swear_word_detector(bot, update)
             u = update.message.text.lower()
@@ -291,7 +293,7 @@ def general_responses(bot, update):
             if update.effective_user.id != 463998526 and update.effective_chat.type in ("group", "supergroup") and "@trainer_jono" in u:
                 update.message.reply_text("唔好tag我主人，乖。")
             if u == "js is very on9":
-                update.message.reply_text("Your IQ is 500")
+                update.message.reply_text("Your IQ is 500!")
             if "trainer jono is rubbish" in u:
                 update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
     except Exception as e:
@@ -326,8 +328,6 @@ def echo(bot, update):
         update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)"
                                       .format(str(e)))
 
-
-# fix to use args = update.message.text.split(" ", 1)[1]
 
 @run_async
 def echo3(bot, update):
@@ -387,42 +387,39 @@ def user_info(bot, update):
                     text += "\nUsername: {}".format(user.username)
                 if user.language_code:
                     text += "\nLanguage code: {}".format(user.language_code)
-                user = bot.get_chat_member(user.id, update.effective_chat)
-                text += "\n\nUser's status in this {}: {}".format(update.effective_chat.type, user.status)
-                if user.status == "creator":
-                    update.message.reply_markdown(text)
-                    return
-                if user.status == "administrator":
-                    if user.can_change_info:
+                nub = bot.get_chat_member(user.id, update.effective_chat)
+                text += "\n\nUser's status in this {}: {}".format(update.effective_chat.type, nub.status)
+                if nub.status == "administrator":
+                    if nub.can_change_info:
                         text += "\nCan change group info: Yes"
                     else:
                         text += "\nCan change group info: No"
-                    if user.can_delete_messages:
+                    if nub.can_delete_messages:
                         text += "\nCan delete messages: Yes"
                     else:
                         text += "\nCan delete messages: No"
-                    if user.can_restrict_members:
+                    if nub.can_restrict_members:
                         text += "\nCan restrict, ban and unban members: Yes"
                     else:
                         text += "\nCan restrict, ban and unban members: No"
-                    if user.can_pin_messages:
+                    if nub.can_pin_messages:
                         text += "\nCan pin messages: Yes"
                     else:
                         text += "\nCan pin messages: No"
-                    if user.can_promote_members:
+                    if nub.can_promote_members:
                         text += "\nCan add new admins: Yes"
                     else:
                         text += "\nCan add new admins: No"
-                if user.status in ("administrator", "member"):
-                    if user.can_send_messages:
+                if nub.status in ("administrator", "member"):
+                    if nub.can_send_messages:
                         text += "\n\nCan send messages: Yes"
-                        if user.can_send_media_messages:
+                        if nub.can_send_media_messages:
                             text += "\nCan send media: Yes"
-                            if user.can_send_other_messages:
+                            if nub.can_send_other_messages:
                                 text += "\nCan send stickers and GIFs: Yes"
                             else:
                                 text += "\nCan send stickers and GIFs: No"
-                            if user.add_send_web_page_previews:
+                            if nub.add_send_web_page_previews:
                                 text += "\nCan send web page previews: Yes"
                             else:
                                 text += "\nCan send web page previews: No"
@@ -430,7 +427,7 @@ def user_info(bot, update):
                             text += "\nCan send media: No"
                     else:
                         text += "\n\nCan send messages: No"
-                update.message.reply_text(text)
+                update.message.reply_markdown(text)
             else:
                 update.message.reply_text("This command is currently only available in groups and supergroups.")
         else:
