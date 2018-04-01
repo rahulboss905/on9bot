@@ -4,6 +4,7 @@
 from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
 from telegram.error import BadRequest
+from telegram.utils import helpers
 from time import sleep
 from re import match
 import logging
@@ -373,12 +374,12 @@ def user_info(bot, update):
                     text = "*Information of this bot*"
                 else:
                     text = "*Information of this user*"
-                text += "\n\nUser id: {}\nFirst name: {}".format(user.id, user.first_name)
+                text += "\n\nUser id: ```{}```\nFirst name: {}".format(user.id, helpers.escape_markdown(user.first_name))
                 if user.last_name:
-                    text += "\nLast name: {}".format(user.last_name)
-                    text += "\nFull name: {}".format(user.full_name)
+                    text += "\nLast name: {}".format(helpers.escape_markdown(user.last_name))
+                    text += "\nFull name: {}".format(helpers.escape_markdown(user.full_name))
                 if user.username:
-                    text += "\nUsername: {}".format(user.username)
+                    text += "\nUsername: @{}".format(helpers.escape_markdown(user.username))
                 if user.language_code:
                     text += "\nLanguage code: {}".format(user.language_code)
                 nub = bot.get_chat_member(update.message.chat_id, user.id)
