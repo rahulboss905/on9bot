@@ -442,10 +442,10 @@ def user_info(bot, update):
                                     text += "\nCan send stickers and GIFs: Yes"
                                 else:
                                     text += "\nCan send stickers and GIFs: No"
-                                if nub.can_send_web_page_previews:
-                                    text += "\nCan send web page previews: Yes"
+                                if nub.can_ad_web_page_previews:
+                                    text += "\nCan add web page previews: Yes"
                                 else:
-                                    text += "\nCan send web page previews: No"
+                                    text += "\nCan add web page previews: No"
                             else:
                                 text += "\nCan send media: No"
                         else:
