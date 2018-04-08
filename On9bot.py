@@ -215,52 +215,44 @@ def tag9js(bot, update):
 def tag9(bot, update, args):
     try:
         bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and
-                                                     update.message.chat_id == -1001295361187):
+        if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and update.message.chat_id == -1001295361187):
             if update.message.chat_id > 0:
                 update.message.reply_text("PM無得tag9人喎。")
                 return
             if update.message.reply_to_message:
-                try:
                     if update.message.reply_to_message.from_user.id == 463998526:
-                        update.message.reply_text("我我——我好似突然之間盲咗，睇睇——睇唔到你條訊息喎。")
+                        update.message.reply_text("Zzz... Waht?")
                         return
                     if update.message.reply_to_message.from_user.id == 506548905:
-                        update.message.reply_text("我我——我好似突然之間盲咗，睇睇——睇唔到你條訊息喎。")
+                        update.message.reply_text("Zzz... Waht?")
                         return
                     if update.message.reply_to_message.from_user.is_bot:
                         update.message.reply_text("Tag9 bot？咁無聊？")
                         return
                     user_info = bot.get_chat_member(update.message.chat_id,
                                                     update.message.reply_to_message.from_user.id)
-                    if user_info.status == "restricted":
-                        if not user_info.status.can_send_messages:
-                            update.message.reply_text("吓？人地無得講嘢都要tag9？")
-                            return
-                    if user_info.status in ("administrator", "creator", "member", "restricted"):
+                    if user_info.status in ("administrator", "creator", "member"):
                         if user_info.user.username:
                             update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
                                                           reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
                             sleep(15)
                             update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
                         else:
-                            update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。喂啊[{}](tg://user?id={})"
-                                                          "。".format(user_info.full_name,user_info.user.id))
+                            update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
+                                                          "[柒頭](tg://user?id={})。".format(user_info.user.id))
                     else:
-                        update.message.reply_text("吓？人地唔喺呢個群組都要tag9？")
-                except Exception as e:
-                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人"
-                                                  "[Trainer Jono](tg://user?id=463998526)。"
-                                                  .format(helpers.escape_markdown(str(e))))
+                        update.message.reply_text("吓？人地唔喺呢度都要tag9？")
             else:
                 try:
                     args = int(args[0])
                 except (ValueError, IndexError):
                     update.message.reply_text("咁用先啱喎： /tag9 <user id>。你應該知道user id係咩掛。")
+                    return
                 except Exception as e:
                     update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人"
                                                   "[Trainer Jono](tg://user?id=463998526)。"
                                                   .format(helpers.escape_markdown(str(e))))
+                    return
                 if args == 463998526:
                     update.message.reply_text("我我——我好似突然之間盲咗，睇睇——睇唔到你條訊息喎。")
                     return
@@ -291,7 +283,8 @@ def tag9(bot, update, args):
                 except BadRequest:
                     update.message.reply_text("乜呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
                 except Exception as e:
-                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
+                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人"
+                                                  "[Trainer Jono](tg://user?id=463998526)。"
                                                   .format(helpers.escape_markdown(str(e))))
         else:
             update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
