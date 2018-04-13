@@ -199,7 +199,7 @@ def tag9js(bot, update):
                 update.message.reply_text("我已經整走咗個鍵盤啦。",
                                           reply_markup=ReplyKeyboardRemove(), quote=False)
             else:
-                update.message.reply_markdown("[JS](tg://user?id=190726372)del咗username，本bot愛莫能助")
+                update.message.reply_markdown("[JS](tg://user?id=190726372) del鬼咗username，本bot愛莫能助。")
         elif update.message.chat_id < 0:
             update.message.reply_markdown("呢個群組用唔到 /tag9js 㗎。")
         else:
