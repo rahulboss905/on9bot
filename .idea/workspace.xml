@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="53c9c8d4-5ca6-42f8-a228-7df61adfafb2" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/On9bot" afterPath="$PROJECT_DIR$/On9bot" />
       <change beforePath="$PROJECT_DIR$/On9bot.py" afterPath="$PROJECT_DIR$/On9bot.py" />
     </list>
@@ -18,8 +17,8 @@
       <file leaf-file-name="On9bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/On9bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="215" column="0" lean-forward="true" selection-start-line="215" selection-start-column="0" selection-end-line="215" selection-end-column="0" />
+            <state relative-caret-position="560">
+              <caret line="712" column="10" lean-forward="true" selection-start-line="712" selection-start-column="10" selection-end-line="712" selection-end-column="10" />
               <folding>
                 <element signature="e#129#246#0" expanded="true" />
               </folding>
@@ -40,7 +39,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="308" />
     <option name="width" value="809" />
     <option name="height" value="867" />
@@ -99,7 +98,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="876" extended-state="7" />
+    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25031686" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -191,8 +190,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/On9bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="215" column="0" lean-forward="true" selection-start-line="215" selection-start-column="0" selection-end-line="215" selection-end-column="0" />
+        <state relative-caret-position="560">
+          <caret line="712" column="10" lean-forward="true" selection-start-line="712" selection-start-column="10" selection-end-line="712" selection-end-column="10" />
           <folding>
             <element signature="e#129#246#0" expanded="true" />
           </folding>

@@ -698,7 +698,7 @@ def main():
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("x", phantom_of_the_opera))
     dp.add_handler(CommandHandler("r", echo))
-    dp.add_handler(CommandHandler("r3", echo3))
+#    dp.add_handler(CommandHandler("r3", echo3))
     dp.add_handler(CommandHandler("y", beefball_christ))
     dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
