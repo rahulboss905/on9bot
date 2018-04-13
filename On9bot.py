@@ -199,7 +199,7 @@ def tag9js(bot, update):
                 update.message.reply_text("我已經整走咗個鍵盤啦。",
                                           reply_markup=ReplyKeyboardRemove(), quote=False)
             else:
-                update.message.reply_markdownl("[JS](tg://user?id=190726372)del咗username，本bot愛莫能助")
+                update.message.reply_markdown("[JS](tg://user?id=190726372)del咗username，本bot愛莫能助")
         elif update.message.chat_id < 0:
             update.message.reply_markdown("呢個群組用唔到 /tag9js 㗎。")
         else:
@@ -211,11 +211,15 @@ def tag9js(bot, update):
                                       .format(helpers.escape_markdown(str(e))))
 
 
+can_use_tag9 = (463998526, 487754154, 426072433, 49202743, 442517724, 190726372, 106665913)
+# respectively   Tr. Jono, Ms. Symbol, Giselle,   Siu Kei,  Chestnut,  JS,        Jeffffffc
+
+
 @run_async
 def tag9(bot, update, args):
     try:
         bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        if update.effective_user.id == 463998526 or (update.effective_user.id == 190726372 and update.message.chat_id == -1001295361187):
+        if update.effective_user.id in can_use_tag9:
             if update.message.chat_id > 0:
                 update.message.reply_text("PM無得tag9人喎。")
                 return
@@ -457,42 +461,42 @@ def echo(bot, update):
                                       .format(helpers.escape_markdown(str(e))))
 
 
-@run_async
-def echo3(bot, update):
-    try:
-        args = update.message.text.split(" ", 1)[1]
-        if update.message.reply_to_message:
-            for i in range(3):
-                update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
-                if i == 3:
-                    break
-                sleep(1)
-        else:
-            for i in range(3):
-                update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
-                if i == 3:
-                    break
-                sleep(1)
-    except IndexError:
-        try:
-            if update.message.reply_to_message:
-                if update.message.reply_to_message.text:
-                    for i in range(3):
-                        update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
-                                                  quote=False)
-                        if i == 3:
-                            break
-                        sleep(1)
-                else:
-                    update.message.reply_text("人地條訊息都唔係文字訊息...🙃")
-            else:
-                update.message.reply_text("Dis is da wae: /r3 <text> and/or (reply to a message)\nMore info in /help.")
-        except Exception as e:
-            update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                          .format(helpers.escape_markdown(str(e))))
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+# @run_async
+# def echo3(bot, update):
+#     try:
+#         args = update.message.text.split(" ", 1)[1]
+#         if update.message.reply_to_message:
+#             for i in range(3):
+#                 update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
+#                 if i == 3:
+#                     break
+#                 sleep(1)
+#         else:
+#             for i in range(3):
+#                 update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
+#                 if i == 3:
+#                     break
+#                 sleep(1)
+#     except IndexError:
+#         try:
+#             if update.message.reply_to_message:
+#                 if update.message.reply_to_message.text:
+#                     for i in range(3):
+#                         update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
+#                                                   quote=False)
+#                         if i == 3:
+#                             break
+#                         sleep(1)
+#                 else:
+#                     update.message.reply_text("人地條訊息都唔係文字訊息...🙃")
+#             else:
+#                 update.message.reply_text("Dis is da wae: /r3 <text> and/or (reply to a message)\nMore info in /help.")
+#         except Exception as e:
+#             update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
+#                                           .format(helpers.escape_markdown(str(e))))
+#     except Exception as e:
+#         update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
+#                                       .format(helpers.escape_markdown(str(e))))
 
 
 def user_info(bot, update):
