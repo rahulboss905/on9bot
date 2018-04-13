@@ -291,7 +291,7 @@ def tag9(bot, update, args):
                                                   "[Trainer Jono](tg://user?id=463998526)。"
                                                   .format(helpers.escape_markdown(str(e))))
         else:
-            update.message.reply_text("唔好亂用Trainer Jono嘅指令，乖。")
+            update.message.reply_text("呢個指令唔係比你用㗎，唔好用，乖。")
     except Exception as e:
         update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(helpers.escape_markdown(str(e))))
