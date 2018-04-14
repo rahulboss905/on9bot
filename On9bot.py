@@ -169,7 +169,7 @@ def bot_help(bot, update):
     try:
         update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25) (尚未完成)\n"
                                       "[Source code](https://www.codepile.net/pile/3aD3DPkD) (尚未更新)\n"
-                                      "¯\\_(ツ)\_/¯")
+                                      "¯\\_(ツ)\\_/¯")
     except Exception as e:
         update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(helpers.escape_markdown(str(e))))
@@ -210,25 +210,25 @@ def tag9(bot, update, args):
     elif msg.reply_to_message:
         tag9_part2(msg, bot.get_chat_member(msg.chat_id, msg.reply_to_message.from_user.id))
     elif not args:
-        msg.reply_text("Denied. Please reply to a message or provide an user id as an argument.")
+        msg.reply_text("Please reply to a message or provide an user id as an argument. More information in /help")
     else:
         try:
             tag9_part2(msg, bot.get_chat_member(msg.chat_id, int(args[0])))
         except ValueError:
-            msg.reply_text("Denied. Argument is not an integer.")
+            msg.reply_text("Failed. Argument is not an integer.")
         except BadRequest:
-            msg.reply_text("Denied. User has never joined this group or does not exist.")
+            msg.reply_text("Failed. User has never joined this group or does not exist.")
 
 
 @run_async
 def tag9_part2(msg, u_info):
     if u_info.status in ("restricted", "left", "kicked"):
         msg.reply_text("Denied. User is either restricted or not in this group.)")
-    elif u_info.id in (463998526, 506548905):
+    elif u_info.user.id in (463998526, 506548905):
         msg.reply_text("Denied. User cannot be tagged.")
-    elif u_info.is_bot:
+    elif u_info.user.is_bot:
         msg.reply_text("Denied. User is a bot.")
-    elif u_info.username is None:
+    elif u_info.user.username is None:
         msg.reply_markdown("Denied. User does not have a username.")
     else:
         msg.reply_markdown("15 sec, tag tag tag.", reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
