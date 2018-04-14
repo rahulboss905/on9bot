@@ -606,8 +606,7 @@ def get_file_id_response(bot, update, file_type, file_id):
 
 def ping(bot, update):
     try:
-        update.message.reply_markdown("Pong...?\n```0.001```\n\nSorry this took long to send but Telegram said I was "
-                                      "too popular and wouldn't let me send messages for a bit...")
+        update.message.reply_markdown("Ping你老母？！")
     except Exception as e:
         update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(helpers.escape_markdown(str(e))))
