@@ -374,7 +374,7 @@ def echo(bot, update):
                 msg.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
             except Exception as e:
                 msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
-                               "use a backslash (\"\\\") before a markdown character to escape it.")
+                               "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
             try:
                 msg.delete()
             except:
@@ -384,7 +384,7 @@ def echo(bot, update):
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
             except Exception as e:
                 msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
-                               "use a backslash (\"\\\") before a markdown character to escape it.")
+                               "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
             try:
                 msg.delete()
             except:
@@ -397,7 +397,7 @@ def echo(bot, update):
                                    quote=False)
                 except Exception as e:
                     msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
-                                   "use a backslash (\"\\\") before a markdown character to escape it.")
+                                   "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
                 try:
                     msg.delete()
                 except:
