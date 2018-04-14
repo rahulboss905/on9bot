@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="53c9c8d4-5ca6-42f8-a228-7df61adfafb2" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/On9bot" afterPath="$PROJECT_DIR$/On9bot" />
-      <change beforePath="$PROJECT_DIR$/On9bot.py" afterPath="$PROJECT_DIR$/On9bot.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="On9bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/On9bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="622">
-              <caret line="623" column="8" lean-forward="true" selection-start-line="623" selection-start-column="8" selection-end-line="623" selection-end-column="8" />
+            <state relative-caret-position="367">
+              <caret line="470" column="22" lean-forward="false" selection-start-line="470" selection-start-column="22" selection-end-line="470" selection-end-column="22" />
               <folding>
                 <element signature="e#129#246#0" expanded="true" />
               </folding>
@@ -237,8 +236,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/On9bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="622">
-          <caret line="623" column="8" lean-forward="true" selection-start-line="623" selection-start-column="8" selection-end-line="623" selection-end-column="8" />
+        <state relative-caret-position="367">
+          <caret line="470" column="22" lean-forward="false" selection-start-line="470" selection-start-column="22" selection-end-line="470" selection-end-column="22" />
           <folding>
             <element signature="e#129#246#0" expanded="true" />
           </folding>
