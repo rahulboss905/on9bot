@@ -175,126 +175,65 @@ def bot_help(bot, update):
                                       .format(helpers.escape_markdown(str(e))))
 
 
-def tag9js_text():
-    text = """限時十五秒，一齊撳掣tag死[JS](tg://user?id=190726372)啦！
-五秒唔好撳個掣多過七次，如果唔係GH Bot會話你flood，mute左你，到時本bot幫你唔到㗎。
-你可以隨時撳 /remove\_keyboard 整走個鍵盤。"""
-    return text
-
-
 @run_async
 def tag9js(bot, update):
-    try:
-        bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        if update.message.chat_id == -1001295361187:
-            js_info = bot.get_chat_member(-1001295361187, 190726372)
-            if js_info.status != "creator":
-                update.message.reply_markdown("一齊撳掣tag死——吓？！[JS](tg://user?id=190726372)去左邊？？？")
-                return
-            if js_info.user.username:
-                update.message.reply_markdown(tag9js_text(),
-                                              reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]),
-                                              disable_web_page_preview=True)
-                sleep(15)
-                update.message.reply_text("我已經整走咗個鍵盤啦。",
-                                          reply_markup=ReplyKeyboardRemove(), quote=False)
-            else:
-                update.message.reply_markdown("[JS](tg://user?id=190726372) del鬼咗username，本bot愛莫能助。")
-        elif update.message.chat_id < 0:
-            update.message.reply_markdown("呢個群組用唔到 /tag9js 㗎。")
+    bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+    msg = update.message
+    if msg.chat_id == -1001295361187:
+        js_info = bot.get_chat_member(msg.chat_id, 190726372)
+        if js_info.user.username:
+            msg.reply_text("15 sec, tag tag tag.", reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
+            sleep(15)
+            msg.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
         else:
-            reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
-            update.message.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。",
-                                      reply_markup=reply_markup)
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+            msg.reply_markdown("Denied. User does not have a username.")
+    elif update.message.chat_id < 0:
+        update.message.reply_markdown("Denied. This group or supergroup is not allowed to use this command.")
+    else:
+        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
+        update.message.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。",
+                                  reply_markup=reply_markup)
 
 
 can_use_tag9 = (463998526, 487754154, 426072433, 49202743, 442517724, 190726372, 106665913)
-# respectively   Tr. Jono, Ms. Symbol, Giselle,   Siu Kei,  Chestnut,  JS,        Jeffffffc
+# respectively  Tr. Jono,  Ms. Symbol, Giselle,   Siu Kei,  Chestnut,  JS,        Jeffffffc
 
 
 @run_async
 def tag9(bot, update, args):
-    try:
-        bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        if update.effective_user.id in can_use_tag9:
-            if update.message.chat_id > 0:
-                update.message.reply_text("PM無得tag9人喎。")
-                return
-            if update.message.reply_to_message:
-                    if update.message.reply_to_message.from_user.id == 463998526:
-                        update.message.reply_text("Zzz... Waht?")
-                        return
-                    if update.message.reply_to_message.from_user.id == 506548905:
-                        update.message.reply_text("Zzz... Waht?")
-                        return
-                    if update.message.reply_to_message.from_user.is_bot:
-                        update.message.reply_text("Tag9 bot？咁無聊？")
-                        return
-                    user_info = bot.get_chat_member(update.message.chat_id,
-                                                    update.message.reply_to_message.from_user.id)
-                    if user_info.status in ("administrator", "creator", "member"):
-                        if user_info.user.username:
-                            update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
-                                                          reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
-                            sleep(15)
-                            update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-                        else:
-                            update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
-                                                          "[柒頭](tg://user?id={})。".format(user_info.user.id))
-                    else:
-                        update.message.reply_text("吓？人地唔喺呢度都要tag9？")
-            else:
-                try:
-                    args = int(args[0])
-                except (ValueError, IndexError):
-                    update.message.reply_text("咁用先啱喎： /tag9 <user id>。你應該知道user id係咩掛。")
-                    return
-                except Exception as e:
-                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人"
-                                                  "[Trainer Jono](tg://user?id=463998526)。"
-                                                  .format(helpers.escape_markdown(str(e))))
-                    return
-                if args == 463998526:
-                    update.message.reply_text("我我——我好似突然之間盲咗，睇睇——睇唔到你條訊息喎。")
-                    return
-                if args == 506548905:
-                    update.message.reply_text("我我——我好似突然之間盲咗，睇睇——睇唔到你條訊息喎。")
-                if args <= 0:
-                    update.message.reply_text("我又唔至於柒到唔知user id係正整數嘅。Zzz...")
-                    return
-                try:
-                    user_info = bot.get_chat_member(update.message.chat_id, args)
-                    if user_info.user.is_bot:
-                        update.message.reply_text("Tag9 bot？咁無聊？")
-                        return
-                    if user_info.status == "restricted":
-                        if not user_info.status.can_send_messages:
-                            update.message.reply_text("吓？人地無得講嘢都要tag9？")
-                    if user_info.status in ("administrator", "creator", "member"):
-                        if user_info.user.username:
-                            update.message.reply_markdown("限時十五秒，唔好tag得太過分。",
-                                                          reply_markup=ReplyKeyboardMarkup([[user_info.user.name]]))
-                            sleep(15)
-                            update.message.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-                        else:
-                            update.message.reply_markdown("Tag唔到，佢無username。我tag一下lor。"
-                                                          "[柒頭](tg://user?id={})。".format(user_info.user.id))
-                    else:
-                        update.message.reply_text("吓？人地唔喺呢個群組都要tag9？")
-                except BadRequest:
-                    update.message.reply_text("乜呢個群組有呢個人咩？定Telegram入面根本無呢個人？定係啲數字亂打嘅？Zzz...")
-                except Exception as e:
-                    update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人"
-                                                  "[Trainer Jono](tg://user?id=463998526)。"
-                                                  .format(helpers.escape_markdown(str(e))))
-        else:
-            update.message.reply_text("呢個指令唔係比你用㗎，唔好用，乖。")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+    bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+    msg = update.message
+    if msg.from_user.id not in can_use_tag9:
+        msg.reply_text("Denied. User is not authorized to use this command.")
+    elif msg.chat_id > 0:
+        msg.reply_text("Denied. Chat is not a group or supergroup.")
+    elif msg.reply_to_message:
+        tag9_part2(msg, bot.get_chat_member(msg.chat_id, msg.reply_to_message.from_user))
+    elif not args:
+        msg.reply_text("Denied. Please reply to a message or provide an user id as an argument.")
+    else:
+        try:
+            tag9_part2(msg, bot.get_chat_member(msg.chat_id, int(args[0])))
+        except ValueError:
+            msg.reply_text("Denied. Argument is not an integer.")
+        except:
+            msg.reply_text("Denied. User is not in this group or the integer is not a valid user id.")
+
+
+@run_async
+def tag9_part2(msg, u_info):
+    if u_info.status in ("restricted", "left", "kicked"):
+        msg.reply_text("Denied. User is either restricted or not in this group.)")
+    elif u_info.id in (463998526, 506548905):
+        msg.reply_text("Denied. User cannot be tagged.")
+    elif u_info.is_bot:
+        msg.reply_text("Denied. User is a bot.")
+    elif u_info.username is None:
+        msg.reply_markdown("Denied. User does not have a username.")
+    else:
+        msg.reply_markdown("15 sec, tag tag tag.", reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
+        sleep(15)
+        msg.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove(), quote=False)
 
 
 # Ah, how boring it is after writing such a damn large function. raise BoredError("¯\_(ツ)_/¯")
