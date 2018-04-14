@@ -366,31 +366,50 @@ def general_responses(bot, update):
 
 
 def echo(bot, update):
+    msg = update.message
     try:
-        args = update.message.text.split(" ", 1)[1]
-        if update.message.reply_to_message:
-            update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
-            update.message.delete()
+        args = msg.text.split(" ", 1)[1]
+        if msg.reply_to_message:
+            try:
+                msg.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
+            except Exception as e:
+                msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
+                               "use a backslash (\"\\\") before a markdown character to escape it.")
+            try:
+                msg.delete()
+            except:
+                pass
         else:
-            update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
-            update.message.delete()
+            try:
+                msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
+            except Exception as e:
+                msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
+                               "use a backslash (\"\\\") before a markdown character to escape it.")
+            try:
+                msg.delete()
+            except:
+                pass
     except IndexError:
         if update.message.reply_to_message:
-            if update.message.reply_to_message.text:
+            if msg.reply_to_message.text:
                 try:
-                    update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
-                                              quote=False)
+                    msg.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
+                                   quote=False)
                 except Exception as e:
-                    update.messsage.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
-                                               "use a backslash (\"\\\") before a markdown character to escape it.")
+                    msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
+                                   "use a backslash (\"\\\") before a markdown character to escape it.")
                 try:
-                    update.message.delete()
+                    msg.delete()
                 except:
                     pass
             else:
-                update.message.reply_text("人地條訊息都唔係文字訊息...🙃")
+                msg.reply_to_message.reply_text("No text in this message...🙃")
         else:
-            update.message.reply_text("Dis is da wae: /r <text> and/or (reply to a message)\nMore info in /help.")
+            msg.reply_text("""Deez r da waes:
+            /r <text>
+            /r [reply to a text message (files with captions don't count) not sent by other bots]
+            /r <text> [reply to a message not sent by other bots]
+            More info in /help.""")
 
 
 # @run_async
