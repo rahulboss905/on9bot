@@ -169,7 +169,7 @@ def bot_help(bot, update):
     try:
         update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25) (尚未完成)\n"
                                       "[Source code](https://www.codepile.net/pile/3aD3DPkD) (尚未更新)\n"
-                                      "¯\\_(ツ)\\_/¯")
+                                      "¯\\\_(ツ)\_/¯")
     except Exception as e:
         update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
                                       .format(helpers.escape_markdown(str(e))))
