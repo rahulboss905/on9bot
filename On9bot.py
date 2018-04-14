@@ -380,7 +380,7 @@ def echo(bot, update):
                 try:
                     update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
                                               quote=False)
-                except BadRequest as e:
+                except Exception as e:
                     update.messsage.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
                                                "use a backslash (\"\\\") before a markdown character to escape it.")
                 try:
