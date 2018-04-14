@@ -252,14 +252,10 @@ def tag9_part2(msg, u_info):
 
 
 def remove_keyboard(bot, update):
-    try:
-        if update.message.chat_id < 0:
-            update.message.reply_text("我已經整走咗個鍵盤啦（如有）。", reply_markup=ReplyKeyboardRemove())
-        else:
-            update.message.reply_text("我唔會整鍵盤比你撳，移乜除姐。")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+    if update.message.chat_id < 0:
+        update.message.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove())
+    else:
+        update.message.reply_text("no u")
 
 
 # YOU ARE ADVISED TO IGNORE THE FOLLOWING OFFENSIVE WORDS.
@@ -273,7 +269,7 @@ eng_swear_words = ("anus", "arse", "ass", "axwound", "bampot", "bastard", "beane
                    "bollox", "boner", "butt", "camaltoe", "carpetmuncher", "chesticle", "chinc", "chink", "choad",
                    "chode", "clit", "cock", "coochie", "choochy", "coon", "cooter", "cracker", "cum", "cunnie",
                    "cunnilingus", "cunt", "dago", "damn", "deggo", "dick", "dike", "dildo", "doochbag", "dookie",
-                   "douche", "dumb", "dyke", "fag", "fellatio", "feltch", "flamer", "fuck", "fidgepacker", "gay",
+                   "douche", "dumb", "dyke", "fag", "fellatio", "feltch", "flamer", "fuck", "fidgepacker",
                    "goddamn", "goddamnit", "gooch", "gook", "gringo", "guido", "handjob", "hardon", "heeb", "hell",
                    "hoe", "homo", "honkey", "humping", "jagoff", "jap", "jerk", "jigaboo", "jizz", "junglebunny",
                    "kike", "kooch", "kootch", "kraut", "kunt", "kyke", "lesbian", "lesbo", "lezzie", "mick", "minge",
@@ -306,25 +302,22 @@ def eng_swear_word_detector():
 
 
 def swear_word_detector(bot, update):
-    try:
-        if update.message.text:
-            global t
-            t = update.message.text
-            if cn_swear_word_detector():
-                if update.message.chat_id < 0:
-                    update.message.reply_text("講粗口？！記你一次大過！")
-                else:
-                    update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-                return
+    msg = update.message
+    if msg.text:
+        global t
+        t = msg.text
+        if cn_swear_word_detector():
+            if msg.chat_id < 0:
+                msg.reply_text("講粗口？！記你一次大過！")
+            else:
+                msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
+        else:
             t = t.lower().split(" ")
             if cn_swear_word_in_eng_detector() or eng_swear_word_detector():
-                if update.message.chat_id < 0:
-                    update.message.reply_text("講粗口？！記你一次大過！")
+                if msg.chat_id < 0:
+                    msg.reply_text("講粗口？！記你一次大過！")
                 else:
-                    update.message.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+                    msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
 
 
 def general_responses(bot, update):
@@ -382,22 +375,22 @@ def echo(bot, update):
             update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
             update.message.delete()
     except IndexError:
-        try:
-            if update.message.reply_to_message:
-                if update.message.reply_to_message.text:
+        if update.message.reply_to_message:
+            if update.message.reply_to_message.text:
+                try:
                     update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
                                               quote=False)
+                except BadRequest as e:
+                    update.messsage.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
+                                               "use a backslash (\"\\\") before a markdown character to escape it.")
+                try:
                     update.message.delete()
-                else:
-                    update.message.reply_text("人地條訊息都唔係文字訊息...🙃")
+                except:
+                    pass
             else:
-                update.message.reply_text("Dis is da wae: /r <text> and/or (reply to a message)\nMore info in /help.")
-        except Exception as e:
-            update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                          .format(helpers.escape_markdown(str(e))))
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+                update.message.reply_text("人地條訊息都唔係文字訊息...🙃")
+        else:
+            update.message.reply_text("Dis is da wae: /r <text> and/or (reply to a message)\nMore info in /help.")
 
 
 # @run_async
