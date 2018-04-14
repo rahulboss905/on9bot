@@ -204,11 +204,11 @@ def tag9(bot, update, args):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     msg = update.message
     if msg.from_user.id not in can_use_tag9:
-        msg.reply_text("Denied. User is not authorized to use this command.")
+        msg.reply_text("Denied. You are not authorized to use this command.")
     elif msg.chat_id > 0:
         msg.reply_text("Denied. Chat is not a group or supergroup.")
     elif msg.reply_to_message:
-        tag9_part2(msg, bot.get_chat_member(msg.chat_id, msg.reply_to_message.from_user))
+        tag9_part2(msg, bot.get_chat_member(msg.chat_id, msg.reply_to_message.from_user.id))
     elif not args:
         msg.reply_text("Denied. Please reply to a message or provide an user id as an argument.")
     else:
@@ -216,8 +216,8 @@ def tag9(bot, update, args):
             tag9_part2(msg, bot.get_chat_member(msg.chat_id, int(args[0])))
         except ValueError:
             msg.reply_text("Denied. Argument is not an integer.")
-        except:
-            msg.reply_text("Denied. User is not in this group or the integer is not a valid user id.")
+        except BadRequest:
+            msg.reply_text("Denied. User has never joined this group or does not exist.")
 
 
 @run_async
