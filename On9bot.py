@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 # On9Bot (an annoying Cantonese Telegram bot) source code
 # Uses Python 3 and the python-telegram-bot library, hosted on Heroku
 
@@ -62,7 +59,8 @@ def tag9js(bot, update):
     if msg.chat_id == -1001295361187:
         js_info = bot.get_chat_member(msg.chat_id, 190726372)
         if js_info.user.username:
-            msg.reply_text("15 sec, tag tag tag.", reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
+            msg.reply_text("15 sec, tag tag tag. Use /remove\_keyboard to remove the reply keyboard.",
+                           reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
             sleep(15)
             msg.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
         else:
@@ -111,7 +109,8 @@ def tag9_part2(msg, u_info):
     elif u_info.user.username is None:
         msg.reply_markdown("Denied. User does not have a username.")
     else:
-        msg.reply_markdown("15 sec, tag tag tag.", reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
+        msg.reply_markdown("15 sec, tag tag tag. Use /remove\_keyboard to remove the reply keyboard.",
+                           reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
         msg.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove(), quote=False)
 
@@ -338,7 +337,7 @@ def user_info(bot, update):
                     text = "*Information of this bot*"
                 else:
                     text = "*Information of this user*"
-                text += "\n\nUser id: ```{}```\nFirst name: {}".format(user.id, helpers.escape_markdown(user.first_name))
+                text += "\n\nUser id: `{}`\nFirst name: {}".format(user.id, helpers.escape_markdown(user.first_name))
                 if user.last_name:
                     text += "\nLast name: {}".format(helpers.escape_markdown(user.last_name))
                     text += "\nFull name: {}".format(helpers.escape_markdown(user.full_name))
