@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # On9Bot (an annoying Cantonese Telegram bot) source code
 # Uses Python 3 and the python-telegram-bot library, hosted on Heroku
 
