@@ -23,146 +23,23 @@ logger = logging.getLogger(__name__)
 # cur = conn.cursor()
 
 
-class Victim:
-    def __init__(self, name, user_id):
-        self.name = name
-        self.user_id = user_id
-        self.mention = "[{}](tg://user?id={})".format(name, user_id)
-        self.alive = True
-
-
-class Game:
-    def __init__(self, chat_id, msg):
-        self.chat_id = chat_id
-        self.game_state = "joining"
-        self.victims = []
-        self.msg = msg
-
-    def add_player(self, bot, update):
-        user = update.effective_user
-        victim_count = len(self.victims)
-        if not self.victims:
-            self.victims.append(Victim(user.full_name, user.id))
-            update.message.reply_text(ww_join_text)
-        elif victim_count < 4:
-            if user.id in [victim.id for victim in self.victims]:
-                update.message.reply_text(ww_join_alr_text)
-            else:
-                self.victims.append(Victim(user.full_name, user.id))
-                update.message.reply_text(ww_join_text)
-                self.send_to_group(bot, ww_join_gp_text.format(self.victims[-1].mention))
-                if len(self.victims) == 4:
-                    bot.edit_message_text(self.msg.text, chat_id=self.msg.chat_id, message_id=self.message_id)
-                    self.start_trolling(bot)
-        else:
-            update.message.reply_text(ww_start_alr_text)
-
-    def send_to_group(self, bot, text):
-        bot.send_message(self.chat_id, text, parse_mode="Markdown")
-        sleep(1)
-
-    def send_victim_list(self, bot):
-        joined_victims_text = "在生玩家: {}/5\n".format(len([victim for victim in self.victims if victim.alive]))
-        for victim in self.victims:
-            if victim.alive:
-                joined_victims_text += "\n{} - 在生".format(victim.mention)
-        joined_victims_text += "\n{} - 在生".format(on9bot_mention)
-        for victim in self.victims:
-            if not victim.alive:
-                joined_victims_text += "\n{}廢村 - 死左".format(victim.mention)
-        return joined_victims_text
-
-    def send_victim_list_game_end(self, bot):
-        victim_list_game_end = "在生玩家: 1/5\n"
-        for victim in self.victims:
-            victim_list_game_end += "\n{}廢村 - 死左 輸".format(victim.mention)
-        victim_list_game_end += "\n{}村長兼槍手 - 在生 贏".format(on9bot_mention)
-        return victim_list_game_end
-
-    def start_trolling(self, bot):
-        self.send_to_group(bot, ww_on9bot_join_text)
-        self.send_to_group(bot, ww_first_night_text)
-        for victim in self.victims:
-            bot.send_message(victim.user_id, ww_role_text)
-        sleep(29)
-        self.send_to_group(bot, ww_shot.format(self.victims[0].mention))
-        sleep(89)
-        self.send_to_group(bot, ww_pre_reveal)
-        self.send_to_group(bot, ww_reveal.format(on9bot_mention))
-        self.send_to_group(bot, ww_lynch_decision.format(self.victims[1].mention))
-        self.send_to_group(bot, "The mayor has decided who to lynch. {0} is dead. {0} was a villager.\n\n"
-                                "Night has fallen.  Everyone heads to bed, weary after another stressful day. "
-                                "Night players: you have 30 seconds use your actions!")
-        sleep(29)
-        self.send_to_group(bot, ww_shot.format(self.victims[2].name))
-        self.send_to_group(bot, "Two players remain. {} grins, takes out his gun, aims at {} and shoots!"
-                           .format(on9bot_mention, self.victims[3].name))
-        self.send_to_group(bot, "槍手: \"頂！Para比得我兩粒子彈，無撚曬。不過我好似仲收埋左幾粒㗎喎，去鬼左邊...？*Reloads gun with bullets*")
-        self.send_to_group(bot, "{0} isn't stupid and immediately runs away from On9 Village! {0} was a villager."
-                           .format(self.victims[3].name))
-        self.send_to_group(bot, "槍手贏左！")
-        self.send_to_group(bot, self.send_victim_list_game_end(bot))
-        del running_ww_games[self.chat_id]
-
-
-# WW Dialogues
-on9bot_mention = "[On9 Bot](tg://user?id=506548905)"
-ww_join_text = "你成功加入左游戲。"
-ww_join_alr_text = "好心你入左game咪再㩒掣啦。"
-ww_join_gp_text = "{}加入左游戲。"
-ww_on9bot_join_text = "唉，難得有四個人，-1開到game。喂，不如趁我得閒，等我入嚟玩殘你弟班柒頭，哈哈。"
-ww_start_alr_text = "開始左，撳乜撚掣？"
-ww_role_text = "你又係死廢村啦，真係好同情你。"
-ww_first_night_text = "開波！我pm左你地角色啦。各位柒頭，你地30秒做嘢。"
-ww_shot = "柒頭槍手琴日又飲醉左，殺撚左{0}，真係on9過本bot幾廿倍。{0}原來係廢村。\n\n"
-ww_pre_reveal = "夠鐘，各位柒頭有90秒投票殺—— 屌！好彩嚟得切。"
-ww_reveal = "{0}突然大嗌︰「嘈咩啊你地班柒頭！我係村長！」，轉個頭拎咗委任證出黎，由今晚起，{0}就係村長，每晚殺邊個都係佢話事" \
-            "，冇票比你班廢村投。"
-ww_lynch_decision = "我話殺{}!"
-
-
-def start(bot, update):  # add args back later
+def start(bot, update):  # add args back later when commenting ww parts
     if update.message.chat_id > 0:
-        try:
-            if args:
-                if args.startswith("joinww_"):
-                    chat_id = int(args[0].split("_", 1)[1])
-                    try:
-                        user = bot.get_chat_member(chat_id, update.effective_user.id)
-                        if user.status in ("restricted", "kicked", "left"):
-                            raise Exception
-                    except:
-                        update.message.reply_text("唔比你入！")
-                        return
-                    finally:
-
-                else:
-                    raise Exception
-        except:
+        # try:
+        #     if args:
+        #         if args.startswith("joinww_"):
+        #             chat_id = int(args[0].split("_", 1)[1])
+        #             try:
+        #                 user = bot.get_chat_member(chat_id, update.effective_user.id)
+        #                 if user.status in ("restricted", "kicked", "left"):
+        #                     raise Exception
+        #             except:
+        #                 update.message.reply_text("唔比你入！")
+        #                 return
+        #         else:
+        #             raise Exception
+        # except:
         update.message.reply_text("吓。求其揾個command用下，撳 /help 睇點用。有咩事揾 @Trainer_Jono 。")
-
-
-running_ww_games = {}
-
-
-def ww_start(bot, update):
-    chat_id = update.message.chat_id
-    user = update.effective_user
-    if chat_id > 0:
-        update.message.reply_text("群組先用到開到game喎。")
-        return
-    if running_ww_games.get(chat_id):
-        update.message.reply_text("你地已經玩梗就咪嘈啦。")
-    else:
-        join_url = "https://t.me/On9Bot?start=joinww_" + str(chat_id)
-        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("撳我", url=join_url)]])
-        msg = update.message.reply_markdown("{0}開始左場狼人，撳掣入嚟玩啦！五個人先開到game。\n{0}，記得你都要撳掣先入到game。"
-                                            .format(user.mention_markdown(user.full_name)), reply_markup=reply_markup)
-        running_ww_games[chat_id] = Game(chat_id, msg)
-
-
-# check if game exists in group
-# if not, create a game
 
 
 def bot_help(bot, update):
@@ -451,7 +328,6 @@ def echo(bot, update):
 
 
 def user_info(bot, update):
-    try:
         if update.message.reply_to_message:
             if update.effective_chat.type in ("supergroup", "group"):
                 user = update.message.reply_to_message.from_user
@@ -469,74 +345,63 @@ def user_info(bot, update):
                     text += "\nLanguage code: {}".format(user.language_code)
                 try:
                     nub = bot.get_chat_member(update.message.chat_id, user.id)
-                    if nub.status == "creator":
-                        text += "\n\n*Creator* of {}".format(update.effective_chat.title)
-                    elif nub.status == "administrator":
-                        text += "\n\n*Administrator* of {}".format(update.effective_chat.title)
-                    elif nub.status == "member":
-                        text += "\n\n*Member* of {}".format(update.effective_chat.title)
-                    elif nub.status == "restricted":
-                        text += "\n\nUser has *restricted* rights but *may / may not* be a *member* of {}*"\
-                            .format(update.effective_chat.title)
-                    elif nub.status == "left":
-                        text += "\n\nUser does *not* have *restricted* rights but is *not* a *member* in {}"\
-                            .format(update.effective_chat.title)
-                    elif nub.status == "kicked":
-                        text += "*\n\nUser is banned in {}*".format(update.effective_chat.title)
                 except BadRequest:
                     text += "\n\n*User has never joined {}*".format(update.effective_chat.title)
                     update.message.reply_text(text)
-                except Exception as e:
-                    update.message.reply_markdown(
-                        "有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                        .format(helpers.escape_markdown(str(e))))
-                finally:
-                    if nub.status == "administrator":
-                        if nub.can_change_info:
-                            text += "\n\nCan change group info: Yes"
-                        else:
-                            text += "\n\nCan change group info: No"
-                        if nub.can_delete_messages:
-                            text += "\nCan delete messages: Yes"
-                        else:
-                            text += "\nCan delete messages: No"
-                        if nub.can_restrict_members:
-                            text += "\nCan restrict, ban and unban members: Yes"
-                        else:
-                            text += "\nCan restrict, ban and unban members: No"
-                        if nub.can_pin_messages:
-                            text += "\nCan pin messages: Yes"
-                        else:
-                            text += "\nCan pin messages: No"
-                        if nub.can_promote_members:
-                            text += "\nCan add new admins: Yes"
-                        else:
-                            text += "\nCan add new admins: No"
-                    if nub.status == "restricted":
-                        if nub.can_send_messages:
-                            text += "\n\nCan send messages: Yes"
-                            if nub.can_send_media_messages:
-                                text += "\nCan send media: Yes"
-                                if nub.can_send_other_messages:
-                                    text += "\nCan send stickers and GIFs: Yes"
-                                else:
-                                    text += "\nCan send stickers and GIFs: No"
-                                if nub.can_add_web_page_previews:
-                                    text += "\nCan add web page previews: Yes"
-                                else:
-                                    text += "\nCan add web page previews: No"
+                    return
+                if nub.status == "creator":
+                    text += "\n\n*Creator* of {}".format(update.effective_chat.title)
+                elif nub.status == "administrator":
+                    text += "\n\n*Administrator* of {}".format(update.effective_chat.title)
+                    if nub.can_change_info:
+                        text += "\n\nCan change group info: Yes"
+                    else:
+                        text += "\n\nCan change group info: No"
+                    if nub.can_delete_messages:
+                        text += "\nCan delete messages: Yes"
+                    else:
+                        text += "\nCan delete messages: No"
+                    if nub.can_restrict_members:
+                        text += "\nCan restrict, ban and unban members: Yes"
+                    else:
+                        text += "\nCan restrict, ban and unban members: No"
+                    if nub.can_pin_messages:
+                        text += "\nCan pin messages: Yes"
+                    else:
+                        text += "\nCan pin messages: No"
+                    if nub.can_promote_members:
+                        text += "\nCan add new admins: Yes"
+                    else:
+                        text += "\nCan add new admins: No"
+                elif nub.status == "member":
+                    text += "\n\n*Member* of {}".format(update.effective_chat.title)
+                elif nub.status == "restricted":
+                    text += "\n\n*Restricted* in {}*".format(update.effective_chat.title)
+                    if nub.can_send_messages:
+                        text += "\n\nCan send messages: Yes"
+                        if nub.can_send_media_messages:
+                            text += "\nCan send media: Yes"
+                            if nub.can_send_other_messages:
+                                text += "\nCan send stickers and GIFs: Yes"
                             else:
-                                text += "\nCan send media: No"
+                                text += "\nCan send stickers and GIFs: No"
+                            if nub.can_add_web_page_previews:
+                                text += "\nCan add web page previews: Yes"
+                            else:
+                                text += "\nCan add web page previews: No"
                         else:
-                            text += "\n\nCan send messages: No"
-                    update.message.reply_markdown(text)
+                            text += "\nCan send media: No"
+                    else:
+                        text += "\n\nCan send messages: No"
+                elif nub.status == "left":
+                    text += "\n\n*Left {}".format(update.effective_chat.title)
+                elif nub.status == "kicked":
+                    text += "\n\n*Banned* in {}".format(update.effective_chat.title)
+                update.message.reply_markdown(text)
             else:
                 update.message.reply_text("This command is currently only available in groups and supergroups.")
         else:
             update.message.reply_text("Dis is da wae: /user_info [reply to a message]")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
 
 
 def get_id(bot, update):
