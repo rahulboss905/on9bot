@@ -88,7 +88,7 @@ def tag9(bot, update, args):
     elif msg.reply_to_message:
         tag9_part2(msg, bot.get_chat_member(msg.chat_id, msg.reply_to_message.from_user.id))
     elif not args:
-        msg.reply_text("Please reply to a message or provide an user id as an argument. More information in /help")
+        msg.reply_text("Please reply to a message or provide an user id as an argument.")
     else:
         try:
             tag9_part2(msg, bot.get_chat_member(msg.chat_id, int(args[0])))
