@@ -59,7 +59,7 @@ def tag9js(bot, update):
     if msg.chat_id == -1001295361187:
         js_info = bot.get_chat_member(msg.chat_id, 190726372)
         if js_info.user.username:
-            msg.reply_text("15 sec, tag tag tag. Use /remove\_keyboard to remove the reply keyboard.",
+            msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                            reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
             sleep(15)
             msg.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
@@ -109,25 +109,10 @@ def tag9_part2(msg, u_info):
     elif u_info.user.username is None:
         msg.reply_markdown("Denied. User does not have a username.")
     else:
-        msg.reply_markdown("15 sec, tag tag tag. Use /remove\_keyboard to remove the reply keyboard.",
-                           reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
+        msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
+                       reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
         msg.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove(), quote=False)
-
-
-# Ah, how boring it is after writing such a damn large function. raise BoredError("¯\_(ツ)_/¯")
-# I wouldn't mind some drawings here, you know.
-#   ____                       ____
-#  |    \                     |    \                    |
-#  |     \ ____ _____ ____    |     \ ____ ____ .  ____ |
-#  |     | |  | | | | |  |    |     | |  | |  | | |___| |
-#  |_____/ \_/\ | | | |  |    |_____/ \_/\ |  | | |___  |
-#
-#  _____ ____    ____
-#    |  |       |                 |  /
-#    |  |____   |____         ___ |/   ____
-#    |      |       | |   |  |    |\  |____
-# \__|  ____|   ____| |___|\ |___ | \ ____|
 
 
 def remove_keyboard(bot, update):
@@ -135,11 +120,6 @@ def remove_keyboard(bot, update):
         update.message.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove())
     else:
         update.message.reply_text("no u")
-
-
-# YOU ARE ADVISED TO IGNORE THE FOLLOWING OFFENSIVE WORDS.
-# THESE WORDS ARE ONLY FOR DETECTING OFFENSIVE WORDS IN TELEGRAM MESSAGES
-# AND NOT INSULTING USERS OR OTHER PEOPLE.
 
 
 cn_swear_words = ("屌", "閪", "柒", "撚", "鳩", "𨳒", "屄", "𨶙", "𨳊", "㞗", "𨳍", "杘")
@@ -199,49 +179,61 @@ def swear_word_detector(bot, update):
                     msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
 
 
+def check_number_dude(bot, update, user=None):
+    msg = update.message
+    if user:
+        if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
+            msg.reply_text("又係數字人？我屌！")
+            try:
+                bot.kick_chat_member(msg.chat_id, user.id)
+            except:
+                pass
+            return True
+    else:
+        user = msg.from_user
+        if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
+            msg.reply_text("又係數字人？我屌！")
+            try:
+                bot.kick_chat_member(msg.chat_id, user.id)
+            except:
+                pass
+            try:
+                update.message.delete()
+            except:
+                pass
+
+
 def general_responses(bot, update):
-    try:
-        if update.message.new_chat_members:
-            for on9user in update.message.new_chat_members:
-                if on9user.id == 506548905:
-                    update.message.reply_text("嘩，邊撚到嚟㗎？")
-                    update.message.reply_text("你好，我係全部Telegram bot之中最On9嘅，有邊個bot想同我鬥on9嘅可以同我主人"
-                                              "[Trainer Jono](tg://user?id=463998526)講。撳 /help 睇點用。Zzz...")
-                elif match(r'\d\d\d\d\d\d\d\d', on9user.first_name):
-                    if match(r'\d\d\d\d\d\d\d\d', on9user.last_name):
-                        update.message.reply_text("又係數字人？我屌！我ban 9佢啦。")
-                        bot.kick_chat_member(update.message.chat_id, on9user.id)
-                elif on9user.is_bot:
-                    update.message.reply_text("Zzz...哦？新bot喎，乜水？")
-        elif update.message.left_chat_member:
-            update.message.reply_text(update.message.left_chat_member.full_name + "離開左群組...")
-        elif match(r'\d\d\d\d\d\d\d\d', update.message.from_user.first_name) and match(r'\d\d\d\d\d\d\d\d', update.from_user.last_name):
-            update.message.reply_text("又係數字人？我屌！我ban 9數字人啦。", quote=False)
-            update.message.delete()
-            bot.kick_chat_member(update.message.chat_id, update.message.from_user.id)
-        elif update.message.pinned_message:
-            if update.message.from_user.id != 463998526:
-                update.message.reply_markdown("Ding-a-ling-a-ling, ding-a-fucking-ling...\n"
-                                              "電話又響啊...原來係[{}](tg://user?id={})又pin嘢...🙃"
-                                              .format(update.message.from_user.full_name, update.message.from_user.id),
-                                              quote=False)
-        elif update.message.sticker:
-            if update.message.sticker.set_name == "payize2" or update.message.sticker.set_name == "FPbabydukeredition":
-                update.message.reply_text("嘩屌又係bb啊，媽咪我好驚驚！！！")
-        elif update.message.text:
-            swear_word_detector(bot, update)
-            u = update.message.text.lower()
-            if u == "hello" and update.effective_user.id == 463998526:
-                update.message.reply_text("主人你好！")
-            if update.effective_user.id != 463998526 and update.effective_chat.type in ("group", "supergroup") and "@trainer_jono" in u:
-                update.message.reply_text("唔好tag我主人，乖。")
-            if u == "js is very on9":
-                update.message.reply_text("Your IQ is 500!")
-            if "trainer jono is rubbish" in u:
-                update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+    msg = update.message
+    user = update.effective_user
+    if msg.new_chat_members:
+        for nub in msg.new_chat_members:
+            if nub.id == 506548905:
+                msg.reply_markdown("Hi，我係全部Telegram bot之中最On9嘅，有邊個bot想同我鬥on9嘅可以同我主人"
+                                   "[Trainer Jono](tg://user?id=463998526)講。撳 /help 睇點用。Zzz...")
+            elif nub.is_bot:
+                msg.reply_text("哦？新bot喎，乜水？")
+            else:
+                check_number_dude(bot, update, nub)
+    elif msg.left_chat_member:
+        msg.reply_text("Bey, " + user.mention_markdown(user.full_name))
+    elif msg.pinned_message:
+        if user != 463998526:
+            msg.reply_markdown(user.mention_markdown(user.full_name) + "又pin嘢...🙃", quote=False)
+    elif msg.sticker:
+        if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
+            msg.reply_text("嘩屌又係bb，見到都反胃。")
+    elif update.message.text:
+        swear_word_detector(bot, update)
+        text = update.message.text.lower()
+        if text == "hello" and user.id == 463998526:
+            msg.reply_text("主人你好！")
+        if update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in u:
+            update.message.reply_text("唔好tag我主人，乖。")
+        if u == "js is very on9":
+            update.message.reply_text("Your IQ is 500!")
+        if "trainer jono is rubbish" in u:
+            update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
 
 
 def echo(bot, update):
@@ -435,40 +427,43 @@ def get_message_link(bot, update):
 
 
 def get_file_id(bot, update):
-    try:
-        if update.message.reply_to_message:
-            x = update.message.reply_to_message
-            if x.audio:
-                get_file_id_response(bot, update, "段音頻", x.audio.file_id)
-            elif x.photo:
-                get_file_id_response(bot, update, "張相", x.photo[-1].file_id)
-            elif x.sticker:
-                get_file_id_response(bot, update, "張貼紙", x.sticker.file_id)
-            elif x.video:
-                get_file_id_response(bot, update, "段影片", x.video.file_id)
-            elif x.voice:
-                get_file_id_response(bot, update, "段錄音", x.voice.file_id)
-            elif x.video_note:
-                get_file_id_response(bot, update, "段影片", x.video_note.file_id)
-            elif x.document:
-                get_file_id_response(bot, update, "份文件", x.document.file_id)
-            else:
-                update.message.reply_text("Dis is da wae: /get_file_id [reply to message containing a supported file]\n"
-                                          "Supported file types include audios (.mp3), documents (general files), "
-                                          "photos (most image formats are supported), stickers (.webp), videos (.mp4), "
-                                          "voice recordings (.ogg) and video messages.")
+    if update.message.reply_to_message:
+        msg = update.message.reply_to_message
+        if msg.audio:
+            get_file_id_response(bot, update, "段音頻", msg.audio.file_id)
+        elif msg.photo:
+            get_file_id_response(bot, update, "張相", msg.photo[-1].file_id)
+        elif msg.sticker:
+            get_file_id_response(bot, update, "張貼紙", msg.sticker.file_id)
+        elif msg.video:
+            get_file_id_response(bot, update, "段影片", msg.video.file_id)
+        elif msg.voice:
+            get_file_id_response(bot, update, "段錄音", msg.voice.file_id)
+        elif msg.video_note:
+            get_file_id_response(bot, update, "段影片", msg.video_note.file_id)
+        elif msg.document:
+            get_file_id_response(bot, update, "份文件", msg.document.file_id)
         else:
-            update.message.reply_text("Dis is da wae: /get_file_id [reply to message containing a supported file]\n"
-                                      "Supported file types include audios (.mp3), documents (general files), "
-                                      "photos (most image formats are supported), stickers (.webp), videos (.mp4), "
-                                      "voice recordings (.ogg) and video messages.")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+            update.message.reply_text(get_file_id_error())
+    else:
+        update.message.reply_text(get_file_id_error())
 
 
 def get_file_id_response(bot, update, file_type, file_id):
     update.message.reply_markdown("呢{}嘅file id: ```{}```".format(file_type, file_id))
+
+
+def get_file_id_error():
+    text = """Dis is da wae: /get_file_id [reply to message containing a supported file]
+    Supported file types include:
+    Audios (.mp3)
+    Documents (general files)
+    Photos (most image formats are supported)
+    Stickers (.webp)
+    Videos (.mp4)
+    Voice recordings (.ogg)
+    Video messages"""
+    return text
 
 
 def ping(bot, update):
