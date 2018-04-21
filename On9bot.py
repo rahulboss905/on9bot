@@ -59,14 +59,15 @@ def tag9js(bot, update):
     if msg.chat_id == -1001295361187:
         js_info = bot.get_chat_member(msg.chat_id, 190726372)
         if js_info.user.username:
-            msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
-                           reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
+            sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
+                                  reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
             sleep(15)
             msg.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
+            sent.delete()
         else:
-            msg.reply_markdown("Denied. User does not have a username.")
+            msg.reply_text("Denied. User does not have a username.")
     elif update.message.chat_id < 0:
-        update.message.reply_markdown("Denied. This group or supergroup is not allowed to use this command.")
+        update.message.reply_text("Denied. This group or supergroup is not allowed to use this command.")
     else:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
         update.message.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。",
@@ -84,11 +85,11 @@ def tag9(bot, update, args):
     if msg.from_user.id not in can_use_tag9:
         msg.reply_text("Denied. You are not authorized to use this command.")
     elif msg.chat_id > 0:
-        msg.reply_text("Denied. Chat is not a group or supergroup.")
+        msg.reply_text("You cannot tag people in a private chat with me.")
     elif msg.reply_to_message:
         tag9_part2(msg, bot.get_chat_member(msg.chat_id, msg.reply_to_message.from_user.id))
     elif not args:
-        msg.reply_text("Please reply to a message or provide an user id as an argument.")
+        msg.reply_text("Please specify the user you would like to tag.")
     else:
         try:
             tag9_part2(msg, bot.get_chat_member(msg.chat_id, int(args[0])))
@@ -109,10 +110,14 @@ def tag9_part2(msg, u_info):
     elif u_info.user.username is None:
         msg.reply_markdown("Denied. User does not have a username.")
     else:
-        msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
-                       reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
+        sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
+                              reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
         msg.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove(), quote=False)
+        try:
+            sent.delete()
+        except Exception:
+            pass
 
 
 def remove_keyboard(bot, update):
@@ -123,7 +128,7 @@ def remove_keyboard(bot, update):
 
 
 cn_swear_words = ("屌", "閪", "柒", "撚", "鳩", "𨳒", "屄", "𨶙", "𨳊", "㞗", "𨳍", "杘")
-cn_swear_words_in_eng = ("diu", "dllm", "dnlm", "diuneinomo", "diuneilomo")
+cn_swear_words_in_eng = ("diu", "dllm", "dnlm")
 eng_swear_words = ("anus", "arse", "ass", "axwound", "bampot", "bastard", "beaner", "bitch", "blowjob", "bollocks",
                    "bollox", "boner", "butt", "camaltoe", "carpetmuncher", "chesticle", "chinc", "chink", "choad",
                    "chode", "clit", "cock", "coochie", "choochy", "coon", "cooter", "cracker", "cum", "cunnie",
@@ -140,67 +145,29 @@ eng_swear_words = ("anus", "arse", "ass", "axwound", "bampot", "bastard", "beane
                    "whore", "wop", "wtf", "fk", "asshole", "bullshit", "shitty", "asshole")
 
 
-def cn_swear_word_detector():
-    for cn_swear_word in cn_swear_words:
-        if cn_swear_word in t:
-            return True
-
-
-def cn_swear_word_in_eng_detector():
-    for cn_swear_word_in_eng in cn_swear_words_in_eng:
-        for word in t:
-            if word == cn_swear_word_in_eng:
-                return True
-
-
-def eng_swear_word_detector():
-    for eng_swear_word in eng_swear_words:
-        for word in t:
-            if word == eng_swear_word:
-                return True
-
-
 def swear_word_detector(bot, update):
     msg = update.message
-    if msg.text:
-        global t
-        t = msg.text
-        if cn_swear_word_detector():
-            if msg.chat_id < 0:
-                msg.reply_text("講粗口？！記你一次大過！")
-            else:
-                msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-        else:
-            t = t.lower().split(" ")
-            if cn_swear_word_in_eng_detector() or eng_swear_word_detector():
-                if msg.chat_id < 0:
-                    msg.reply_text("講粗口？！記你一次大過！")
-                else:
-                    msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-
-
-def check_number_dude(bot, update, user=None):
-    msg = update.message
-    if user:
-        if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
-            msg.reply_text("又係數字人？我屌！")
-            try:
-                bot.kick_chat_member(msg.chat_id, user.id)
-            except:
-                pass
-            return True
+    text = update.message.text
+    if any(word in text for word in cn_swear_words):
+        msg.reply_text("講粗口？！記你一次大過！") if msg.chat_id < 0 else msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
     else:
-        user = msg.from_user
-        if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
-            msg.reply_text("又係數字人？我屌！")
-            try:
-                bot.kick_chat_member(msg.chat_id, user.id)
-            except:
-                pass
-            try:
-                update.message.delete()
-            except:
-                pass
+        text = text.lower().split(" ")
+        if any(word in text for word in cn_swear_words_in_eng) or any(word in text for word in eng_swear_words):
+            msg.reply_text("講粗口？！記你一次大過！") if msg.chat_id < 0 else msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
+
+
+def check_number_dude(bot, update, user):
+    msg = update.message
+    if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
+        msg.reply_text("又係數字人？我屌！")
+        try:
+            bot.kick_chat_member(msg.chat_id, user.id)
+        except Exception:
+            pass
+        try:
+            update.message.delete()
+        except Exception:
+            pass
 
 
 def general_responses(bot, update):
@@ -209,16 +176,17 @@ def general_responses(bot, update):
     if msg.new_chat_members:
         for nub in msg.new_chat_members:
             if nub.id == 506548905:
-                msg.reply_markdown("Hi，我係全部Telegram bot之中最On9嘅，有邊個bot想同我鬥on9嘅可以同我主人"
-                                   "[Trainer Jono](tg://user?id=463998526)講。撳 /help 睇點用。Zzz...")
+                msg.reply_markdown("Hi，我係On9 Bot。撳 /help 睇點用。")
             elif nub.is_bot:
                 msg.reply_text("哦？新bot喎，乜水？")
             else:
                 check_number_dude(bot, update, nub)
     elif msg.left_chat_member:
-        msg.reply_text("Bey, " + user.mention_markdown(user.full_name))
+        msg.reply_text("Bey")
+    elif msg:
+        check_number_dude(bot, update, msg.from_user)
     elif msg.pinned_message:
-        if user != 463998526:
+        if user.id != 463998526:
             msg.reply_markdown(user.mention_markdown(user.full_name) + "又pin嘢...🙃", quote=False)
     elif msg.sticker:
         if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
@@ -228,11 +196,11 @@ def general_responses(bot, update):
         text = update.message.text.lower()
         if text == "hello" and user.id == 463998526:
             msg.reply_text("主人你好！")
-        if update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in u:
+        if update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
             update.message.reply_text("唔好tag我主人，乖。")
-        if u == "js is very on9":
+        if text == "js is very on9":
             update.message.reply_text("Your IQ is 500!")
-        if "trainer jono is rubbish" in u:
+        if "trainer jono is rubbish" in text:
             update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
 
 
@@ -323,7 +291,7 @@ def echo(bot, update):
 
 def user_info(bot, update):
         if update.message.reply_to_message:
-            if update.effective_chat.type in ("supergroup", "group"):
+            if update.message.chat_id < 0:
                 user = update.message.reply_to_message.from_user
                 if user.is_bot:
                     text = "*Information of this bot*"
@@ -393,7 +361,7 @@ def user_info(bot, update):
                     text += "\n\n*Banned* in {}".format(update.effective_chat.title)
                 update.message.reply_markdown(text)
             else:
-                update.message.reply_text("This command is currently only available in groups and supergroups.")
+                update.message.reply_text("暫時群組先用到，pm就收皮先。")
         else:
             update.message.reply_text("Dis is da wae: /user_info [reply to a message]")
 
@@ -467,11 +435,7 @@ def get_file_id_error():
 
 
 def ping(bot, update):
-    try:
-        update.message.reply_markdown("Ping你老母？！")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+    update.message.reply_markdown("Ping你老母？！")
 
 
 def phantom_of_the_opera(bot, update):
