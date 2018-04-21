@@ -16,41 +16,18 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# conn = psycopg2.connect(host="ec2-23-21-121-220.compute-1.amazonaws.com",
-#                         database="ddqe8lueaue1pl", user="fttveeezgekmvf",
-#                         password="948fc928d48ed553c738617c8a906b5efc5b86e97ceb42cbbc55839a92057889")
-# cur = conn.cursor()
-
 TOKEN = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
 
 
 def start(bot, update):  # add args back later when commenting ww parts
     if update.message.chat_id > 0:
-        # try:
-        #     if args:
-        #         if args.startswith("joinww_"):
-        #             chat_id = int(args[0].split("_", 1)[1])
-        #             try:
-        #                 user = bot.get_chat_member(chat_id, update.effective_user.id)
-        #                 if user.status in ("restricted", "kicked", "left"):
-        #                     raise Exception
-        #             except:
-        #                 update.message.reply_text("唔比你入！")
-        #                 return
-        #         else:
-        #             raise Exception
-        # except:
         update.message.reply_text("吓。求其揾個command用下，撳 /help 睇點用。有咩事揾 @Trainer_Jono 。")
 
 
 def bot_help(bot, update):
-    try:
-        update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25) (尚未完成)\n"
-                                      "[Source code](https://www.codepile.net/pile/3aD3DPkD) (尚未更新)\n"
-                                      "¯\\\_(ツ)\_/¯")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+    update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25) (尚未完成)\n"
+                                  "[Source code](https://www.codepile.net/pile/3aD3DPkD) (尚未更新)\n"
+                                  "¯\\\_(ツ)\_/¯")
 
 
 @run_async
@@ -64,7 +41,10 @@ def tag9js(bot, update):
                                   reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
             sleep(15)
             msg.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
-            sent.delete()
+            try:
+                sent.delete()
+            except Exception:
+                pass
         else:
             msg.reply_text("Denied. User does not have a username.")
     elif update.message.chat_id < 0:
@@ -253,80 +233,80 @@ def echo(bot, update):
 
 
 def user_info(bot, update):
-        if update.message.reply_to_message:
-            if update.message.chat_id < 0:
-                user = update.message.reply_to_message.from_user
-                if user.is_bot:
-                    text = "*Information of this bot*"
-                else:
-                    text = "*Information of this user*"
-                text += "\n\nUser id: `{}`\nFirst name: {}".format(user.id, helpers.escape_markdown(user.first_name))
-                if user.last_name:
-                    text += "\nLast name: {}".format(helpers.escape_markdown(user.last_name))
-                    text += "\nFull name: {}".format(helpers.escape_markdown(user.full_name))
-                if user.username:
-                    text += "\nUsername: @{}".format(helpers.escape_markdown(user.username))
-                if user.language_code:
-                    text += "\nLanguage code: {}".format(user.language_code)
-                try:
-                    nub = bot.get_chat_member(update.message.chat_id, user.id)
-                except BadRequest:
-                    text += "\n\n*User has never joined {}*".format(update.effective_chat.title)
-                    update.message.reply_text(text)
-                    return
-                if nub.status == "creator":
-                    text += "\n\n*Creator* of {}".format(update.effective_chat.title)
-                elif nub.status == "administrator":
-                    text += "\n\n*Administrator* of {}".format(update.effective_chat.title)
-                    if nub.can_change_info:
-                        text += "\n\nCan change group info: Yes"
-                    else:
-                        text += "\n\nCan change group info: No"
-                    if nub.can_delete_messages:
-                        text += "\nCan delete messages: Yes"
-                    else:
-                        text += "\nCan delete messages: No"
-                    if nub.can_restrict_members:
-                        text += "\nCan restrict, ban and unban members: Yes"
-                    else:
-                        text += "\nCan restrict, ban and unban members: No"
-                    if nub.can_pin_messages:
-                        text += "\nCan pin messages: Yes"
-                    else:
-                        text += "\nCan pin messages: No"
-                    if nub.can_promote_members:
-                        text += "\nCan add new admins: Yes"
-                    else:
-                        text += "\nCan add new admins: No"
-                elif nub.status == "member":
-                    text += "\n\n*Member* of {}".format(update.effective_chat.title)
-                elif nub.status == "restricted":
-                    text += "\n\n*Restricted* in {}*".format(update.effective_chat.title)
-                    if nub.can_send_messages:
-                        text += "\n\nCan send messages: Yes"
-                        if nub.can_send_media_messages:
-                            text += "\nCan send media: Yes"
-                            if nub.can_send_other_messages:
-                                text += "\nCan send stickers and GIFs: Yes"
-                            else:
-                                text += "\nCan send stickers and GIFs: No"
-                            if nub.can_add_web_page_previews:
-                                text += "\nCan add web page previews: Yes"
-                            else:
-                                text += "\nCan add web page previews: No"
-                        else:
-                            text += "\nCan send media: No"
-                    else:
-                        text += "\n\nCan send messages: No"
-                elif nub.status == "left":
-                    text += "\n\n*Left {}".format(update.effective_chat.title)
-                elif nub.status == "kicked":
-                    text += "\n\n*Banned* in {}".format(update.effective_chat.title)
-                update.message.reply_markdown(text)
+    if update.message.reply_to_message:
+        if update.message.chat_id < 0:
+            user = update.message.reply_to_message.from_user
+            if user.is_bot:
+                text = "*Information of this bot*"
             else:
-                update.message.reply_text("暫時群組先用到，pm就收皮先。")
+                text = "*Information of this user*"
+            text += "\n\nUser id: `{}`\nFirst name: {}".format(user.id, helpers.escape_markdown(user.first_name))
+            if user.last_name:
+                text += "\nLast name: {}".format(helpers.escape_markdown(user.last_name))
+                text += "\nFull name: {}".format(helpers.escape_markdown(user.full_name))
+            if user.username:
+                text += "\nUsername: @{}".format(helpers.escape_markdown(user.username))
+            if user.language_code:
+                text += "\nLanguage code: {}".format(user.language_code)
+            try:
+                nub = bot.get_chat_member(update.message.chat_id, user.id)
+            except BadRequest:
+                text += "\n\n*User has never joined {}*".format(update.effective_chat.title)
+                update.message.reply_text(text)
+                return
+            if nub.status == "creator":
+                text += "\n\n*Creator* of {}".format(update.effective_chat.title)
+            elif nub.status == "administrator":
+                text += "\n\n*Administrator* of {}".format(update.effective_chat.title)
+                if nub.can_change_info:
+                    text += "\n\nCan change group info: Yes"
+                else:
+                    text += "\n\nCan change group info: No"
+                if nub.can_delete_messages:
+                    text += "\nCan delete messages: Yes"
+                else:
+                    text += "\nCan delete messages: No"
+                if nub.can_restrict_members:
+                    text += "\nCan restrict, ban and unban members: Yes"
+                else:
+                    text += "\nCan restrict, ban and unban members: No"
+                if nub.can_pin_messages:
+                    text += "\nCan pin messages: Yes"
+                else:
+                    text += "\nCan pin messages: No"
+                if nub.can_promote_members:
+                    text += "\nCan add new admins: Yes"
+                else:
+                    text += "\nCan add new admins: No"
+            elif nub.status == "member":
+                text += "\n\n*Member* of {}".format(update.effective_chat.title)
+            elif nub.status == "restricted":
+                text += "\n\n*Restricted* in {}*".format(update.effective_chat.title)
+                if nub.can_send_messages:
+                    text += "\n\nCan send messages: Yes"
+                    if nub.can_send_media_messages:
+                        text += "\nCan send media: Yes"
+                        if nub.can_send_other_messages:
+                            text += "\nCan send stickers and GIFs: Yes"
+                        else:
+                            text += "\nCan send stickers and GIFs: No"
+                        if nub.can_add_web_page_previews:
+                            text += "\nCan add web page previews: Yes"
+                        else:
+                            text += "\nCan add web page previews: No"
+                    else:
+                        text += "\nCan send media: No"
+                else:
+                    text += "\n\nCan send messages: No"
+            elif nub.status == "left":
+                text += "\n\n*Left {}".format(update.effective_chat.title)
+            elif nub.status == "kicked":
+                text += "\n\n*Banned* in {}".format(update.effective_chat.title)
+            update.message.reply_markdown(text)
         else:
-            update.message.reply_text("Dis is da wae: /user_info [reply to a message]")
+            update.message.reply_text("暫時群組先用到，pm就收皮先。")
+    else:
+        update.message.reply_text("Dis is da wae: /user_info [reply to a message]")
 
 
 def get_id(bot, update):
