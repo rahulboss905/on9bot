@@ -251,44 +251,6 @@ def echo(bot, update):
             More info in /help.""")
 
 
-# @run_async
-# def echo3(bot, update):
-#     try:
-#         args = update.message.text.split(" ", 1)[1]
-#         if update.message.reply_to_message:
-#             for i in range(3):
-#                 update.message.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
-#                 if i == 3:
-#                     break
-#                 sleep(1)
-#         else:
-#             for i in range(3):
-#                 update.message.reply_markdown(args, disable_web_page_preview=True, quote=False)
-#                 if i == 3:
-#                     break
-#                 sleep(1)
-#     except IndexError:
-#         try:
-#             if update.message.reply_to_message:
-#                 if update.message.reply_to_message.text:
-#                     for i in range(3):
-#                         update.message.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
-#                                                   quote=False)
-#                         if i == 3:
-#                             break
-#                         sleep(1)
-#                 else:
-#                     update.message.reply_text("人地條訊息都唔係文字訊息...🙃")
-#             else:
-#                 update.message.reply_text("Dis is da wae: /r3 <text> and/or (reply to a message)\nMore info in /help.")
-#         except Exception as e:
-#             update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-#                                           .format(helpers.escape_markdown(str(e))))
-#     except Exception as e:
-#         update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-#                                       .format(helpers.escape_markdown(str(e))))
-
-
 def user_info(bot, update):
         if update.message.reply_to_message:
             if update.message.chat_id < 0:
@@ -367,31 +329,23 @@ def user_info(bot, update):
 
 
 def get_id(bot, update):
-    try:
-        if update.message.reply_to_message:
-            update.message.reply_markdown("佢嘅user id: ```{}```".format(update.message.reply_to_message.from_user.id))
-        else:
-            update.message.reply_markdown("呢個對話嘅chat id: ```{}```\n你嘅user id: ```{}```"
-                                          .format(update.message.chat_id, update.effective_user.id))
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+    if update.message.reply_to_message:
+        update.message.reply_markdown("佢嘅user id: ```{}```".format(update.message.reply_to_message.from_user.id))
+    else:
+        update.message.reply_markdown("呢個對話嘅chat id: ```{}```\n你嘅user id: ```{}```"
+                                      .format(update.message.chat_id, update.effective_user.id))
 
 
 def get_message_link(bot, update):
-    try:
-        if update.message.reply_to_message:
-            group_info = bot.get_chat(update.message.chat_id)
-            if group_info.type == "supergroup" and group_info.username:
-                    update.message.reply_text("t.me/{}/{}".format(group_info.username,
-                                                                  update.message.reply_to_message.message_id))
-            else:
-                update.message.reply_text("Public supergroup先用得架柒頭。")
+    if update.message.reply_to_message:
+        group_info = bot.get_chat(update.message.chat_id)
+        if group_info.type == "supergroup" and group_info.username:
+                update.message.reply_text("t.me/{}/{}".format(group_info.username,
+                                                              update.message.reply_to_message.message_id))
         else:
-            update.message.reply_text("唔識用就咪撚用啦柒頭，睇 /help 啦。")
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
+            update.message.reply_text("公開嘅超級群組先用得架柒頭。")
+    else:
+        update.message.reply_text("Reply to a message.")
 
 
 def get_file_id(bot, update):
@@ -474,7 +428,6 @@ def main():
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("x", phantom_of_the_opera))
     dp.add_handler(CommandHandler("r", echo))
-#    dp.add_handler(CommandHandler("r3", echo3))
     dp.add_handler(CommandHandler("y", beefball_christ))
     dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
