@@ -10,7 +10,6 @@ from re import match
 import logging
 import os
 
-# import psycopg2
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -195,20 +194,22 @@ def echo(bot, update):
             except Exception as e:
                 msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
                                "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
-            try:
-                msg.delete()
-            except Exception:
-                pass
+            else:
+                try:
+                    msg.delete()
+                except Exception:
+                    pass
         else:
             try:
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
             except Exception as e:
                 msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
                                "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
-            try:
-                msg.delete()
-            except Exception:
-                pass
+            else:
+                try:
+                    msg.delete()
+                except Exception:
+                    pass
     except IndexError:
         if update.message.reply_to_message:
             if msg.reply_to_message.text:
@@ -218,12 +219,13 @@ def echo(bot, update):
                 except Exception as e:
                     msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
                                    "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
-                try:
-                    msg.delete()
-                except:
-                    pass
+                else:
+                    try:
+                        msg.delete()
+                    except Exception:
+                        pass
             else:
-                msg.reply_to_message.reply_text("No text in this message...🙃")
+                msg.reply_to_message.reply_text("no u")
         else:
             msg.reply_text("""Deez r da waes:
             /r <text>
