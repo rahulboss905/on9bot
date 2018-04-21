@@ -16,11 +16,12 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
 # conn = psycopg2.connect(host="ec2-23-21-121-220.compute-1.amazonaws.com",
 #                         database="ddqe8lueaue1pl", user="fttveeezgekmvf",
 #                         password="948fc928d48ed553c738617c8a906b5efc5b86e97ceb42cbbc55839a92057889")
 # cur = conn.cursor()
+
+TOKEN = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
 
 
 def start(bot, update):  # add args back later when commenting ww parts
@@ -392,31 +393,14 @@ def ping(bot, update):
     update.message.reply_markdown("Ping你老母？！")
 
 
-def phantom_of_the_opera(bot, update):
-    try:
-        update.message.reply_audio("AwADBQADIgADsZ35Vf15qTeOTDR3Ag", quote=False)
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
-
-
-def beefball_christ(bot, update):
-    try:
-        update.message.reply_audio("AwADBQADIwADsZ35VVzG9kRL3IU8Ag", quote=False)
-    except Exception as e:
-        update.message.reply_markdown("有嘢出錯喎: {}\n唔明出咩錯或者覺得係bot有嘢出錯，歡迎你pm我主人[Trainer Jono](tg://user?id=463998526)。"
-                                      .format(helpers.escape_markdown(str(e))))
-
-
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 
 def main():
-    token = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
     name = "on9bot"
     port = os.environ.get('PORT')
-    updater = Updater(token)
+    updater = Updater(TOKEN)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", bot_help))
@@ -426,15 +410,13 @@ def main():
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("ping", ping))
-    dp.add_handler(CommandHandler("x", phantom_of_the_opera))
     dp.add_handler(CommandHandler("r", echo))
-    dp.add_handler(CommandHandler("y", beefball_christ))
     dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
     dp.add_handler(MessageHandler(Filters.all, general_responses))
     dp.add_error_handler(error)
-    updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=token, clean=True)
-    updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(name, token))
+    updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=TOKEN, clean=True)
+    updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(name, TOKEN))
     updater.idle()
 
 
