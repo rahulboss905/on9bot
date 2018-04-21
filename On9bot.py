@@ -64,20 +64,20 @@ def tag9(bot, update, args):
     bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     msg = update.message
     if msg.from_user.id not in can_use_tag9:
-        msg.reply_text("Denied. You are not authorized to use this command.")
+        msg.reply_text("no u")
     elif msg.chat_id > 0:
-        msg.reply_text("You cannot tag people in a private chat with me.")
+        msg.reply_text("no u")
     elif msg.reply_to_message:
         tag9_part2(msg, bot.get_chat_member(msg.chat_id, msg.reply_to_message.from_user.id))
     elif not args:
-        msg.reply_text("Please specify the user you would like to tag.")
+        msg.reply_text("Who do you want to tag?")
     else:
         try:
             tag9_part2(msg, bot.get_chat_member(msg.chat_id, int(args[0])))
         except ValueError:
-            msg.reply_text("Failed. Argument is not an integer.")
-        except BadRequest:
-            msg.reply_text("Failed. User has never joined this group or does not exist.")
+            msg.reply_text("no u")
+        except BadRequest as e:
+            msg.reply_text("Bad request: " + str(e))
 
 
 @run_async
@@ -197,7 +197,7 @@ def echo(bot, update):
                                "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
             try:
                 msg.delete()
-            except:
+            except Exception:
                 pass
         else:
             try:
@@ -207,7 +207,7 @@ def echo(bot, update):
                                "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
             try:
                 msg.delete()
-            except:
+            except Exception:
                 pass
     except IndexError:
         if update.message.reply_to_message:
