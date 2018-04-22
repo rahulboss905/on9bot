@@ -1,6 +1,6 @@
 from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
-from telegram.error import BadRequest
+from telegram.error import BadRequest, TimedOut
 from telegram.utils import helpers
 from time import sleep
 from re import match
@@ -164,7 +164,7 @@ def echo(bot, update):
         if msg.reply_to_message:
             try:
                 msg.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
-            except Exception as e:
+            except BadRequest as e:
                 msg.reply_text(markdown_error_response(e))
             else:
                 try:
@@ -353,17 +353,19 @@ def pinned(bot, update):
         return
     chat_info = bot.get_chat(chat.id)
     if not chat_info.pinned_message:
-        msg.reply_text("No message is pinned in this supergroup currently (might be a few minutes out-of-date.")
+        msg.reply_text("No message is pinned in this supergroup currently (might be a few minutes out-of-date or "
+                       "wrong since the pinned message may be forgotten if the sender of the pinned message "
+                       "is another bot.)")
         return
     pmsg_id = chat_info.pinned_message.message_id
     if not chat_info.pinned_message.from_user.is_bot or chat_info.pinned_message.from_user.id == 506548905:
-        msg.reply_text("⬆️Pinned message (might be a few minutes out-of-date)⬆️", reply_to_message_id=pmsg_id)
+        msg.reply_text("⬆️Pinned message⬆️\n(might be a few minutes out-of-date)", reply_to_message_id=pmsg_id)
         return
     if chat.username:
         link = "https://t.me/{}/{}".format(chat.username, pmsg_id)
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
         msg.reply_text("The message is sent by another bot, so I can only provide you an url button to the message.\n\n"
-                       "⬇️Pinned message (might be a few minutes out-of-date)⬇️", reply_markup=reply_markup)
+                       "⬇️Pinned message⬇️\n(might be a few minutes out-of-date)", reply_markup=reply_markup)
         return
     msg.reply_text("The pinned message was sent by another bot and this supergroup is not public, so I cannot help you.")
 
@@ -428,8 +430,11 @@ def feedback(bot, update):
 
 
 def error(bot, update, error):
+    if str(error).startswith("Can't parse entities:") or str(error) == "Timed out":
+        return
     logger.warning('Update "%s" caused error "%s"', update, error)
-    bot.send_message(-1001141544515, str(error))
+    forwarded = bot.forward_message(-1001141544515, update.effective_chat.id, update.message.message_id)
+    bot.send_message(-1001141544515, str(error), reply_to_message_id=forwarded.message_id)
 
 
 def main():
