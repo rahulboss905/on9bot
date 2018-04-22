@@ -398,8 +398,8 @@ def feedback(bot, update):
 
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
-    forwarded = bot.forward_message(1141544515, update.message.chat_id, update.message.message_id)
-    bot.send_message(1141544515, error, reply_to_message_id=forwarded.message_id)
+    # forwarded = bot.forward_message(1141544515, update.message.chat_id, update.message.message_id)
+    # bot.send_message(1141544515, error, reply_to_message_id=forwarded.message_id)
 
 
 def main():
