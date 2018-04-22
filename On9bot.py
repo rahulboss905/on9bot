@@ -165,21 +165,25 @@ def general_responses(bot, update):
         msg.reply_text("Bey")
         return
     check_number_dude(bot, update, msg.from_user)
-    if msg.pinned_message:
-        if user.id != 463998526:
-            msg.reply_markdown(user.mention_markdown(user.full_name) + "又pin嘢...🙃", quote=False)
-    elif msg.sticker:
-        if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
-            msg.reply_text("嘩屌又係bb，見到都反胃。")
-    elif msg.text:
+    # if msg.pinned_message:
+    #     if user.id != 463998526:
+    #         msg.reply_markdown(user.mention_markdown(user.full_name) + "又pin嘢...🙃", quote=False)
+    # elif msg.sticker:
+    #     if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
+    #         msg.reply_text("嘩屌又係bb，見到都反胃。")
+    if msg.text:  # change to elif when uncommenting the above code
         swear_word_detector(bot, update)
         text = msg.text.lower()
         if text == "hello" and user.id == 463998526:
             msg.reply_text("主人你好！")
         elif update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
             msg.reply_text("唔好tag我主人，乖。")
-        elif text == "ur mom gay":
+        elif "ur mom gay" in text:
             msg.reply_text("no u")
+        elif text == "no no u":
+            msg.reply_text("no no u")
+        elif "no no no u" in text:
+            msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
         elif text == "js is very on9":
             msg.reply_text("Your IQ is 500!")
         elif "trainer jono is rubbish" in text:
