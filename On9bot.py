@@ -389,8 +389,8 @@ def feedback(bot, update):
     user = msg.from_user
     chat = update.effective_chat
     try:
-        username = "@{}".format(chat.username) if chat.username else "none"
-        chat_type = "{} (chat id: `{}`, username: {})".format(chat.title, chat.id, username) if chat.id < 0 else "pm"
+        link = "telegram.dog/{}".format(chat.username) if chat.username else None
+        chat_type = "[{}]({}) (chat id: `{}`)".format(chat.title, link, chat.id) if chat.id < 0 else "pm"
         fb = helpers.escape_markdown(msg.text.split(" ", 1)[1])
         fb += "\n\nFeedback from {} (user id: `{}`) sent in {}.".format(user.mention_markdown(user.full_name),
                                                                         user.id, chat_type)
