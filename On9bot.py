@@ -43,7 +43,7 @@ def tag9js(bot, update):
             except Exception:
                 pass
         else:
-            msg.reply_text("How sad, JS removed his username.")
+            msg.reply_text("no u, JS removed his username.")
     elif msg.chat_id < 0:
         msg.reply_text("no u")
     else:
@@ -51,15 +51,16 @@ def tag9js(bot, update):
         msg.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。", reply_markup=reply_markup)
 
 
-can_use_tag9 = (463998526, 487754154, 426072433, 49202743, 442517724, 190726372, 106665913)
-# respectively  Tr. Jono,  Ms. Symbol, Giselle,   Siu Kei,  Chestnut, JS,        Jeffffffc
-
+can_use_tag9 = (463998526, 190726372, 106665913)
+# respectively  Tr. Jono,  JS,        Jeffffffc
+temp_can_use_tag9 = (487754154, 426072433, 49202743, 442517724)
+# respectively       Cat,       Giselle,   Siu Kei,  Chestnut,
 
 @run_async
 def tag9(bot, update, args):
     msg = update.message
     update.effective_chat.send_action(ChatAction.TYPING)
-    if msg.from_user.id not in can_use_tag9:
+    if msg.from_user.id not in can_use_tag9 and msg.from_user.id not in can_use_tag9:
         msg.reply_text("no u")
     elif msg.chat_id > 0:
         msg.reply_text("no u")
@@ -79,13 +80,13 @@ def tag9(bot, update, args):
 @run_async
 def tag9_part2(msg, u_info):
     if u_info.status in ("restricted", "left", "kicked"):
-        msg.reply_text("Denied. User is either restricted or not in this group.)")
+        msg.reply_text("no u, not in group or restricted")
     elif u_info.user.id in (463998526, 506548905):
         msg.reply_text("no u")
     elif u_info.user.is_bot:
-        msg.reply_text("no u")
+        msg.reply_text("no u, don't tag other bots")
     elif u_info.user.username is None:
-        msg.reply_markdown("How sad, that user does not have a username.")
+        msg.reply_markdown("no u, that user does not have a username.")
     else:
         sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                               reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
@@ -98,10 +99,11 @@ def tag9_part2(msg, u_info):
 
 
 def remove_keyboard(bot, update):
-    if update.message.chat_id < 0:
-        update.message.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove())
+    msg = update.message
+    if msg.chat_id < 0:
+        msg.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove())
     else:
-        update.message.reply_text("no u")
+        msg.reply_text("no u")
 
 
 cn_swear_words = ("屌", "閪", "柒", "撚", "鳩", "𨳒", "屄", "𨶙", "𨳊", "㞗", "𨳍", "杘")
@@ -124,7 +126,7 @@ eng_swear_words = ("anus", "arse", "ass", "axwound", "bampot", "bastard", "beane
 
 def swear_word_detector(bot, update):
     msg = update.message
-    text = update.message.text
+    text = msg.text
     if any(word in text for word in cn_swear_words):
         msg.reply_text("講粗口？！記你一次大過！") if msg.chat_id < 0 else msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
     else:
@@ -237,83 +239,79 @@ More info in /help.""")
 
 def user_info(bot, update):
     msg = update.message
-    if msg.reply_to_message:
-        if msg.chat_id < 0:
-            user = msg.reply_to_message.from_user
-            chat = update.effective_chat
-            title = chat.title
-            if user.is_bot:
-                text = "*Information of this bot*"
-            else:
-                text = "*Information of this user*"
-            text += "\n\nUser id: `{}`\nFirst name: {}".format(user.id, helpers.escape_markdown(user.first_name))
-            if user.last_name:
-                text += "\nLast name: {}".format(helpers.escape_markdown(user.last_name))
-                text += "\nFull name: {}".format(helpers.escape_markdown(user.full_name))
-            if user.username:
-                text += "\nUsername: @{}".format(helpers.escape_markdown(user.username))
-            if user.language_code:
-                text += "\nLanguage code: {}".format(user.language_code)
-            try:
-                nub = bot.get_chat_member(msg.chat_id, user.id)
-                status = nub.status
-            except Exception:
-                text += "\n\n*User has never joined {}*".format(title)
-                msg.reply_text(text)
-                return
-            if status == "creator":
-                text += "\n\n*Creator* of {}".format(title)
-            elif status == "administrator":
-                text += "\n\n*Administrator* of {}".format(title)
-                if nub.can_change_info:
-                    text += "\n\nCan change group info: Yes"
-                else:
-                    text += "\n\nCan change group info: No"
-                if nub.can_delete_messages:
-                    text += "\nCan delete messages: Yes"
-                else:
-                    text += "\nCan delete messages: No"
-                if nub.can_restrict_members:
-                    text += "\nCan restrict, ban and unban members: Yes"
-                else:
-                    text += "\nCan restrict, ban and unban members: No"
-                if nub.can_pin_messages:
-                    text += "\nCan pin messages: Yes"
-                else:
-                    text += "\nCan pin messages: No"
-                if nub.can_promote_members:
-                    text += "\nCan add new admins: Yes"
-                else:
-                    text += "\nCan add new admins: No"
-            elif status == "member":
-                text += "\n\n*Member* of {}".format(title)
-            elif status == "restricted":
-                text += "\n\n*Restricted* in {}*".format(title)
-                if nub.can_send_messages:
-                    text += "\n\nCan send messages: Yes"
-                    if nub.can_send_media_messages:
-                        text += "\nCan send media: Yes"
-                        if nub.can_send_other_messages:
-                            text += "\nCan send stickers and GIFs: Yes"
-                        else:
-                            text += "\nCan send stickers and GIFs: No"
-                        if nub.can_add_web_page_previews:
-                            text += "\nCan add web page previews: Yes"
-                        else:
-                            text += "\nCan add web page previews: No"
-                    else:
-                        text += "\nCan send media: No"
-                else:
-                    text += "\n\nCan send messages: No"
-            elif status == "left":
-                text += "\n\n*Was a member of {}".format(title)
-            elif status == "kicked":
-                text += "\n\n*Banned* from {}".format(title)
-            msg.reply_markdown(text)
-        else:
-            msg.reply_text("暫時群組先用到，pm就收皮先。")
-    else:
+    if not msg.reply_to_message:
         msg.reply_text("Dis is da wae: /user_info [reply to a message]")
+        return
+    if msg.chat_id > 0:
+        msg.reply_text("暫時群組入，面先用到呢個指令，pm就收皮先。")
+        return
+    user = msg.reply_to_message.from_user
+    chat = update.effective_chat
+    title = chat.title
+    if user.is_bot:
+        text = "*Information of this bot*"
+    else:
+        text = "*Information of this user*"
+    text += "\n\nUser id: `{}`\nName: {}".format(user.id, helpers.escape_markdown(user.full_name))
+    if user.username:
+        text += "\nUsername: @{}".format(helpers.escape_markdown(user.username))
+    if user.language_code:
+        text += "\nLanguage code: {}".format(user.language_code)
+    try:
+        nub = bot.get_chat_member(msg.chat_id, user.id)
+        status = nub.status
+    except Exception:
+        msg.reply_text(text)
+        return
+    if status == "creator":
+        text += "\n\n*Creator* of {}".format(title)
+    elif status == "administrator":
+        text += "\n\n*Administrator* of {}".format(title)
+        if nub.can_change_info:
+            text += "\n\nCan change group info: Yes"
+        else:
+            text += "\n\nCan change group info: No"
+        if nub.can_delete_messages:
+            text += "\nCan delete messages: Yes"
+        else:
+            text += "\nCan delete messages: No"
+        if nub.can_restrict_members:
+            text += "\nCan restrict, ban and unban members: Yes"
+        else:
+            text += "\nCan restrict, ban and unban members: No"
+        if nub.can_pin_messages:
+            text += "\nCan pin messages: Yes"
+        else:
+            text += "\nCan pin messages: No"
+        if nub.can_promote_members:
+            text += "\nCan add new admins: Yes"
+        else:
+            text += "\nCan add new admins: No"
+    elif status == "member":
+        text += "\n\n*Member* of {}".format(title)
+    elif status == "restricted":
+        text += "\n\n*Restricted* in {}*".format(title)
+        if nub.can_send_messages:
+            text += "\n\nCan send messages: Yes"
+            if nub.can_send_media_messages:
+                text += "\nCan send media: Yes"
+                if nub.can_send_other_messages:
+                    text += "\nCan send stickers and GIFs: Yes"
+                else:
+                    text += "\nCan send stickers and GIFs: No"
+                if nub.can_add_web_page_previews:
+                    text += "\nCan add web page previews: Yes"
+                else:
+                    text += "\nCan add web page previews: No"
+            else:
+                text += "\nCan send media: No"
+        else:
+            text += "\n\nCan send messages: No"
+    elif status == "left":
+        text += "\n\n*Was a member of {}".format(title)
+    elif status == "kicked":
+        text += "\n\n*Banned* from {}".format(title)
+    msg.reply_markdown(text)
 
 
 def get_id(bot, update):
@@ -326,38 +324,39 @@ def get_id(bot, update):
 
 def get_message_link(bot, update):
     msg = update.message
-    if msg.reply_to_message:
-        chat = update.effective_chat
-        rmsg_id = msg.reply_to_message.message_id
-        if chat.type == "supergroup" and chat.username:
-            msg.reply_text("t.me/{}/{}".format(chat.username, rmsg_id), disable_web_page_preview=True)
-        else:
-            msg.reply_text("公開嘅超級群組嘅訊息先有link㗎。不過我可以話你知，嗰條訊息嘅message id係{}。".format(rmsg_id))
-    else:
+    if not msg.reply_to_message:
         msg.reply_text("Reply to a message.")
+        return
+    chat = update.effective_chat
+    rmsg_id = msg.reply_to_message.message_id
+    if chat.type == "supergroup" and chat.username:
+        msg.reply_text("t.me/{}/{}".format(chat.username, rmsg_id), disable_web_page_preview=True)
+    else:
+        msg.reply_text("公開嘅超級群組嘅訊息先有link㗎。不過我可以話你知，嗰條訊息嘅message id係{}。".format(rmsg_id))
 
 
 def get_file_id(bot, update):
-    if update.message.reply_to_message:
-        msg = update.message.reply_to_message
-        if msg.audio:
-            get_file_id_response(bot, update, "段音頻", msg.audio.file_id)
-        elif msg.photo:
-            get_file_id_response(bot, update, "張相", msg.photo[-1].file_id)
-        elif msg.sticker:
-            get_file_id_response(bot, update, "張貼紙", msg.sticker.file_id)
-        elif msg.video:
-            get_file_id_response(bot, update, "段影片", msg.video.file_id)
-        elif msg.voice:
-            get_file_id_response(bot, update, "段錄音", msg.voice.file_id)
-        elif msg.video_note:
-            get_file_id_response(bot, update, "段影片", msg.video_note.file_id)
-        elif msg.document:
-            get_file_id_response(bot, update, "份文件", msg.document.file_id)
-        else:
-            update.message.reply_text(get_file_id_error)
+    msg = update.message
+    if not msg.reply_to_message:
+        msg.reply_text(get_file_id_error)
+        return
+    rmsg = msg.reply_to_message
+    if rmsg.audio:
+        get_file_id_response(bot, update, "段音頻", rmsg.audio.file_id)
+    elif rmsg.photo:
+        get_file_id_response(bot, update, "張相", rmsg.photo[-1].file_id)
+    elif rmsg.sticker:
+        get_file_id_response(bot, update, "張貼紙", rmsg.sticker.file_id)
+    elif rmsg.video:
+        get_file_id_response(bot, update, "段影片", rmsg.video.file_id)
+    elif rmsg.voice:
+        get_file_id_response(bot, update, "段錄音", rmsg.voice.file_id)
+    elif rmsg.video_note:
+        get_file_id_response(bot, update, "段影片", rmsg.video_note.file_id)
+    elif rmsg.document:
+        get_file_id_response(bot, update, "份文件", rmsg.document.file_id)
     else:
-        update.message.reply_text(get_file_id_error)
+        msg.reply_text(get_file_id_error)
 
 
 def get_file_id_response(bot, update, file_type, file_id):
