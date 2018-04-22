@@ -185,8 +185,7 @@ def general_responses(bot, update):
 
 def markdown_error_response(error):
     text = """Markdown error: {}
-Parse mode is Markdown. Use a backslash (\"\\\") before a markdown character (\"_\", \"*\", \"`") to escape it."""
-    text.format(str(error))
+Parse mode is Markdown. Use a backslash (\"\\\") before a markdown character (\"_\", \"*\", \"`") to escape it.""".format(str(error))
     return text
 
 
@@ -198,8 +197,7 @@ def echo(bot, update):
             try:
                 msg.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
             except Exception as e:
-                msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
-                               "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
+                markdown_error_response(e)
             else:
                 try:
                     msg.delete()
@@ -209,8 +207,7 @@ def echo(bot, update):
             try:
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
             except Exception as e:
-                msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
-                               "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
+                markdown_error_response(e)
             else:
                 try:
                     msg.delete()
@@ -223,8 +220,7 @@ def echo(bot, update):
                     msg.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
                                    quote=False)
                 except Exception as e:
-                    msg.reply_text("Markdown error: {}\nBy the way, the parse_mode is markdown. You can "
-                                   "use a backslash (\"\\\") before a markdown character to escape it.".format(str(e)))
+                    markdown_error_response(e)
                 else:
                     try:
                         msg.delete()
@@ -234,16 +230,19 @@ def echo(bot, update):
                 msg.reply_to_message.reply_text("no u")
         else:
             msg.reply_text("""Deez r da waes:
-            /r <text>
-            /r [reply to a text message (files with captions don't count) not sent by other bots]
-            /r <text> [reply to a message not sent by other bots]
-            More info in /help.""")
+/r <text>
+/r [reply to a text message (files with captions don't count) not sent by other bots]
+/r <text> [reply to a message not sent by other bots]
+More info in /help.""")
 
 
 def user_info(bot, update):
-    if update.message.reply_to_message:
-        if update.message.chat_id < 0:
-            user = update.message.reply_to_message.from_user
+    msg = update.message
+    if msg.reply_to_message:
+        if msg.chat_id < 0:
+            user = msg.reply_to_message.from_user
+            chat = update.effective_chat
+            title = chat.title
             if user.is_bot:
                 text = "*Information of this bot*"
             else:
@@ -257,15 +256,16 @@ def user_info(bot, update):
             if user.language_code:
                 text += "\nLanguage code: {}".format(user.language_code)
             try:
-                nub = bot.get_chat_member(update.message.chat_id, user.id)
-            except BadRequest:
-                text += "\n\n*User has never joined {}*".format(update.effective_chat.title)
-                update.message.reply_text(text)
+                nub = bot.get_chat_member(msg.chat_id, user.id)
+                status = nub.status
+            except Exception:
+                text += "\n\n*User has never joined {}*".format(title)
+                msg.reply_text(text)
                 return
-            if nub.status == "creator":
-                text += "\n\n*Creator* of {}".format(update.effective_chat.title)
-            elif nub.status == "administrator":
-                text += "\n\n*Administrator* of {}".format(update.effective_chat.title)
+            if status == "creator":
+                text += "\n\n*Creator* of {}".format(title)
+            elif status == "administrator":
+                text += "\n\n*Administrator* of {}".format(title)
                 if nub.can_change_info:
                     text += "\n\nCan change group info: Yes"
                 else:
@@ -286,10 +286,10 @@ def user_info(bot, update):
                     text += "\nCan add new admins: Yes"
                 else:
                     text += "\nCan add new admins: No"
-            elif nub.status == "member":
-                text += "\n\n*Member* of {}".format(update.effective_chat.title)
-            elif nub.status == "restricted":
-                text += "\n\n*Restricted* in {}*".format(update.effective_chat.title)
+            elif status == "member":
+                text += "\n\n*Member* of {}".format(title)
+            elif status == "restricted":
+                text += "\n\n*Restricted* in {}*".format(title)
                 if nub.can_send_messages:
                     text += "\n\nCan send messages: Yes"
                     if nub.can_send_media_messages:
@@ -306,35 +306,36 @@ def user_info(bot, update):
                         text += "\nCan send media: No"
                 else:
                     text += "\n\nCan send messages: No"
-            elif nub.status == "left":
-                text += "\n\n*Left {}".format(update.effective_chat.title)
-            elif nub.status == "kicked":
-                text += "\n\n*Banned* in {}".format(update.effective_chat.title)
-            update.message.reply_markdown(text)
+            elif status == "left":
+                text += "\n\n*Was a member of {}".format(title)
+            elif status == "kicked":
+                text += "\n\n*Banned* from {}".format(title)
+            msg.reply_markdown(text)
         else:
-            update.message.reply_text("暫時群組先用到，pm就收皮先。")
+            msg.reply_text("暫時群組先用到，pm就收皮先。")
     else:
-        update.message.reply_text("Dis is da wae: /user_info [reply to a message]")
+        msg.reply_text("Dis is da wae: /user_info [reply to a message]")
 
 
 def get_id(bot, update):
-    if update.message.reply_to_message:
-        update.message.reply_markdown("佢嘅user id: ```{}```".format(update.message.reply_to_message.from_user.id))
+    msg = update.message
+    if msg.reply_to_message:
+        msg.reply_markdown("佢嘅user id: ```{}```".format(msg.reply_to_message.from_user.id))
     else:
-        update.message.reply_markdown("呢個對話嘅chat id: ```{}```\n你嘅user id: ```{}```"
-                                      .format(update.message.chat_id, update.effective_user.id))
+        msg.reply_markdown("呢個對話嘅chat id: ```{}```\n你嘅user id: ```{}```".format(msg.chat_id, msg.from_user.id))
 
 
 def get_message_link(bot, update):
-    if update.message.reply_to_message:
-        group_info = bot.get_chat(update.message.chat_id)
-        if group_info.type == "supergroup" and group_info.username:
-                update.message.reply_text("t.me/{}/{}".format(group_info.username,
-                                                              update.message.reply_to_message.message_id))
+    msg = update.message
+    if msg.reply_to_message:
+        chat = update.effective_chat
+        rmsg_id = msg.reply_to_message.message_id
+        if chat.type == "supergroup" and chat.username:
+            msg.reply_text("t.me/{}/{}".format(chat.username, rmsg_id), disable_web_page_preview=True)
         else:
-            update.message.reply_text("公開嘅超級群組先用得架柒頭。")
+            msg.reply_text("公開嘅超級群組嘅訊息先有link㗎。不過我可以話你知，嗰條訊息嘅message id係{}。".format(rmsg_id))
     else:
-        update.message.reply_text("Reply to a message.")
+        msg.reply_text("Reply to a message.")
 
 
 def get_file_id(bot, update):
@@ -355,26 +356,24 @@ def get_file_id(bot, update):
         elif msg.document:
             get_file_id_response(bot, update, "份文件", msg.document.file_id)
         else:
-            update.message.reply_text(get_file_id_error())
+            update.message.reply_text(get_file_id_error)
     else:
-        update.message.reply_text(get_file_id_error())
+        update.message.reply_text(get_file_id_error)
 
 
 def get_file_id_response(bot, update, file_type, file_id):
     update.message.reply_markdown("呢{}嘅file id: ```{}```".format(file_type, file_id))
 
 
-def get_file_id_error():
-    text = """Dis is da wae: /get_file_id [reply to message containing a supported file]
-    Supported file types include:
-    Audios (.mp3)
-    Documents (general files)
-    Photos (most image formats are supported)
-    Stickers (.webp)
-    Videos (.mp4)
-    Voice recordings (.ogg)
-    Video messages"""
-    return text
+get_file_id_error = """Dis is da wae: /file_id [reply to message containing media or general files]
+Supported file types include:
+Audios (.mp3)
+Documents (general files)
+Photos (most image formats are supported)
+Stickers (.webp)
+Videos (.mp4)
+Voice recordings (.ogg)
+Video messages"""
 
 
 def ping(bot, update):
