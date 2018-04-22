@@ -149,47 +149,6 @@ def check_number_dude(bot, update, user):
             pass
 
 
-def general_responses(bot, update):
-    msg = update.message
-    user = update.effective_user
-    if msg.new_chat_members:
-        for nub in msg.new_chat_members:
-            if nub.id == 506548905:
-                msg.reply_markdown("Hi，我係On9 Bot。撳 /help 睇點用。")
-            elif nub.is_bot:
-                msg.reply_text("哦？新bot喎，乜水？")
-            else:
-                check_number_dude(bot, update, nub)
-        return
-    elif msg.left_chat_member:
-        msg.reply_text("Bey")
-        return
-    check_number_dude(bot, update, msg.from_user)
-    # if msg.pinned_message:
-    #     if user.id != 463998526:
-    #         msg.reply_markdown(user.mention_markdown(user.full_name) + "又pin嘢...🙃", quote=False)
-    # elif msg.sticker:
-    #     if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
-    #         msg.reply_text("嘩屌又係bb，見到都反胃。")
-    if msg.text:  # change to elif when uncommenting the above code
-        swear_word_detector(bot, update)
-        text = msg.text.lower()
-        if text == "hello" and user.id == 463998526:
-            msg.reply_text("主人你好！")
-        elif update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
-            msg.reply_text("唔好tag我主人，乖。")
-        elif "ur mom gay" in text:
-            msg.reply_text("no u")
-        elif text == "no no u":
-            msg.reply_text("no no u")
-        elif "no no no u" in text:
-            msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
-        elif text == "js is very on9":
-            msg.reply_text("Your IQ is 500!")
-        elif "trainer jono is rubbish" in text:
-            msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
-
-
 def markdown_error_response(error):
     text = """Markdown error: {}
 Parse mode is Markdown. Use a backslash (\"\\\") before a markdown character (\"_\", \"*\", \"`") to escape it.""".format(str(error))
@@ -384,8 +343,63 @@ def ping(bot, update):
     update.message.reply_markdown("Ping你老母？！")
 
 
+def message_handler(bot, update):
+    msg = update.message
+    user = update.effective_user
+    if msg.new_chat_members:
+        for nub in msg.new_chat_members:
+            if nub.id == 506548905:
+                msg.reply_markdown("Hi，我係On9 Bot。撳 /help 睇點用。")
+            elif nub.is_bot:
+                msg.reply_text("哦？新bot喎，乜水？")
+            else:
+                check_number_dude(bot, update, nub)
+        return
+    elif msg.left_chat_member:
+        msg.reply_text("Bey")
+        return
+    check_number_dude(bot, update, msg.from_user)
+    # if msg.pinned_message:
+    #     if user.id != 463998526:
+    #         msg.reply_markdown(user.mention_markdown(user.full_name) + "又pin嘢...🙃", quote=False)
+    # elif msg.sticker:
+    #     if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
+    #         msg.reply_text("嘩屌又係bb，見到都反胃。")
+    if msg.text:  # change to elif when uncommenting the above code
+        swear_word_detector(bot, update)
+        text = msg.text.lower()
+        if text == "hello" and user.id == 463998526:
+            msg.reply_text("主人你好！")
+        elif update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
+            msg.reply_text("唔好tag我主人，乖。")
+        elif "ur mom gay" in text:
+            msg.reply_text("no u")
+        elif text == "no no u":
+            msg.reply_text("no no u")
+        elif "no no no u" in text:
+            msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
+        elif text == "js is very on9":
+            msg.reply_text("Your IQ is 500!")
+        elif "trainer jono is rubbish" in text:
+            msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
+
+
+def feedback(bot, update):
+    msg = update.message
+    user = msg.from_user
+    chat = update.effective_chat
+    chat_type = "{} (chat id: {}, username: {})".format(chat.title, chat.id, chat.username) if chat.id < 0 else "pm"
+    fb = helpers.escape_markdown(update.message.text.split(" ", 1)[1])
+    fb += "\n\nThis feedback was sent by {} (user id: ```{}```) in {}.".format(user.mention_markdown(user.full_name),
+                                                                               user.id, chat_type)
+    bot.send_message(1141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
+    msg.reply_text("Feedback sent successfully!")
+
+
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
+    forwarded = bot.forward_message(1141544515, update.message.chat_id, update.message.message_id)
+    bot.send_message(1141544515, error, reply_to_message_id=forwarded.message_id)
 
 
 def main():
@@ -403,8 +417,9 @@ def main():
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("r", echo))
     dp.add_handler(CommandHandler("user_info", user_info))
+    dp.add_handler(CommandHandler("feedback", feedback))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
-    dp.add_handler(MessageHandler(Filters.all, general_responses))
+    dp.add_handler(MessageHandler(Filters.all, message_handler))
     dp.add_error_handler(error)
     updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=TOKEN, clean=True)
     updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(name, TOKEN))
