@@ -1,6 +1,3 @@
-# On9Bot (an annoying Cantonese Telegram bot) source code
-# Uses Python 3 and the python-telegram-bot library, hosted on Heroku
-
 from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
 from telegram.error import BadRequest
@@ -18,9 +15,10 @@ logger = logging.getLogger(__name__)
 TOKEN = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
 
 
-def start(bot, update):  # add args back later when commenting ww parts
-    if update.message.chat_id > 0:
-        update.message.reply_text("吓。求其揾個command用下，撳 /help 睇點用。有咩事揾 @Trainer_Jono 。")
+def start(bot, update):
+    msg = update.message
+    if msg.chat_id > 0:
+        msg.reply_text("吓。求其揾個command用下，撳 /help 睇點用。有咩事揾 @Trainer_Jono 。")
 
 
 def bot_help(bot, update):
@@ -31,37 +29,36 @@ def bot_help(bot, update):
 
 @run_async
 def tag9js(bot, update):
-    bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     msg = update.message
     if msg.chat_id == -1001295361187:
+        update.effective_chat.send_action(ChatAction.TYPING)
         js_info = bot.get_chat_member(msg.chat_id, 190726372)
         if js_info.user.username:
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                                   reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
             sleep(15)
-            msg.reply_text("我已經整走咗個鍵盤啦。", reply_markup=ReplyKeyboardRemove(), quote=False)
+            msg.reply_text("Keyboard removed, message deleted.", reply_markup=ReplyKeyboardRemove(), quote=False)
             try:
                 sent.delete()
             except Exception:
                 pass
         else:
-            msg.reply_text("Denied. User does not have a username.")
-    elif update.message.chat_id < 0:
-        update.message.reply_text("Denied. This group or supergroup is not allowed to use this command.")
+            msg.reply_text("How sad, JS removed his username.")
+    elif msg.chat_id < 0:
+        msg.reply_text("no u")
     else:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
-        update.message.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。",
-                                  reply_markup=reply_markup)
+        msg.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。", reply_markup=reply_markup)
 
 
 can_use_tag9 = (463998526, 487754154, 426072433, 49202743, 442517724, 190726372, 106665913)
-# respectively  Tr. Jono,  Ms. Symbol, Giselle,   Siu Kei,  Chestnut,  JS,        Jeffffffc
+# respectively  Tr. Jono,  Ms. Symbol, Giselle,   Siu Kei,  Chestnut, JS,        Jeffffffc
 
 
 @run_async
 def tag9(bot, update, args):
-    bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     msg = update.message
+    update.effective_chat.send_action(ChatAction.TYPING)
     if msg.from_user.id not in can_use_tag9:
         msg.reply_text("no u")
     elif msg.chat_id > 0:
@@ -69,7 +66,7 @@ def tag9(bot, update, args):
     elif msg.reply_to_message:
         tag9_part2(msg, bot.get_chat_member(msg.chat_id, msg.reply_to_message.from_user.id))
     elif not args:
-        msg.reply_text("Who do you want to tag?")
+        msg.reply_text("Please reply to an user's message or provide a valid user id as an argument.")
     else:
         try:
             tag9_part2(msg, bot.get_chat_member(msg.chat_id, int(args[0])))
@@ -84,16 +81,16 @@ def tag9_part2(msg, u_info):
     if u_info.status in ("restricted", "left", "kicked"):
         msg.reply_text("Denied. User is either restricted or not in this group.)")
     elif u_info.user.id in (463998526, 506548905):
-        msg.reply_text("Denied. User cannot be tagged.")
+        msg.reply_text("no u")
     elif u_info.user.is_bot:
-        msg.reply_text("Denied. User is a bot.")
+        msg.reply_text("no u")
     elif u_info.user.username is None:
-        msg.reply_markdown("Denied. User does not have a username.")
+        msg.reply_markdown("How sad, that user does not have a username.")
     else:
         sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                               reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
-        msg.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove(), quote=False)
+        msg.reply_text("Keyboard removed, message deleted.", reply_markup=ReplyKeyboardRemove(), quote=False)
         try:
             sent.delete()
         except Exception:
@@ -172,14 +169,14 @@ def general_responses(bot, update):
             msg.reply_text("嘩屌又係bb，見到都反胃。")
     elif msg.text:
         swear_word_detector(bot, update)
-        text = update.message.text.lower()
+        text = msg.text.lower()
         if text == "hello" and user.id == 463998526:
             msg.reply_text("主人你好！")
-        if update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
+        elif update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
             msg.reply_text("唔好tag我主人，乖。")
-        if text == "js is very on9":
+        elif text == "js is very on9":
             msg.reply_text("Your IQ is 500!")
-        if "trainer jono is rubbish" in text:
+        elif "trainer jono is rubbish" in text:
             msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
 
 
