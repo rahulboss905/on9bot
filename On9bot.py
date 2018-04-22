@@ -158,8 +158,10 @@ def general_responses(bot, update):
                 msg.reply_text("哦？新bot喎，乜水？")
             else:
                 check_number_dude(bot, update, nub)
+        return
     elif msg.left_chat_member:
         msg.reply_text("Bey")
+        return
     check_number_dude(bot, update, msg.from_user)
     if msg.pinned_message:
         if user.id != 463998526:
@@ -383,7 +385,7 @@ def error(bot, update, error):
 
 def main():
     name = "on9bot"
-    port = os.environ.get('PORT')
+    port = os.environ.get("PORT")
     updater = Updater(TOKEN)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
