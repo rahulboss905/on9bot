@@ -353,17 +353,17 @@ def pinned(bot, update):
         return
     chat_info = bot.get_chat(chat.id)
     if not chat_info.pinned_message:
-        msg.reply_text("No message is pinned in this supergroup currently.")
+        msg.reply_text("No message is pinned in this supergroup currently (might be a few minutes out-of-date.")
         return
     pmsg_id = chat_info.pinned_message.message_id
     if not chat_info.pinned_message.from_user.is_bot or chat_info.pinned_message.from_user.id == 506548905:
-        msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=pmsg_id)
+        msg.reply_text("⬆️Pinned message (might be a few minutes out-of-date)⬆️", reply_to_message_id=pmsg_id)
         return
     if chat.username:
         link = "https://t.me/{}/{}".format(chat.username, pmsg_id)
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
         msg.reply_text("The message is sent by a bot, so I can only provide you an url button to the message.\n\n"
-                       "⬇️Pinned message⬇️", reply_markup=reply_markup)
+                       "⬇️Pinned message (might be a few minutes out-of-date)⬇️", reply_markup=reply_markup)
         return
     msg.reply_text("The pinned message was sent by a bot and this supergroup is not public, so I cannot help you.")
 
