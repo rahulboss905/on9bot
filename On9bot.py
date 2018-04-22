@@ -338,7 +338,7 @@ def get_message_link(bot, update):
     if chat.type == "supergroup" and chat.username:
         msg.reply_text("t.me/{}/{}".format(chat.username, rmsg_id), disable_web_page_preview=True)
     else:
-        msg.reply_text("公開嘅超級群組嘅訊息先有link㗎。不過我可以話你知，嗰條訊息嘅message id係{}。".format(rmsg_id))
+        msg.reply_markdown("公開嘅超級群組嘅訊息先有link㗎。不過我可以話你知，嗰條訊息嘅message id係```{}```。".format(rmsg_id))
 
 
 def get_file_id(bot, update):
