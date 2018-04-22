@@ -163,25 +163,31 @@ def general_responses(bot, update):
                 check_number_dude(bot, update, nub)
     elif msg.left_chat_member:
         msg.reply_text("Bey")
-    elif msg:
-        check_number_dude(bot, update, msg.from_user)
-    elif msg.pinned_message:
+    check_number_dude(bot, update, msg.from_user)
+    if msg.pinned_message:
         if user.id != 463998526:
             msg.reply_markdown(user.mention_markdown(user.full_name) + "又pin嘢...🙃", quote=False)
     elif msg.sticker:
         if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
             msg.reply_text("嘩屌又係bb，見到都反胃。")
-    elif update.message.text:
+    elif msg.text:
         swear_word_detector(bot, update)
         text = update.message.text.lower()
         if text == "hello" and user.id == 463998526:
             msg.reply_text("主人你好！")
         if update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
-            update.message.reply_text("唔好tag我主人，乖。")
+            msg.reply_text("唔好tag我主人，乖。")
         if text == "js is very on9":
-            update.message.reply_text("Your IQ is 500!")
+            msg.reply_text("Your IQ is 500!")
         if "trainer jono is rubbish" in text:
-            update.message.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
+            msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
+
+
+def markdown_error_response(error):
+    text = """Markdown error: {}
+Parse mode is Markdown. Use a backslash (\"\\\") before a markdown character (\"_\", \"*\", \"`") to escape it."""
+    text.format(str(error))
+    return text
 
 
 def echo(bot, update):
