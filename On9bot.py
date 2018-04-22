@@ -396,7 +396,7 @@ def feedback(bot, update):
         bot.send_message(1141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
         msg.reply_text("Feedback sent successfully!")
     except IndexError:
-        update.message.reply_to_message("Please provide an argument. For example: /feedback 我覺得你可以加呢個功能...")
+        update.message.reply_text("Please provide an argument. For example: /feedback 我覺得你可以加呢個功能...")
 
 
 def error(bot, update, error):
