@@ -178,6 +178,8 @@ def general_responses(bot, update):
             msg.reply_text("主人你好！")
         elif update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
             msg.reply_text("唔好tag我主人，乖。")
+        elif text == "ur mom gay":
+            msg.reply_text("no u")
         elif text == "js is very on9":
             msg.reply_text("Your IQ is 500!")
         elif "trainer jono is rubbish" in text:
