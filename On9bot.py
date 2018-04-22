@@ -374,8 +374,10 @@ def message_handler(bot, update):
             msg.reply_text("唔好tag我主人，乖。")
         elif "ur mom gay" in text:
             msg.reply_text("no u")
-        elif text == "no no u":
+        elif text == "no u":
             msg.reply_text("no no u")
+        elif text == "no no u":
+            msg.reply_text("no no no u")
         elif "no no no u" in text:
             msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
         elif text == "js is very on9":
