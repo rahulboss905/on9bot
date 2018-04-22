@@ -360,7 +360,7 @@ def pinned(bot, update):
         msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=pmsg_id)
         return
     if chat.username:
-        link = "t.me./{}/{}".format(chat.username, pmsg_id)
+        link = "https://t.me/{}/{}".format(chat.username, pmsg_id)
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
         msg.reply_text("The message is sent by a bot, so I can only provide you an url button to the message.\n\n"
                        "⬇️Pinned message⬇️", reply_markup=reply_markup)
