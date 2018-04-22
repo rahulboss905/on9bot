@@ -356,7 +356,7 @@ def pinned(bot, update):
         msg.reply_text("No message is pinned in this supergroup currently.")
         return
     pmsg_id = chat_info.pinned_message.message_id
-    if not chat_info.pinned_message.from_user.is_bot:
+    if not chat_info.pinned_message.from_user.is_bot or chat_info.pinned_message.from_user.id == 506548905:
         msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=pmsg_id)
         return
     if chat.username:
