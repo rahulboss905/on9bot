@@ -357,7 +357,7 @@ def pinned(bot, update):
         return
     pmsg_id = chat_info.pinned_message.message_id
     if not chat_info.pinned_message.from_user.is_bot:
-        chat.send_message("⬆️Pinned message⬆️", reply_to_message_id=pmsg_id)
+        msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=pmsg_id)
         return
     if chat.username:
         link = "t.me./{}/{}".format(chat.username, pmsg_id)
