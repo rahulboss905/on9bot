@@ -37,7 +37,7 @@ def tag9js(bot, update):
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                                   reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
             sleep(15)
-            msg.reply_text("Keyboard removed, message deleted.", reply_markup=ReplyKeyboardRemove(), quote=False)
+            msg.reply_text("Tag9js is over, keyboard removed, message deleted.", reply_markup=ReplyKeyboardRemove(), quote=False)
             try:
                 sent.delete()
             except Exception:
@@ -91,7 +91,7 @@ def tag9_part2(msg, u_info):
         sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                               reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
-        msg.reply_text("Keyboard removed, message deleted.", reply_markup=ReplyKeyboardRemove(), quote=False)
+        msg.reply_text("Tag9 over, keyboard removed, message deleted.", reply_markup=ReplyKeyboardRemove(), quote=False)
         try:
             sent.delete()
         except Exception:
