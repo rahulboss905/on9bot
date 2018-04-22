@@ -163,7 +163,7 @@ def echo(bot, update):
             try:
                 msg.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
             except Exception as e:
-                markdown_error_response(e)
+                msg.reply_text(markdown_error_response(e))
             else:
                 try:
                     msg.delete()
@@ -173,7 +173,7 @@ def echo(bot, update):
             try:
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
             except Exception as e:
-                markdown_error_response(e)
+                msg.reply_text(markdown_error_response(e))
             else:
                 try:
                     msg.delete()
@@ -186,7 +186,7 @@ def echo(bot, update):
                     msg.reply_text(update.message.reply_to_message.text, disable_web_page_preview=True,
                                    quote=False)
                 except Exception as e:
-                    markdown_error_response(e)
+                    msg.reply_text(markdown_error_response(e))
                 else:
                     try:
                         msg.delete()
