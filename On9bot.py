@@ -393,7 +393,7 @@ def feedback(bot, update):
         fb = helpers.escape_markdown(update.message.text.split(" ", 1)[1])
         fb += "\n\nThis feedback was sent by {} (user id: ```{}```) in {}.".format(user.mention_markdown(user.full_name),
                                                                                    user.id, chat_type)
-        bot.send_message(1141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
+        bot.send_message(-1001141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
         msg.reply_text("Feedback sent successfully!")
     except IndexError:
         update.message.reply_text("Please provide an argument. For example: /feedback 我覺得你可以加呢個功能...")
@@ -401,7 +401,7 @@ def feedback(bot, update):
 
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
-    bot.send_message(1141544515, str(error))
+    bot.send_message(-1001141544515, str(error))
 
 
 def main():
