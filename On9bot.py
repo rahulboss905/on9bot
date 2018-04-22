@@ -389,7 +389,7 @@ def feedback(bot, update):
     user = msg.from_user
     chat = update.effective_chat
     try:
-        chat_type = "{} (chat id: {}, username: @{})".format(chat.title, chat.id, chat.username) if chat.id < 0 else "pm"
+        chat_type = "{} (chat id: `{}`, username: @{})".format(chat.title, chat.id, chat.username) if chat.id < 0 else "pm"
         fb = helpers.escape_markdown(update.message.text.split(" ", 1)[1])
         fb += "\n\nThis feedback was sent by {} (user id: `{}`) in {}.".format(user.mention_markdown(user.full_name),
                                                                                    user.id, chat_type)
