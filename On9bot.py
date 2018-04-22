@@ -362,10 +362,10 @@ def pinned(bot, update):
     if chat.username:
         link = "https://t.me/{}/{}".format(chat.username, pmsg_id)
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
-        msg.reply_text("The message is sent by a bot, so I can only provide you an url button to the message.\n\n"
+        msg.reply_text("The message is sent by another bot, so I can only provide you an url button to the message.\n\n"
                        "⬇️Pinned message (might be a few minutes out-of-date)⬇️", reply_markup=reply_markup)
         return
-    msg.reply_text("The pinned message was sent by a bot and this supergroup is not public, so I cannot help you.")
+    msg.reply_text("The pinned message was sent by another bot and this supergroup is not public, so I cannot help you.")
 
 
 def message_handler(bot, update):
