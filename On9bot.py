@@ -447,6 +447,7 @@ def main():
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("r", echo))
     dp.add_handler(CommandHandler("user_info", user_info))
+    dp.add_handler(CommandHandler("pinned", pinned))
     dp.add_handler(CommandHandler("feedback", feedback))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
     dp.add_handler(MessageHandler(Filters.all, message_handler))
