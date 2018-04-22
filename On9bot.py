@@ -389,10 +389,11 @@ def feedback(bot, update):
     user = msg.from_user
     chat = update.effective_chat
     try:
-        chat_type = "{} (chat id: `{}`, username: @{})".format(chat.title, chat.id, chat.username) if chat.id < 0 else "pm"
-        fb = helpers.escape_markdown(update.message.text.split(" ", 1)[1])
-        fb += "\n\nThis feedback was sent by {} (user id: `{}`) in {}.".format(user.mention_markdown(user.full_name),
-                                                                                   user.id, chat_type)
+        username = "@{}".format(chat.username) if chat.username else "none"
+        chat_type = "{} (chat id: `{}`, username: {})".format(chat.title, chat.id, username) if chat.id < 0 else "pm"
+        fb = helpers.escape_markdown(msg.text.split(" ", 1)[1])
+        fb += "\n\nFeedback from {} (user id: `{}`) sent in {}.".format(user.mention_markdown(user.full_name),
+                                                                        user.id, chat_type)
         bot.send_message(-1001141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
         msg.reply_text("Feedback sent successfully!")
     except IndexError:
