@@ -30,9 +30,10 @@ def bot_help(bot, update):
 @run_async
 def tag9js(bot, update):
     msg = update.message
-    if msg.chat_id == -1001295361187:
-        update.effective_chat.send_action(ChatAction.TYPING)
-        js_info = bot.get_chat_member(msg.chat_id, 190726372)
+    chat = update.effective_chat
+    if chat.id == -1001295361187:
+        chat.send_action(ChatAction.TYPING)
+        js_info = chat.get_member(190726372)
         if js_info.user.username:
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                                   reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
@@ -44,7 +45,7 @@ def tag9js(bot, update):
                 pass
         else:
             msg.reply_text("no u, JS removed his username.")
-    elif msg.chat_id < 0:
+    elif chat.id < 0:
         msg.reply_text("no u")
     else:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
@@ -55,6 +56,7 @@ can_use_tag9 = (463998526, 190726372, 106665913)
 # respectively  Tr. Jono,  JS,        Jeffffffc
 temp_can_use_tag9 = (487754154, 426072433, 49202743, 442517724)
 # respectively       Cat,       Giselle,   Siu Kei,  Chestnut,
+
 
 @run_async
 def tag9(bot, update, args):
@@ -84,9 +86,9 @@ def tag9_part2(msg, u_info):
     elif u_info.user.id in (463998526, 506548905):
         msg.reply_text("no u")
     elif u_info.user.is_bot:
-        msg.reply_text("no u, don't tag other bots")
+        msg.reply_text("no u, dun tag other bots")
     elif u_info.user.username is None:
-        msg.reply_markdown("no u, that user does not have a username.")
+        msg.reply_markdown("no u, no username.")
     else:
         sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                               reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
@@ -140,11 +142,11 @@ def check_number_dude(bot, update, user):
     if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
         msg.reply_text("又係數字人？我屌！")
         try:
-            bot.kick_chat_member(msg.chat_id, user.id)
+            update.effective_chat.kick_member(user.id)
         except Exception:
             pass
         try:
-            update.message.delete()
+            msg.delete()
         except Exception:
             pass
 
@@ -341,6 +343,20 @@ Video messages"""
 
 def ping(bot, update):
     update.message.reply_markdown("Ping你老母？！")
+
+
+def pinned(bot, update):
+    msg = update.message
+    chat = update.effective_chat
+    if chat.type != "supergroup":
+        msg.reply_text("This command can only be used in supergroups!")
+        return
+    chat_info = bot.get_chat(chat.id)
+    if not chat_info.pinned_message:
+        msg.reply_text("No message is pinned in this supergroup currently.")
+        return
+    if not chat_info.pinned_message.from_user.is_bot:
+        chat.send_message("")
 
 
 def message_handler(bot, update):
