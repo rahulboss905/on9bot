@@ -388,12 +388,15 @@ def feedback(bot, update):
     msg = update.message
     user = msg.from_user
     chat = update.effective_chat
-    chat_type = "{} (chat id: {}, username: {})".format(chat.title, chat.id, chat.username) if chat.id < 0 else "pm"
-    fb = helpers.escape_markdown(update.message.text.split(" ", 1)[1])
-    fb += "\n\nThis feedback was sent by {} (user id: ```{}```) in {}.".format(user.mention_markdown(user.full_name),
-                                                                               user.id, chat_type)
-    bot.send_message(1141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
-    msg.reply_text("Feedback sent successfully!")
+    try:
+        chat_type = "{} (chat id: {}, username: {})".format(chat.title, chat.id, chat.username) if chat.id < 0 else "pm"
+        fb = helpers.escape_markdown(update.message.text.split(" ", 1)[1])
+        fb += "\n\nThis feedback was sent by {} (user id: ```{}```) in {}.".format(user.mention_markdown(user.full_name),
+                                                                                   user.id, chat_type)
+        bot.send_message(1141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
+        msg.reply_text("Feedback sent successfully!")
+    except IndexError:
+        update.message.reply_to_message("Please provide an argument. For example: /feedback 我覺得你可以加呢個功能...")
 
 
 def error(bot, update, error):
