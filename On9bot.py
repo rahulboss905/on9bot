@@ -341,10 +341,10 @@ def pinned(bot, update):
         msg.reply_text("no u, supergoups only")
         return
     chat_info = bot.get_chat(chat.id)
-    if not chat_info.pinned_message:
+    pmsg = chat_info.pinned_message
+    if not pmsg:
         msg.reply_text("no u, no pinned (may be outdated)")
         return
-    pmsg = chat_info.pinned_message
     p_id = pmsg.message_id
     if not pmsg.from_user.is_bot or pmsg.from_user.id == 506548905:
         msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=p_id)
