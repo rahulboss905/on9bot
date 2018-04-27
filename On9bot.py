@@ -338,8 +338,9 @@ def pinned(bot, update):
     msg = update.message
     chat = msg.chat
     if chat.type != "supergroup":
-        msg.reply_text("no u, supergoups only")
+        msg.reply_text("no u, supergroups only")
         return
+    chat.send_action("typing")
     chat_info = bot.get_chat(chat.id)
     pmsg = chat_info.pinned_message
     if not pmsg:
@@ -348,13 +349,12 @@ def pinned(bot, update):
     p_id = pmsg.message_id
     if not pmsg.from_user.is_bot or pmsg.from_user.id == 506548905:
         msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=p_id)
-        return
-    if chat.username:
+    elif chat.username:
         link = "https://telegram.dog/{}/{}".format(chat.username, p_id)
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
         msg.reply_text("⬇️Pinned message⬇️", reply_markup=reply_markup)
-        return
-    msg.reply_text("no u, sender is bot and supergroup is private, cannot help")
+    else:
+        msg.reply_text("no u, sender is bot and supergroup is private, cannot help")
 
 
 def message_handler(bot, update):
