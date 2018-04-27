@@ -1,4 +1,4 @@
-from telegram import ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
 from telegram.error import BadRequest, TimedOut
 from telegram.utils import helpers
@@ -32,7 +32,7 @@ def tag9js(bot, update):
     msg = update.message
     chat = update.effective_chat
     if chat.id == -1001295361187:
-        chat.send_action(ChatAction.TYPING)
+        chat.send_action("typing")
         js_info = chat.get_member(190726372)
         if js_info.user.username:
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
@@ -63,7 +63,7 @@ can_use_tag9 = (463998526, 190726372, 106665913)
 def tag9(bot, update, args):
     msg = update.message
     chat = msg.chat
-    chat.send_action(ChatAction.TYPING)
+    chat.send_action("typing")
     if msg.from_user.id not in can_use_tag9:  # and msg.from_user.id not in can_use_tag9:
         msg.reply_text("no u")
     elif msg.chat_id > 0:
@@ -210,8 +210,9 @@ def user_info(bot, update):
     if msg.chat_id > 0:
         msg.reply_text("暫時群組入，面先用到呢個指令，pm就收皮先。")
         return
-    user = msg.reply_to_message.from_user
     chat = msg.chat
+    chat.send_action("typing")
+    user = msg.reply_to_message.from_user
     title = chat.title
     if user.is_bot:
         text = "*Information of this bot*"
@@ -341,7 +342,7 @@ def pinned(bot, update):
         return
     chat_info = bot.get_chat(chat.id)
     if not chat_info.pinned_message:
-        msg.reply_text("no u, no pinned)")
+        msg.reply_text("no u, no pinned (may be outdated)")
         return
     pmsg = chat_info.pinned_message
     p_id = pmsg.message_id
