@@ -347,12 +347,12 @@ def pinned(bot, update):
     pmsg = chat_info.pinned_message
     p_id = pmsg.message_id
     if not pmsg.from_user.is_bot or pmsg.from_user.id == 506548905:
-        msg.reply_text("⬆️Pinned message⬆️)", reply_to_message_id=p_id)
+        msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=p_id)
         return
     if chat.username:
         link = "https://telegram.dog/{}/{}".format(chat.username, p_id)
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
-        msg.reply_text("⬇️Pinned message⬇️)", reply_markup=reply_markup)
+        msg.reply_text("⬇️Pinned message⬇️", reply_markup=reply_markup)
         return
     msg.reply_text("no u, sender is bot and supergroup is private, cannot help")
 
