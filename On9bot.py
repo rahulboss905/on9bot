@@ -374,12 +374,14 @@ def message_handler(bot, update):
             msg.reply_text("Your IQ is 500!")
         elif text == "trainer jono is rubbish":
             msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
+        elif "but can you do this" in text:
+            msg.reply_sticker("CAADBAADbwIAAvkw6QUeD3c89PLAOAI")
         elif text == "goodest english":
-            msg.reply_voice()
+            msg.reply_voice("AwADBQADJgAD8KLQVNdHdLAHdLMzAg")
         elif text == "my english is very good":
-            msg.reply_voice()
-        elif "too good" in text:
-            msg.reply_voice()
+            msg.reply_voice("AwADBQADJwAD8KLQVFu-e5gh4i8RAg")
+        elif "too good" in text or "very good" in text:
+            msg.reply_voice("AwADBQADKAAD8KLQVHrlKTFsd-qGAg")
 
 
 def feedback(bot, update):
