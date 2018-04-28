@@ -179,16 +179,16 @@ def echo(bot, update):
 
 def user_info(bot, update):
     msg = update.message
+    if msg.chat_id > 0:
+        msg.reply_text("no u, groups only")
+        return
     if not msg.reply_to_message:
         msg.reply_text("no u, reply to a message")
-        return
-    if msg.chat_id > 0:
-        msg.reply_text("暫時群組入，面先用到呢個指令，pm就收皮先。")
         return
     chat = msg.chat
     chat.send_action("typing")
     user = msg.reply_to_message.from_user
-    title = chat.title
+    title = helpers.escape_markdown(chat.title)
     if user.is_bot:
         text = "*Information of this bot*"
     else:
@@ -249,7 +249,7 @@ def user_info(bot, update):
         else:
             text += "\n\nCan send messages: No"
     elif status == "left":
-        text += "\n\n*Previously a member of {}".format(title)
+        text += "\n\n*Previously a member* of {}".format(title)
     elif status == "kicked":
         text += "\n\n*Banned* from {}".format(title)
     msg.reply_markdown(text)
