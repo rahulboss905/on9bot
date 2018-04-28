@@ -1,6 +1,6 @@
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
-from telegram.error import BadRequest, TimedOut
+from telegram.error import TelegramError, BadRequest, TimedOut
 from telegram.utils.helpers import escape_markdown
 from time import sleep
 from re import match
@@ -42,7 +42,7 @@ def tag9js(bot, update):
                            reply_markup=ReplyKeyboardRemove(), quote=False)
             try:
                 sent.delete()
-            except Exception:
+            except TelegramError:
                 pass
         else:
             msg.reply_text("no u, JS removed his username.")
@@ -78,7 +78,7 @@ def tag9(bot, update, args):
         except ValueError:
             msg.reply_text("no u, numbers only")
         except BadRequest as e:
-            msg.reply_text("Bad request: " + str(e))
+            msg.reply_text("no u")
 
 
 @run_async
@@ -98,7 +98,7 @@ def tag9_part2(msg, u_info):
         msg.reply_text("Tag9 over, keyboard removed, message deleted.", reply_markup=ReplyKeyboardRemove(), quote=False)
         try:
             sent.delete()
-        except Exception:
+        except TelegramError:
             pass
 
 
@@ -120,11 +120,11 @@ def check_number_dude(bot, update, user):
         msg.reply_text("又係數字人？我屌！")
         try:
             msg.chat.kick_member(user.id)
-        except Exception:
+        except TelegramError:
             pass
         try:
             msg.delete()
-        except Exception:
+        except TelegramError:
             pass
         return True
 
@@ -147,17 +147,17 @@ def echo(bot, update):
             else:
                 try:
                     msg.delete()
-                except Exception:
+                except TelegramError:
                     pass
         else:
             try:
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
-            except Exception as e:
+            except TelegramError as e:
                 msg.reply_text(markdown_error_text.format(str(e)))
             else:
                 try:
                     msg.delete()
-                except Exception:
+                except TelegramError:
                     pass
     except IndexError:
         if rmsg:
@@ -165,12 +165,12 @@ def echo(bot, update):
                 try:
                     msg.reply_text(rmsg.text, disable_web_page_preview=True,
                                    quote=False)
-                except Exception as e:
+                except TelegramError as e:
                     msg.reply_text(markdown_error_text.format(str(e)))
                 else:
                     try:
                         msg.delete()
-                    except Exception:
+                    except TelegramError:
                         pass
             else:
                 msg.reply_text("no u")
@@ -202,7 +202,7 @@ def user_info(bot, update):
     try:
         nub = chat.get_member(user.id)
         status = nub.status
-    except Exception:
+    except TelegramError:
         msg.reply_text(text)
         return
     if status == "creator":
