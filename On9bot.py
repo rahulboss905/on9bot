@@ -57,8 +57,8 @@ def tag9js(bot, update):
 
 can_use_tag9 = (463998526, 190726372, 106665913)
 # respectively  Tr. Jono,  JS,        Jeffffffc
-# temp_can_use_tag9 = (487754154, 426072433, 49202743, 442517724)
-# respectively         Cat,       Giselle,   Siu Kei,  Chestnut,
+temp_can_use_tag9 = (534780193, 444970538)
+# Re 2's accounts
 
 
 @run_async
@@ -66,7 +66,7 @@ def tag9(bot, update, args):
     msg = update.message
     chat = msg.chat
     chat.send_action("typing")
-    if msg.from_user.id not in can_use_tag9:  # and msg.from_user.id not in can_use_tag9:
+    if not (msg.from_user.id in can_use_tag9 or msg.from_user.id in temp_can_use_tag9):
         msg.reply_text("no u")
     elif msg.chat_id > 0:
         msg.reply_text("no u")
