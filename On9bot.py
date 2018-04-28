@@ -22,8 +22,8 @@ def start(bot, update):
 
 
 def bot_help(bot, update):
-    update.message.reply_markdown("[On9Bot所有功能](http://telegra.ph/On9Bot-Help-03-25) (尚未完成)\n"
-                                  "[Source code](https://www.codepile.net/pile/3aD3DPkD) (尚未更新)\n"
+    update.message.reply_markdown("[On9Bot功能](http://telegra.ph/On9Bot-Help-03-25) (尚未完成)\n"
+                                  "[source code link placeholder]()\n"
                                   "¯\\\_(ツ)\_/¯")
 
 
@@ -56,7 +56,7 @@ def tag9js(bot, update):
 can_use_tag9 = (463998526, 190726372, 106665913)
 # respectively  Tr. Jono,  JS,        Jeffffffc
 # temp_can_use_tag9 = (487754154, 426072433, 49202743, 442517724)
-# respectively       Cat,       Giselle,   Siu Kei,  Chestnut,
+# respectively         Cat,       Giselle,   Siu Kei,  Chestnut,
 
 
 @run_async
@@ -112,31 +112,6 @@ def remove_keyboard(bot, update):
 
 cn_swear_words = ("屌", "閪", "柒", "撚", "鳩", "𨳒", "屄", "𨶙", "𨳊", "㞗", "𨳍", "杘")
 cn_swear_words_in_eng = ("diu", "dllm", "dnlm")
-eng_swear_words = ("anus", "arse", "ass", "axwound", "bampot", "bastard", "beaner", "bitch", "blowjob", "bollocks",
-                   "bollox", "boner", "butt", "camaltoe", "carpetmuncher", "chesticle", "chinc", "chink", "choad",
-                   "chode", "clit", "cock", "coochie", "choochy", "coon", "cooter", "cracker", "cum", "cunnie",
-                   "cunnilingus", "cunt", "dago", "damn", "deggo", "dick", "dike", "dildo", "doochbag", "dookie",
-                   "douche", "dumb", "dyke", "fag", "fellatio", "feltch", "flamer", "fuck", "fidgepacker",
-                   "goddamn", "goddamnit", "gooch", "gook", "gringo", "guido", "handjob", "hardon", "heeb", "hell",
-                   "hoe", "homo", "honkey", "humping", "jagoff", "jap", "jerk", "jigaboo", "jizz", "junglebunny",
-                   "kike", "kooch", "kootch", "kraut", "kunt", "kyke", "lesbian", "lesbo", "lezzie", "mick", "minge",
-                   "muff", "munging", "negro", "nigaboo", "nigga", "nigger", "niglet", "nutsack", "paki", "panooch",
-                   "pecker", "penis", "piss", "polesmoker", "pollock", "poon", "porchmonkey", "prick", "punanny",
-                   "punta", "pussy", "pussies", "puto", "queef", "queer", "renob", "rimjob", "ruski", "schlong",
-                   "scrote", "shit", "shiz", "skank", "skeet", "slut", "smeg", "snatch", "spic", "splooge", "spook",
-                   "tard", "thot", "testicle", "tit", "twat", "vajj", "vag", "vajayjay", "vjayjay", "wank", "wetback",
-                   "whore", "wop", "wtf", "fk", "asshole", "bullshit", "shitty", "asshole")
-
-
-def swear_word_detector(bot, update):
-    msg = update.message
-    text = msg.text
-    if any(word in text for word in cn_swear_words):
-        msg.reply_text("講粗口？！記你一次大過！") if msg.chat_id < 0 else msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-    else:
-        text = text.lower().split(" ")
-        if any(word in text for word in cn_swear_words_in_eng) or any(word in text for word in eng_swear_words):
-            msg.reply_text("講粗口？！記你一次大過！") if msg.chat_id < 0 else msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
 
 
 def check_number_dude(bot, update, user):
@@ -379,11 +354,12 @@ def message_handler(bot, update):
     #     if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
     #         msg.reply_text("嘩屌又係bb，見到都反胃。")
     elif msg.text:
-        swear_word_detector(bot, update)
         text = msg.text.lower()
-        if text == "hello" and user.id == 463998526:
+        if any(w in text for w in cn_swear_words) or any(w in text.split() for w in cn_swear_words_in_eng):
+            msg.reply_text("講粗口？！記你一次大過！") if msg.chat_id < 0 else msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
+        elif text == "hello" and user.id == 463998526:
             msg.reply_text("主人你好！")
-        elif update.effective_user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
+        elif user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
             msg.reply_text("唔好tag我主人，乖。")
         elif "ur mom gay" in text:
             msg.reply_text("no u")
@@ -425,8 +401,8 @@ def error_handler(bot, update, error):
     if str(error) == "Timed out":
         return
     logger.warning('Update "%s" caused error "%s"', update, error)
-    forwarded = bot.forward_message(-1001141544515, update.effective_chat.id, update.message.message_id)
-    bot.send_message(-1001141544515, str(error), reply_to_message_id=forwarded.message_id)
+    forwarded = update.message.forward(-1001141544515)
+    bot.send_message(-1001141544515, "Error: {}".format(error), reply_to_message_id=forwarded.message_id)
 
 
 def main():
