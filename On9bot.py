@@ -131,7 +131,7 @@ def check_number_dude(bot, update, user):
 
 markdown_error_text = """no u, markdown error: {}
 Parse mode = Markdown. Use a backslash (\"\\\") before a markdown character to escape it, like this:
-\"_\", \"*\", \"`" """
+\"\_\", \"\*\", \"\`" """
 
 
 def echo(bot, update):
