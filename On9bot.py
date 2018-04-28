@@ -1,7 +1,7 @@
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
 from telegram.error import BadRequest, TimedOut
-from telegram.utils import helpers
+from telegram.utils.helpers import escape_markdown
 from time import sleep
 from re import match
 import logging
@@ -189,14 +189,14 @@ def user_info(bot, update):
     chat = msg.chat
     chat.send_action("typing")
     user = msg.reply_to_message.from_user
-    title = helpers.escape_markdown(chat.title)
+    title = escape_markdown(chat.title)
     if user.is_bot:
         text = "*Information of this bot*"
     else:
         text = "*Information of this user*"
-    text += "\n\nUser id: `{}`\nName: {}".format(user.id, helpers.escape_markdown(user.full_name))
+    text += "\n\nUser id: `{}`\nName: {}".format(user.id, escape_markdown(user.full_name))
     if user.username:
-        text += "\nUsername: @{}".format(helpers.escape_markdown(user.username))
+        text += "\nUsername: @{}".format(escape_markdown(user.username))
     if user.language_code:
         text += "\nLanguage code: {}".format(user.language_code)
     try:
@@ -285,25 +285,25 @@ def get_file_id(bot, update):
         msg.reply_text("no u")
         return
     if rmsg.audio:
-        get_file_id_response(msg, "段音頻", rmsg.audio.file_id)
+        get_file_id_response(msg, "audio", rmsg.audio.file_id)
     elif rmsg.photo:
-        get_file_id_response(msg, "張相", rmsg.photo[-1].file_id)
+        get_file_id_response(msg, "picture", rmsg.photo[-1].file_id)
     elif rmsg.sticker:
-        get_file_id_response(msg, "張貼紙", rmsg.sticker.file_id)
+        get_file_id_response(msg, "sticker", rmsg.sticker.file_id)
     elif rmsg.video:
-        get_file_id_response(msg, "段影片", rmsg.video.file_id)
+        get_file_id_response(msg, "video", rmsg.video.file_id)
     elif rmsg.voice:
-        get_file_id_response(msg, "段錄音", rmsg.voice.file_id)
+        get_file_id_response(msg, "voice recording", rmsg.voice.file_id)
     elif rmsg.video_note:
-        get_file_id_response(msg, "段影片", rmsg.video_note.file_id)
+        get_file_id_response(msg, "video", rmsg.video_note.file_id)
     elif rmsg.document:
-        get_file_id_response(msg, "份文件", rmsg.document.file_id)
+        get_file_id_response(msg, "document", rmsg.document.file_id)
     else:
         msg.reply_text("no u")
 
 
 def get_file_id_response(msg, file_type, file_id):
-    msg.reply_markdown("呢{}嘅file id: ```{}```".format(file_type, file_id))
+    msg.reply_markdown("File id of this {}: ```{}```".format(file_type, file_id))
 
 
 def ping(bot, update):
@@ -372,8 +372,14 @@ def message_handler(bot, update):
             msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
         elif text == "js is very on9":
             msg.reply_text("Your IQ is 500!")
-        elif "trainer jono is rubbish" in text:
+        elif text == "trainer jono is rubbish":
             msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
+        elif text == "goodest english":
+            msg.reply_voice()
+        elif text == "my english is very good":
+            msg.reply_voice()
+        elif "too good" in text:
+            msg.reply_voice()
 
 
 def feedback(bot, update):
@@ -383,7 +389,7 @@ def feedback(bot, update):
     try:
         chat_link = "telegram.dog/{}".format(chat.username) if chat.username and chat.id < 0 else None
         chat_name = "[{}]({}) (chat id: `{}`)".format(chat.title, chat_link, chat.id) if chat.id < 0 else "pm"
-        fb = helpers.escape_markdown(msg.text.split(" ", 1)[1])
+        fb = escape_markdown(msg.text.split(" ", 1)[1])
         fb = "\n\nFeedback from {} (user id: `{}`) sent in {} ({}).\n\n{}".format(user.mention_markdown(user.full_name),
                                                                                   user.id, chat_name, chat.type, fb)
         if chat_link:
@@ -402,8 +408,11 @@ def error_handler(bot, update, error):
     if str(error) == "Timed out":
         return
     logger.warning('Update "%s" caused error "%s"', update, error)
-    forwarded = update.message.forward(-1001141544515)
+    msg = update.message
+    forwarded = msg.forward(-1001141544515)
     bot.send_message(-1001141544515, "Error: {}".format(error), reply_to_message_id=forwarded.message_id)
+    msg.reply_text("This message caused an error: {}\nThe message was forwarded to the creator and he will try to fix "
+                   "it.")
 
 
 def main():
