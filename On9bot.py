@@ -18,7 +18,8 @@ TOKEN = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
 def start(bot, update):
     msg = update.message
     if msg.chat_id > 0:
-        msg.reply_text("吓。求其揾個command用下，撳 /help 睇點用。有咩事揾 @Trainer_Jono 。")
+        msg.reply_text("Use /help to see my functions. Contact @Trainer_Jono if you have questions, suggestions or "
+                       "found a typo or error, lol.")
 
 
 def bot_help(bot, update):
@@ -50,7 +51,8 @@ def tag9js(bot, update):
         msg.reply_text("no u")
     else:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
-        msg.reply_text("呢個指令只可以喺HK Duker用，歡迎撳下面個掣入嚟HK Duker一齊 /tag9js 。", reply_markup=reply_markup)
+        msg.reply_text("This command can only be used in HK Duker. You are welcome to join us and of course, try out "
+                       "the command.", reply_markup=reply_markup)
 
 
 can_use_tag9 = (463998526, 190726372, 106665913)
@@ -76,7 +78,7 @@ def tag9(bot, update, args):
         try:
             tag9_part2(msg, chat.get_member(int(args[0])))
         except ValueError:
-            msg.reply_text("no u, numbers only")
+            msg.reply_text("no u, user ids only.")
         except BadRequest as e:
             msg.reply_text("no u")
 
@@ -88,7 +90,7 @@ def tag9_part2(msg, u_info):
     elif u_info.user.id in (463998526, 506548905):
         msg.reply_text("no u")
     elif u_info.user.is_bot:
-        msg.reply_text("no u, dun tag other bots")
+        msg.reply_text("no u, dun tag other bots.")
     elif u_info.user.username is None:
         msg.reply_text("no u, no username.")
     else:
@@ -110,14 +112,10 @@ def remove_keyboard(bot, update):
         msg.reply_text("no u")
 
 
-cn_swear_words = ("屌", "閪", "柒", "撚", "鳩", "𨳒", "屄", "𨶙", "𨳊", "㞗", "𨳍", "杘")
-cn_swear_words_in_eng = ("diu", "dllm", "dnlm")
-
-
 def check_number_dude(bot, update, user):
     msg = update.message
     if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
-        msg.reply_text("又係數字人？我屌！")
+        msg.reply_text("Number man, shit. BAN!!!!")
         try:
             msg.chat.kick_member(user.id)
         except TelegramError:
@@ -129,7 +127,7 @@ def check_number_dude(bot, update, user):
         return True
 
 
-markdown_error_text = """no u, markdown error: {}
+markdown_error_text = """no u, markdown error: {}.
 Parse mode = Markdown. Use a backslash (\"\\\") before a markdown character to escape it, like this:
 \"\_\", \"\*\", \"\`" """
 
@@ -173,18 +171,18 @@ def echo(bot, update):
                     except TelegramError:
                         pass
             else:
-                msg.reply_text("no u")
+                msg.reply_text("no u, messages with text only.")
         else:
-            msg.reply_text("no u")
+            msg.reply_markdown("no u, use `/echo [text]` or reply to a message.")
 
 
 def user_info(bot, update):
     msg = update.message
     if msg.chat_id > 0:
-        msg.reply_text("no u, groups only")
+        msg.reply_text("no u, groups only.")
         return
     if not msg.reply_to_message:
-        msg.reply_text("no u, reply to a message")
+        msg.reply_text("no u, reply to a message.")
         return
     chat = msg.chat
     chat.send_action("typing")
@@ -232,7 +230,7 @@ def user_info(bot, update):
     elif status == "member":
         text += "\n\n*Member* of {}".format(title)
     elif status == "restricted":
-        text += "\n\n*Restricted* in {}*".format(title)
+        text += "\n\n*Restricted* in {}".format(title)
         if nub.can_send_messages:
             text += "\n\nCan send messages: Yes"
             if nub.can_send_media_messages:
@@ -260,9 +258,9 @@ def get_id(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     if rmsg:
-        msg.reply_markdown("佢嘅user id: ```{}```".format(rmsg.from_user.id))
+        msg.reply_markdown("This user's id: ```{}```".format(rmsg.from_user.id))
     else:
-        msg.reply_markdown("呢個對話嘅chat id: ```{}```\n你嘅user id: ```{}```".format(msg.chat_id, msg.from_user.id))
+        msg.reply_markdown("This chat's id: ```{}```\nYour id: ```{}```".format(msg.chat_id, msg.from_user.id))
 
 
 def get_message_link(bot, update):
@@ -275,7 +273,7 @@ def get_message_link(bot, update):
     if chat.type == "supergroup" and chat.username:
         msg.reply_text("https://telegram.dog/{}/{}".format(chat.username, rmsg.id), disable_web_page_preview=True)
     else:
-        msg.reply_markdown("no u, can only use in public supergroup, but message id is ```{}```.".format(rmsg.id))
+        msg.reply_markdown("no u, can only use in public supergroup, but its message id is ```{}```.".format(rmsg.id))
 
 
 def get_file_id(bot, update):
@@ -299,7 +297,7 @@ def get_file_id(bot, update):
     elif rmsg.document:
         get_file_id_response(msg, "document", rmsg.document.file_id)
     else:
-        msg.reply_text("no u, message has no media")
+        msg.reply_text("no u, message has no media.")
 
 
 def get_file_id_response(msg, file_type, file_id):
@@ -307,7 +305,7 @@ def get_file_id_response(msg, file_type, file_id):
 
 
 def ping(bot, update):
-    update.message.reply_markdown("Ping你老母？！")
+    update.message.reply_markdown("Ping your mother?!")
 
 
 def pinned(bot, update):
@@ -330,7 +328,7 @@ def pinned(bot, update):
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
         msg.reply_text("⬇️Pinned message⬇️", reply_markup=reply_markup)
     else:
-        msg.reply_text("no u, sender is bot and supergroup is private, cannot help")
+        msg.reply_text("no u, sender is bot and group is private, but the id of that message is `{}`.".format(p_id))
 
 
 def message_handler(bot, update):
@@ -339,26 +337,19 @@ def message_handler(bot, update):
     if msg.new_chat_members:
         for nub in msg.new_chat_members:
             if nub.id == 506548905:
-                msg.reply_markdown("Hi，我係On9 Bot。撳 /help 睇點用。")
+                msg.reply_markdown("Use /help to see my functions. Contact @Trainer_Jono if you have questions, "
+                                   "suggestions or found typos/errors, lol.")
             elif nub.is_bot:
-                msg.reply_text("哦？新bot喎，乜水？")
+                msg.reply_text("Ayy, new bot!")
             else:
                 check_number_dude(bot, update, nub)
     elif msg.left_chat_member:
-        msg.reply_text("Bey")
+        msg.reply_text("Bey.")
     elif check_number_dude(bot, update, msg.from_user):
         return
-    # if msg.pinned_message:
-    #     if user.id != 463998526:
-    #         msg.reply_markdown(user.mention_markdown(user.full_name) + "又pin嘢...🙃", quote=False)
-    # elif msg.sticker:
-    #     if msg.sticker.set_name in ("payize2", "FPbabydukeredition"):
-    #         msg.reply_text("嘩屌又係bb，見到都反胃。")
     elif msg.text:
         text = msg.text.lower()
-        if any(w in text for w in cn_swear_words) or any(w in text.split() for w in cn_swear_words_in_eng):
-            msg.reply_text("講粗口？！記你一次大過！") if msg.chat_id < 0 else msg.reply_text("PM講粗口姐，我先懶得理你。Zzz...")
-        elif text == "hello" and user.id == 463998526:
+        if text == "hello" and user.id == 463998526:
             msg.reply_text("主人你好！")
         elif user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
             msg.reply_text("唔好tag我主人，乖。")
@@ -392,11 +383,11 @@ def feedback(bot, update):
         chat_link = "telegram.dog/{}".format(chat.username) if chat.username and chat.id < 0 else None
         chat_name = "[{}]({}) (chat id: `{}`)".format(chat.title, chat_link, chat.id) if chat.id < 0 else "pm"
         fb = escape_markdown(msg.text.split(" ", 1)[1])
-        fb = "\n\nFeedback from {} (user id: `{}`) sent in {} ({}).\n\n{}".format(user.mention_markdown(user.full_name),
-                                                                                  user.id, chat_name, chat.type, fb)
+        fb = "\n\nFeedback from {} (user id: `{}`) sent in {}.\n\n{}".format(user.mention_markdown(user.full_name),
+                                                                             user.id, chat_name, fb)
         if chat_link:
             message_link = chat_link + "/" + str(msg.message_id)
-            reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Feedback", url=message_link)]])
+            reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
             bot.send_message(-1001141544515, fb, parse_mode="Markdown",
                              reply_markup=reply_markup, disable_web_page_preview=True)
         else:
