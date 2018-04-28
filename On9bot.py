@@ -299,7 +299,7 @@ def get_file_id(bot, update):
     elif rmsg.document:
         get_file_id_response(msg, "document", rmsg.document.file_id)
     else:
-        msg.reply_text("no u")
+        msg.reply_text("no u, message has no media")
 
 
 def get_file_id_response(msg, file_type, file_id):
