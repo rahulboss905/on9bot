@@ -50,7 +50,7 @@ def tag9js(bot, update):
     elif chat.id < 0:
         msg.reply_text("no u")
     else:
-        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("加入HK Duker", url="https://t.me/hkduker")]])
+        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Join HK Duker", url="https://t.me/hkduker")]])
         msg.reply_text("This command can only be used in HK Duker. You are welcome to join us and of course, try out "
                        "the command.", reply_markup=reply_markup)
 
