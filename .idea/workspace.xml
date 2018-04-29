@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="53c9c8d4-5ca6-42f8-a228-7df61adfafb2" name="Default" comment="" />
+    <list default="true" id="53c9c8d4-5ca6-42f8-a228-7df61adfafb2" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -11,23 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="On9AnswerBot.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/On9AnswerBot/On9AnswerBot.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="268">
-              <caret line="225" column="36" lean-forward="true" selection-start-line="225" selection-start-column="36" selection-end-line="225" selection-end-column="36" />
-              <folding>
-                <element signature="e#0#63#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="On9bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/On9bot.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="204">
-              <caret line="128" column="0" lean-forward="true" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
+              <caret line="128" column="0" lean-forward="false" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -72,13 +62,13 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane" />
       <pane id="Scratches" />
       <pane id="Scope" />
-      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/On9bot.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
     <property name="SearchEverywhereHistoryKey" value="except Exception&#9;null&#9;null&#10;&lt;=&#9;null&#9;null" />
   </component>
@@ -161,6 +151,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17617238" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293011" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -231,16 +222,15 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/On9AnswerBot/On9AnswerBot.py">
+    <entry file="file://$PROJECT_DIR$/On9bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4216">
-          <caret line="248" column="9" lean-forward="true" selection-start-line="248" selection-start-column="9" selection-end-line="248" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#63#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/On9AnswerBot/On9AnswerBot.py" />
     <entry file="file://$PROJECT_DIR$/On9bot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6783">
@@ -402,20 +392,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/On9AnswerBot/On9AnswerBot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="225" column="36" lean-forward="true" selection-start-line="225" selection-start-column="36" selection-end-line="225" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#63#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/On9AnswerBot/On9AnswerBot.py" />
     <entry file="file://$PROJECT_DIR$/On9bot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
-          <caret line="128" column="0" lean-forward="true" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
+          <caret line="128" column="0" lean-forward="false" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
           <folding />
         </state>
       </provider>
