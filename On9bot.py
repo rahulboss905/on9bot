@@ -401,9 +401,10 @@ def error_handler(bot, update, error):
     if str(error) == "Timed out":
         return
     logger.warning('Update "%s" caused error "%s"', update, error)
+    msg = update.message
     error = str(error)
     forwarded = msg.forward(-1001141544515)
-    bot.send_message(-1001141544515, "Error: {}".format(error), reply_to_message_id=forwarded.message_id)
+    forwarded.reply_text("Error: {}".format(error), quote=True)
     msg.reply_text("This message caused an error: {}\nThe message was forwarded to the creator and he will try to "
                    "fix it.".format(error))
 
