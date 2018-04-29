@@ -430,7 +430,7 @@ def main():
     dp.add_handler(MessageHandler(Filters.all, message_handler))
     dp.add_error_handler(error_handler)
     updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=TOKEN, clean=True)
-    updater.bot.setWebhook("https://{}.herokuapp.com/{}".format(name, TOKEN))
+    updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(name, TOKEN))
     updater.idle()
 
 
