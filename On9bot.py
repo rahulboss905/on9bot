@@ -383,7 +383,7 @@ def feedback(bot, update):
         chat_link = "telegram.dog/{}".format(chat.username) if chat.username and chat.id < 0 else None
         chat_name = "[{}]({}) (chat id: `{}`)".format(chat.title, chat_link, chat.id) if chat.id < 0 else "pm"
         fb = escape_markdown(msg.text.split(" ", 1)[1])
-        fb = "\n\nFeedback for @On9Bot from {} (user id: `{}`) sent in {}.\n\n{}".format(
+        fb = "\n\nFeedback for @On9Bot from {} (user id: `{}`) sent in {}:\n\n{}".format(
             user.mention_markdown(user.full_name), user.id, chat_name, fb)
         if chat_link:
             message_link = chat_link + "/" + str(msg.message_id)
@@ -402,7 +402,7 @@ def error_handler(bot, update, error):
         return
     logger.warning('Update "%s" caused error "%s"', update, error)
     msg = update.message
-    error = str(error)
+    error = escape_markdown(str(error))
     forwarded = msg.forward(-1001141544515)
     forwarded.reply_text("Error: {}".format(error), quote=True)
     msg.reply_text("This message caused an error: {}\nThe message was forwarded to the creator and he will try to "
