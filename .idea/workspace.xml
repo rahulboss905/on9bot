@@ -27,8 +27,8 @@
       <file leaf-file-name="On9TagBot.py" pinned="false" current-in-tab="true">
         <entry file="file://C:/On9TagBot/On9TagBot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="290" column="44" lean-forward="false" selection-start-line="290" selection-start-column="44" selection-end-line="290" selection-end-column="44" />
+            <state relative-caret-position="345">
+              <caret line="289" column="23" lean-forward="true" selection-start-line="289" selection-start-column="23" selection-end-line="289" selection-end-column="23" />
               <folding>
                 <element signature="e#0#63#0" expanded="true" />
               </folding>
@@ -257,232 +257,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>222</line>
-          <option name="timeStamp" value="252" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>223</line>
-          <option name="timeStamp" value="254" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>224</line>
-          <option name="timeStamp" value="255" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>225</line>
-          <option name="timeStamp" value="256" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>226</line>
-          <option name="timeStamp" value="257" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>227</line>
-          <option name="timeStamp" value="258" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>228</line>
-          <option name="timeStamp" value="259" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>229</line>
-          <option name="timeStamp" value="260" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>230</line>
-          <option name="timeStamp" value="261" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>231</line>
-          <option name="timeStamp" value="262" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>232</line>
-          <option name="timeStamp" value="263" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>233</line>
-          <option name="timeStamp" value="264" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>234</line>
-          <option name="timeStamp" value="265" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>236</line>
-          <option name="timeStamp" value="266" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>235</line>
-          <option name="timeStamp" value="267" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>237</line>
-          <option name="timeStamp" value="268" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>238</line>
-          <option name="timeStamp" value="269" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>239</line>
-          <option name="timeStamp" value="270" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>240</line>
-          <option name="timeStamp" value="271" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>241</line>
-          <option name="timeStamp" value="272" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>242</line>
-          <option name="timeStamp" value="273" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>245</line>
-          <option name="timeStamp" value="274" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>246</line>
-          <option name="timeStamp" value="275" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>247</line>
-          <option name="timeStamp" value="276" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>250</line>
-          <option name="timeStamp" value="278" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>251</line>
-          <option name="timeStamp" value="279" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>252</line>
-          <option name="timeStamp" value="280" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>248</line>
-          <option name="timeStamp" value="283" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>253</line>
-          <option name="timeStamp" value="284" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>254</line>
-          <option name="timeStamp" value="285" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>255</line>
-          <option name="timeStamp" value="286" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>256</line>
-          <option name="timeStamp" value="287" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>258</line>
-          <option name="timeStamp" value="288" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>257</line>
-          <option name="timeStamp" value="289" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>260</line>
-          <option name="timeStamp" value="290" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>259</line>
-          <option name="timeStamp" value="291" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>261</line>
-          <option name="timeStamp" value="292" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>262</line>
-          <option name="timeStamp" value="293" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>263</line>
-          <option name="timeStamp" value="294" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>264</line>
-          <option name="timeStamp" value="295" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>265</line>
-          <option name="timeStamp" value="296" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>267</line>
-          <option name="timeStamp" value="297" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>243</line>
-          <option name="timeStamp" value="298" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://C:/On9TagBot/On9TagBot.py</url>
-          <line>244</line>
-          <option name="timeStamp" value="299" />
-        </line-breakpoint>
-      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="300" />
+      <option name="time" value="320" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -726,8 +504,8 @@
     </entry>
     <entry file="file://C:/On9TagBot/On9TagBot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
-          <caret line="290" column="44" lean-forward="false" selection-start-line="290" selection-start-column="44" selection-end-line="290" selection-end-column="44" />
+        <state relative-caret-position="345">
+          <caret line="289" column="23" lean-forward="true" selection-start-line="289" selection-start-column="23" selection-end-line="289" selection-end-column="23" />
           <folding>
             <element signature="e#0#63#0" expanded="true" />
           </folding>
