@@ -411,7 +411,8 @@ def error_handler(bot, update, error):
 
 def main():
     name = "on9bot"
-    port = os.environ.get("PORT")
+    port = os.environ.get('PORT', 80)
+    debug = os.environ.get('DEBUG', "no")
     updater = Updater(TOKEN)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
@@ -429,8 +430,11 @@ def main():
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
     dp.add_handler(MessageHandler(Filters.all, message_handler))
     dp.add_error_handler(error_handler)
-    updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=TOKEN, clean=True)
-    updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(name, TOKEN))
+    if debug != "yes":
+        updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=TOKEN, clean=True)
+        updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(name, TOKEN))
+    else:
+        updater.start_polling(clean=True)
     updater.idle()
 
 
