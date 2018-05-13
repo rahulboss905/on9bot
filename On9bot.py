@@ -23,9 +23,7 @@ def start(bot, update):
 
 
 def bot_help(bot, update):
-    update.message.reply_markdown("[On9Bot功能](http://telegra.ph/On9Bot-Help-03-25) (尚未完成)\n"
-                                  "[source code link placeholder]()\n"
-                                  "¯\\\_(ツ)\_/¯")
+    update.message.reply_html("Look at the code [here](https://github.com/Tr-Jono/on9bot/new/master), lol")
 
 
 @run_async
@@ -57,8 +55,6 @@ def tag9js(bot, update):
 
 can_use_tag9 = (463998526, 190726372, 106665913)
 # respectively  Tr. Jono,  JS,        Jeffffffc
-temp_can_use_tag9 = (534780193, 444970538)
-# Re 2's accounts
 
 
 @run_async
@@ -66,7 +62,7 @@ def tag9(bot, update, args):
     msg = update.message
     chat = msg.chat
     chat.send_action("typing")
-    if not (msg.from_user.id in can_use_tag9 or msg.from_user.id in temp_can_use_tag9):
+    if not msg.from_user.id in can_use_tag9:
         msg.reply_text("no u")
     elif msg.chat_id > 0:
         msg.reply_text("no u")
@@ -77,9 +73,11 @@ def tag9(bot, update, args):
     else:
         try:
             tag9_part2(msg, chat.get_member(int(args[0])))
+        except TimedOut:
+            pass
         except ValueError:
             msg.reply_text("no u, user ids only.")
-        except BadRequest as e:
+        except TelegramError as e:
             msg.reply_text("no u")
 
 
@@ -140,7 +138,9 @@ def echo(bot, update):
         if msg.reply_to_message:
             try:
                 rmsg.reply_markdown(args, disable_web_page_preview=True)
-            except BadRequest as e:
+            except TimedOut:
+                pass
+            except TelegramError as e:
                 msg.reply_text(markdown_error_text.format(str(e)))
             else:
                 try:
@@ -150,6 +150,8 @@ def echo(bot, update):
         else:
             try:
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
+            except TimedOut:
+                pass
             except TelegramError as e:
                 msg.reply_text(markdown_error_text.format(str(e)))
             else:
@@ -163,6 +165,8 @@ def echo(bot, update):
                 try:
                     msg.reply_text(rmsg.text, disable_web_page_preview=True,
                                    quote=False)
+                except TimedOut:
+                    pass
                 except TelegramError as e:
                     msg.reply_text(markdown_error_text.format(str(e)))
                 else:
