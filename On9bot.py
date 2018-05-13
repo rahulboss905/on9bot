@@ -110,22 +110,7 @@ def remove_keyboard(bot, update):
         msg.reply_text("no u")
 
 
-def check_number_dude(bot, update, user):
-    msg = update.message
-    if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
-        msg.reply_text("Number man, shit. BAN!!!!")
-        try:
-            msg.chat.kick_member(user.id)
-        except TelegramError:
-            pass
-        try:
-            msg.delete()
-        except TelegramError:
-            pass
-        return True
-
-
-markdown_error_text = """no u, markdown error: {}.
+markdown_error_text = """no u, markdown error occured: {}.
 Parse mode = Markdown. Use a backslash (\"\\\") before a markdown character to escape it, like this:
 \"\_\", \"\*\", \"\`" """
 
@@ -179,6 +164,10 @@ def echo(bot, update):
                     pass
 
 
+def yn_processor(var):
+    return "Yes" if var else "No"
+
+
 def user_info(bot, update):
     msg = update.message
     if msg.chat_id > 0:
@@ -191,69 +180,41 @@ def user_info(bot, update):
     chat.send_action("typing")
     user = msg.reply_to_message.from_user
     title = escape_markdown(chat.title)
-    if user.is_bot:
-        text = "*Information of this bot*"
-    else:
-        text = "*Information of this user*"
-    text += "\n\nUser id: `{}`\nName: {}".format(user.id, escape_markdown(user.full_name))
+    text = "*Information of this bot*" if user.is_bot else "*Information of this user*"
+    text += f"\n\nUser id: `{user.id}`\nName: {escape_markdown(user.full_name)}"
     if user.username:
-        text += "\nUsername: @{}".format(escape_markdown(user.username))
+        text += f"\nUsername: @{escape_markdown(user.username)}"
     if user.language_code:
-        text += "\nLanguage code: {}".format(user.language_code)
+        text += f"\nLanguage code: {user.language_code}"
     try:
         nub = chat.get_member(user.id)
-        status = nub.status
+        s = nub.status
     except TelegramError:
         msg.reply_text(text)
         return
-    if status == "creator":
-        text += "\n\n*Creator* of {}".format(title)
-    elif status == "administrator":
-        text += "\n\n*Administrator* of {}".format(title)
-        if nub.can_change_info:
-            text += "\n\nCan change group info: Yes"
-        else:
-            text += "\n\nCan change group info: No"
-        if nub.can_delete_messages:
-            text += "\nCan delete messages: Yes"
-        else:
-            text += "\nCan delete messages: No"
-        if nub.can_restrict_members:
-            text += "\nCan restrict, ban and unban members: Yes"
-        else:
-            text += "\nCan restrict, ban and unban members: No"
-        if nub.can_pin_messages:
-            text += "\nCan pin messages: Yes"
-        else:
-            text += "\nCan pin messages: No"
-        if nub.can_promote_members:
-            text += "\nCan add new admins: Yes"
-        else:
-            text += "\nCan add new admins: No"
-    elif status == "member":
-        text += "\n\n*Member* of {}".format(title)
-    elif status == "restricted":
-        text += "\n\n*Restricted* in {}".format(title)
+    if s == "creator":
+        text += f"\n\n*Creator* of {title}"
+    elif s == "administrator":
+        text += f"\n\n*Administrator* of {title}"
+        text += f"\nCan change group info: {yn_processor(nub.can_change_info)}"
+        text += f"\nCan delete messages: {yn_processor(nub.can_delete_messages)}"
+        text += f"\nCan restrict, ban and unban members: {yn_processor(nub.can_restrict_members)}"
+        text += f"\nCan pin messages: {yn_processor(nub.can_pin_messages)}"
+        text += f"\nCan promote members to admins: {yn_processor(nub.can_promote_members)}"
+    elif s == "member":
+        text += f"\n\n*Member* of {title}"
+    elif s == "restricted":
+        text += f"\n\n*Restricted* in {title}"
+        text += f"\n\nCan send messages: {yn_processor(nub.can_send_messages)}"
         if nub.can_send_messages:
-            text += "\n\nCan send messages: Yes"
+            text += f"\nCan send media: {yn_processor(nub.can_send_media_messages)}"
             if nub.can_send_media_messages:
-                text += "\nCan send media: Yes"
-                if nub.can_send_other_messages:
-                    text += "\nCan send stickers and GIFs: Yes"
-                else:
-                    text += "\nCan send stickers and GIFs: No"
-                if nub.can_add_web_page_previews:
-                    text += "\nCan add web page previews: Yes"
-                else:
-                    text += "\nCan add web page previews: No"
-            else:
-                text += "\nCan send media: No"
-        else:
-            text += "\n\nCan send messages: No"
-    elif status == "left":
-        text += "\n\n*Was a member* of {}".format(title)
-    elif status == "kicked":
-        text += "\n\n*Banned* from {}".format(title)
+                text += f"\nCan send stickers and GIFs: {yn_processor(nub.can_send_other_messages)}"
+                text += f"\nCan add web page previews: {yn_processor(nub.can_add_web_page_previews)}"
+    elif s == "left":
+        text += f"\n\n*Was a member* of {title}"
+    elif s == "kicked":
+        text += f"\n\n*Banned* from {title}"
     msg.reply_markdown(text)
 
 
@@ -261,9 +222,9 @@ def get_id(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     if rmsg:
-        msg.reply_markdown("This user's id: `{}`".format(rmsg.from_user.id))
+        msg.reply_markdown(f"This user's id: `{rmsg.from_user.id}`")
     else:
-        msg.reply_markdown("This chat's id: `{}`\nYour id: `{}`".format(msg.chat_id, msg.from_user.id))
+        msg.reply_markdown(f"This chat's id: `{msg.chat_id}`\nYour id: `{msg.from_user.id}`")
 
 
 def get_message_link(bot, update):
@@ -274,9 +235,9 @@ def get_message_link(bot, update):
         return
     chat = msg.chat
     if chat.type == "supergroup" and chat.username:
-        msg.reply_text("https://telegram.dog/{}/{}".format(chat.username, rmsg.id), disable_web_page_preview=True)
+        msg.reply_text(f"https://t.me/{chat.username}/{rmsg.id}", disable_web_page_preview=True)
     else:
-        msg.reply_markdown("no u, can only use in public supergroup, but its message id is ```{}```.".format(rmsg.id))
+        msg.reply_markdown(f"no u, can only use in public supergroup, but the message id is `{rmsg.id}`.")
 
 
 def get_file_id(bot, update):
@@ -304,7 +265,7 @@ def get_file_id(bot, update):
 
 
 def get_file_id_response(msg, file_type, file_id):
-    msg.reply_markdown("File id of this {}: `{}`".format(file_type, file_id))
+    msg.reply_markdown(f"File id of this {file_type}: `{file_id}`")
 
 
 def ping(bot, update):
@@ -321,34 +282,50 @@ def pinned(bot, update):
     chat_info = bot.get_chat(chat.id)
     pmsg = chat_info.pinned_message
     if not pmsg:
-        msg.reply_text("no u, no pinned (may be outdated)")
+        msg.reply_text("no u, no pinned (can be wrong, especially if the pinned message is sent by bots, "
+                       "unstable function)")
         return
     p_id = pmsg.message_id
-    if not pmsg.from_user.is_bot or pmsg.from_user.id == 506548905:
+    if not pmsg.from_user.is_bot or pmsg.from_user.id == bot.id:
         msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=p_id)
     elif chat.username:
-        link = "https://telegram.dog/{}/{}".format(chat.username, p_id)
+        link = "https://t.me/{}/{}".format(chat.username, p_id)
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
         msg.reply_text("⬇️Pinned message⬇️", reply_markup=reply_markup)
     else:
-        msg.reply_text("no u, sender is bot and group is private, but the id of that message is `{}`.".format(p_id))
+        msg.reply_text(f"no u, sender is bot and group is private, but the id of that message is `{p_id}`.")
+
+
+def check_number_dude(msg, user, is_new=False):
+    if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
+        msg.reply_text("Number man, on9. Ban!!!")
+        try:
+            msg.chat.kick_member(user.id)
+        except TelegramError:
+            pass
+        if not is_new:
+            try:
+                msg.delete()
+            except TelegramError:
+                pass
+        return True
 
 
 def message_handler(bot, update):
     msg = update.message
-    user = update.effective_user
+    user = msg.from_user
     if msg.new_chat_members:
         for nub in msg.new_chat_members:
-            if nub.id == 506548905:
+            if nub.id == bot.id:
                 msg.reply_markdown("Use /help to see my functions. Contact @Trainer_Jono if you have questions, "
-                                   "suggestions or found typos/errors, lol.")
+                                   "suggestions or found typos or errors.")
             elif nub.is_bot:
-                msg.reply_text("Ayy, new bot!")
+                msg.reply_text("Ooh, new bot!")
             else:
-                check_number_dude(bot, update, nub)
+                check_number_dude(msg, nub, is_new=True)
     elif msg.left_chat_member:
         msg.reply_text("Bey.")
-    elif check_number_dude(bot, update, msg.from_user):
+    elif check_number_dude(msg, msg.from_user):
         return
     elif msg.text:
         text = msg.text.lower()
@@ -383,16 +360,16 @@ def feedback(bot, update):
     user = msg.from_user
     chat = msg.chat
     try:
-        chat_link = "telegram.dog/{}".format(chat.username) if chat.username and chat.id < 0 else None
-        chat_name = "[{}]({}) (chat id: `{}`)".format(chat.title, chat_link, chat.id) if chat.id < 0 else "pm"
+        chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
+        chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
         fb = escape_markdown(msg.text.split(" ", 1)[1])
-        fb = "\n\nFeedback for @On9Bot from {} (user id: `{}`) sent in {}:\n\n{}".format(
-            user.mention_markdown(user.full_name), user.id, chat_name, fb)
+        fb = f"\n\nFeedback for @On9Bot from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) " \
+             f"sent in {chat_name}:\n\n{fb}"
         if chat_link:
-            message_link = chat_link + "/" + str(msg.message_id)
+            message_link = f"{chat_link}/{msg.message_id}"
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
-            bot.send_message(-1001141544515, fb, parse_mode="Markdown",
-                             reply_markup=reply_markup, disable_web_page_preview=True)
+            bot.send_message(-1001141544515, fb, parse_mode="Markdown", reply_markup=reply_markup,
+                             disable_web_page_preview=True)
         else:
             bot.send_message(-1001141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
         msg.reply_text("Feedback sent successfully!")
@@ -408,8 +385,8 @@ def error_handler(bot, update, error):
     error = escape_markdown(str(error))
     forwarded = msg.forward(-1001141544515)
     forwarded.reply_text("Error: {}".format(error), quote=True)
-    msg.reply_text("This message caused an error: {}\nThe message was forwarded to the creator and he will try to "
-                   "fix it.".format(error))
+    msg.reply_text(f"This message caused an error: {error}\nThe message was forwarded to the creator and he will try "
+                   "to fix it.")
 
 
 def main():
