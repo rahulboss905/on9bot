@@ -160,24 +160,23 @@ def echo(bot, update):
                 except TelegramError:
                     pass
     except IndexError:
-        if rmsg:
-            if rmsg.text:
-                try:
-                    msg.reply_text(rmsg.text, disable_web_page_preview=True,
-                                   quote=False)
-                except TimedOut:
-                    pass
-                except TelegramError as e:
-                    msg.reply_text(markdown_error_text.format(str(e)))
-                else:
-                    try:
-                        msg.delete()
-                    except TelegramError:
-                        pass
-            else:
-                msg.reply_text("no u, messages with text only.")
-        else:
+        if not rmsg:
             msg.reply_markdown("no u, use `/echo [text]` or reply to a message.")
+        elif not msg.text:
+            msg.reply_text("no u, messages with text only.")
+        else:
+            try:
+                msg.reply_text(rmsg.text, disable_web_page_preview=True,
+                               quote=False)
+            except TimedOut:
+                pass
+            except TelegramError as e:
+                msg.reply_text(markdown_error_text.format(str(e)))
+            else:
+                try:
+                    msg.delete()
+                except TelegramError:
+                    pass
 
 
 def user_info(bot, update):
@@ -252,7 +251,7 @@ def user_info(bot, update):
         else:
             text += "\n\nCan send messages: No"
     elif status == "left":
-        text += "\n\n*Previously a member* of {}".format(title)
+        text += "\n\n*Was a member* of {}".format(title)
     elif status == "kicked":
         text += "\n\n*Banned* from {}".format(title)
     msg.reply_markdown(text)
@@ -354,9 +353,9 @@ def message_handler(bot, update):
     elif msg.text:
         text = msg.text.lower()
         if text == "hello" and user.id == 463998526:
-            msg.reply_text("主人你好！")
+            msg.reply_text("Hey Jono! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
         elif user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
-            msg.reply_text("唔好tag我主人，乖。")
+            msg.reply_text("Don't tag mah owner!!!")
         elif "ur mom gay" in text:
             msg.reply_text("no u")
         elif text == "no u":
