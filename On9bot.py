@@ -23,7 +23,7 @@ def start(bot, update):
 
 
 def bot_help(bot, update):
-    update.message.reply_html("Look at the code [here](https://github.com/Tr-Jono/on9bot/new/master), lol")
+    update.message.reply_markdown("Look at the code [here](https://github.com/Tr-Jono/on9bot), lol")
 
 
 @run_async
