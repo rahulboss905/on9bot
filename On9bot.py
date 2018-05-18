@@ -367,7 +367,7 @@ def feedback(bot, update):
         chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
         chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
         fb = escape_markdown(msg.text.split(" ", 1)[1])
-        fb = f"\n\nFeedback for @On9Bot from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) " \
+        fb = f"Feedback for @On9Bot from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) " \
              f"sent in {chat_name}:\n\n{fb}"
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"
@@ -386,9 +386,19 @@ def error_handler(bot, update, error):
         return
     logger.warning('Update "%s" caused error "%s"', update, error)
     msg = update.message
+    chat = msg.chat
     error = escape_markdown(str(error))
     forwarded = msg.forward(-1001141544515)
-    forwarded.reply_text("Error: {}".format(error), quote=True)
+    chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
+    chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
+    text = f"Error occurred in {chat_name}:\n\n{error}"
+    if chat_link:
+        message_link = f"{chat_link}/{msg.message_id}"
+        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
+        forwarded.reply_markdown(text, reply_markup=reply_markup, disable_web_page_preview=True)
+    else:
+        forwarded.reply_markdown(text, disable_web_page_preview=True)
+    forwarded.reply_markdown(f"Error: {error}, happened in {chat_name}", quote=True)
     msg.reply_text(f"This message caused an error: {error}\nThe message was forwarded to the creator and he will try "
                    "to fix it.")
 
