@@ -1,6 +1,6 @@
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
-from telegram.error import TelegramError, BadRequest, TimedOut
+from telegram.error import TelegramError, TimedOut
 from telegram.utils.helpers import escape_markdown
 from time import sleep
 from re import match
@@ -332,15 +332,19 @@ def message_handler(bot, update):
         if text == "hello" and user.id == 463998526:
             msg.reply_text("Hey Jono! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
         elif user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
-            msg.reply_text("Don't tag mah owner!!!")
+            msg.reply_text("Tag你老母？！")
         elif "ur mom gay" in text:
             msg.reply_text("no u")
         elif text == "no u":
-            msg.reply_text("no no u")
+            msg.reply_text(f"{'no'*2} u")
         elif text == "no no u":
-            msg.reply_text("no no no u")
+            msg.reply_text(f"{'no'*3} u")
         elif "no no no u" in text:
             msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
+        elif [word for word in ("trainer", "jono", "leung") if word in text] and [word for word in ("on9", "nub", "rubbish", "trash") if word in text]:
+            msg.reply_markdown("I got this error when I tried dividing your IQ by itself:\n"
+                               "```Traceback (most recent call last):\n  File \"<input>\", line 777, in <module>\n"
+                               "ZeroDivisionError: division by zero```")
         elif text == "js is very on9":
             msg.reply_text("Your IQ is 500!")
         elif text == "trainer jono is rubbish":
@@ -403,16 +407,16 @@ def main():
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("ping", ping))
-    dp.add_handler(CommandHandler("r", echo))
+    dp.add_handler(CommandHandler("r", echo, allow_edited=True))
     dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("pinned", pinned))
     dp.add_handler(CommandHandler("feedback", feedback))
-    dp.add_handler(CommandHandler("tag9", tag9, pass_args=True))
-    dp.add_handler(MessageHandler(Filters.all, message_handler))
+    dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
+    dp.add_handler(MessageHandler(Filters.all, message_handler, allow_edited=True))
     dp.add_error_handler(error_handler)
     if debug != "yes":
         updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=TOKEN, clean=True)
-        updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(name, TOKEN))
+        updater.bot.set_webhook(f"https://{name}.herokuapp.com/{TOKEN}")
     else:
         updater.start_polling(clean=True)
     updater.idle()
