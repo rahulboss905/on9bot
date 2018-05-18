@@ -329,7 +329,7 @@ def message_handler(bot, update):
         return
     elif msg.text:
         text = msg.text.lower()
-        if text == "hello" and user.id == 463998526:
+        if user.id == 463998526 and text == "hello":
             msg.reply_text("Hey Jono! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
         elif user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
             msg.reply_text("Tag你老母？！")
