@@ -149,9 +149,13 @@ def echo(bot, update):
     rmsg = msg.reply_to_message
     try:
         args = msg.text.split(maxsplit=1)[1]
-        if msg.reply_to_message:
+        if rmsg:
             try:
-                rmsg.reply_markdown(args, disable_web_page_preview=True)
+                assert "@trainer_jono" not in msg.text
+                assert not ("[" in msg.text and "}(tg://user?id=-1001141544515)" in msg.text)
+                msg.reply_markdown(args, disable_web_page_preview=True)
+            except AssertionError:
+                msg.reply_text("no u")
             except TimedOut:
                 pass
             except TelegramError as e:
@@ -163,7 +167,11 @@ def echo(bot, update):
                     pass
         else:
             try:
+                assert "@trainer_jono" not in msg.text
+                assert not ("[" in msg.text and "}(tg://user?id=-1001141544515)" in msg.text)
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
+            except AssertionError:
+                msg.reply_text("no u")
             except TimedOut:
                 pass
             except TelegramError as e:
@@ -180,8 +188,12 @@ def echo(bot, update):
             msg.reply_text("no u, messages with text only.")
         else:
             try:
+                assert "@trainer_jono" not in rmsg.text
+                assert not ("[" in rmsg.text and "}(tg://user?id=-1001141544515)" in rmsg.text)
                 msg.reply_text(rmsg.text, disable_web_page_preview=True,
                                quote=False)
+            except AssertionError:
+                msg.reply_text("no u")
             except TimedOut:
                 pass
             except TelegramError as e:
