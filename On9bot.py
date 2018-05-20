@@ -39,6 +39,8 @@ def tag9js(bot, update):
             try:
                 text = msg.text.split(maxsplit=1)[1]
                 assert "{username}" in text
+                if "@trainer_jono" in text.lower():
+                    raise IndexError
                 text = text.replace("{username}", username)
             except IndexError:
                 text = username
