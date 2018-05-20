@@ -34,23 +34,23 @@ def tag9js(bot, update):
         chat.send_action("typing")
         js_info = chat.get_member(190726372)
         if js_info.user.username:
-            sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
-                                  reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
+            sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
+                                  "keyboard.", reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
             sleep(15)
-            msg.reply_text("Tag9js over, keyboard removed, message deleted.",
+            msg.reply_text("Tag9js over, removing reply keyboard and deleting message...",
                            reply_markup=ReplyKeyboardRemove(), quote=False)
             try:
                 sent.delete()
             except TelegramError:
                 pass
         else:
-            msg.reply_text("no u, JS removed his username.")
+            msg.reply_text("no u, JS removed username.")
     elif chat.id < 0:
         msg.reply_text("no u")
     else:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Join HK Duker", url="https://t.me/hkduker")]])
-        msg.reply_text("This command can only be used in HK Duker. You are welcome to join us and of course, try out "
-                       "the command.", reply_markup=reply_markup)
+        msg.reply_text("This command can only be used in HK Duker. Click the following button join the group and try "
+                       "out the command", reply_markup=reply_markup)
 
 
 can_use_tag9 = (463998526, 190726372, 106665913)
@@ -62,9 +62,7 @@ def tag9(bot, update, args):
     msg = update.message
     chat = msg.chat
     chat.send_action("typing")
-    if not msg.from_user.id in can_use_tag9:
-        msg.reply_text("no u")
-    elif msg.chat_id > 0:
+    if msg.from_user.id not in can_use_tag9 or msg.chat_id > 0:
         msg.reply_text("no u")
     elif msg.reply_to_message:
         tag9_part2(msg, chat.get_member(msg.reply_to_message.from_user.id))
@@ -72,13 +70,15 @@ def tag9(bot, update, args):
         msg.reply_text("Please reply to an user's message or provide a valid user id as an argument.")
     else:
         try:
-            tag9_part2(msg, chat.get_member(int(args[0])))
+            user_id = int(args[0])
+            assert user_id > 0
+            tag9_part2(msg, chat.get_member(user_id))
         except TimedOut:
             pass
-        except ValueError:
+        except (ValueError, AssertionError):
             msg.reply_text("no u, user ids only.")
-        except TelegramError as e:
-            msg.reply_text("no u")
+        except TelegramError:
+            msg.reply_text("no u, give a valid user id.")
 
 
 @run_async
@@ -88,14 +88,15 @@ def tag9_part2(msg, u_info):
     elif u_info.user.id in (463998526, 506548905):
         msg.reply_text("no u")
     elif u_info.user.is_bot:
-        msg.reply_text("no u, dun tag other bots.")
+        msg.reply_text("no u, don't tag other bots.")
     elif u_info.user.username is None:
-        msg.reply_text("no u, no username.")
+        msg.reply_text("no u, user has no username.")
     else:
-        sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
-                              reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
+        sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
+                              "keyboard.", reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
-        msg.reply_text("Tag9 over, keyboard removed, message deleted.", reply_markup=ReplyKeyboardRemove(), quote=False)
+        msg.reply_text("Tag9 over, removing reply keyboard and deleting message...",
+                       reply_markup=ReplyKeyboardRemove(), quote=False)
         try:
             sent.delete()
         except TelegramError:
@@ -105,7 +106,17 @@ def tag9_part2(msg, u_info):
 def remove_keyboard(bot, update):
     msg = update.message
     if msg.chat_id < 0:
-        msg.reply_text("Keyboard removed.", reply_markup=ReplyKeyboardRemove())
+        msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove, quote=False)
+    else:
+        msg.reply_text("no u")
+
+
+def remove_keyboard2(bot, update):
+    msg = update.message
+    if msg.chat_id < 0:
+        msg.reply_text("Replacing reply keyboard markup...", reply_markup=ReplyKeyboardMarkup(
+            [["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]), quote=False)
+        msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove, quote=False)
     else:
         msg.reply_text("no u")
 
@@ -413,6 +424,7 @@ def main():
     dp.add_handler(CommandHandler("help", bot_help))
     dp.add_handler(CommandHandler("tag9js", tag9js))
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
+    dp.add_handler(CommandHandler("remove_keyboard2", remove_keyboard2))
     dp.add_handler(CommandHandler("id", get_id))
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("file_id", get_file_id))
