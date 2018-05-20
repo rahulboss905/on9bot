@@ -27,6 +27,13 @@ def bot_help(bot, update):
                                   "lol")
 
 
+def del_msg(msg):
+    try:
+        msg.delete()
+    except TelegramError:
+        pass
+
+
 @run_async
 def tag9js(bot, update):
     msg = update.message
@@ -45,16 +52,13 @@ def tag9js(bot, update):
             except IndexError:
                 text = username
             except AssertionError:
-                text = msg.text.split(maxsplit=1)[1] + " " + username
+                text = f"{msg.text.split(maxsplit=1)[1]} {username}"
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
                                   "keyboard.", reply_markup=ReplyKeyboardMarkup([[text]]))
             sleep(15)
             msg.reply_text("Tag9js over, removing reply keyboard and deleting message if no one did so...",
                            reply_markup=ReplyKeyboardRemove(), quote=False)
-            try:
-                sent.delete()
-            except TelegramError:
-                pass
+            del_msg(sent)
         else:
             msg.reply_text("no u, JS removed username.")
     elif chat.id < 0:
@@ -109,10 +113,7 @@ def tag9_part2(msg, u_info):
         sleep(15)
         msg.reply_text("Tag9 over, removing reply keyboard and deleting message if no one did so...",
                        reply_markup=ReplyKeyboardRemove(), quote=False)
-        try:
-            sent.delete()
-        except TelegramError:
-            pass
+        del_msg(sent)
 
 
 def remove_keyboard(bot, update):
@@ -130,10 +131,7 @@ def remove_keyboard2(bot, update):
         sent = msg.reply_text("Replacing reply keyboard if there was an existing reply keyboard...",
                               reply_markup=ReplyKeyboardMarkup(
                                   [["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]), quote=False)
-        try:
-            sent.delete()
-        except Exception:
-            pass
+        del_msg(sent)
         msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
     else:
         msg.reply_text("no u")
@@ -149,60 +147,53 @@ def echo(bot, update):
     rmsg = msg.reply_to_message
     try:
         args = msg.text.split(maxsplit=1)[1]
+        ltext = msg.text.lower()
         if rmsg:
             try:
-                assert "@trainer_jono" not in msg.text
-                assert not ("[" in msg.text and "}(tg://user?id=-1001141544515)" in msg.text)
+                assert "@trainer_jono" not in ltext
+                assert not ("[" in ltext and "}(tg://user?id=-1001141544515)" in ltext)
                 msg.reply_markdown(args, disable_web_page_preview=True)
             except AssertionError:
-                msg.reply_text("no u")
+                msg.reply_text("Tag your mother?!")
             except TimedOut:
                 pass
             except TelegramError as e:
                 msg.reply_text(markdown_error_text.format(str(e)))
             else:
-                try:
-                    msg.delete()
-                except TelegramError:
-                    pass
+                del_msg(msg)
         else:
             try:
-                assert "@trainer_jono" not in msg.text
-                assert not ("[" in msg.text and "}(tg://user?id=-1001141544515)" in msg.text)
+                assert "@trainer_jono" not in ltext
+                assert not ("[" in ltext and "}(tg://user?id=-1001141544515)" in ltext)
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
             except AssertionError:
-                msg.reply_text("no u")
+                msg.reply_text("Tag your mother?!")
             except TimedOut:
                 pass
             except TelegramError as e:
                 msg.reply_text(markdown_error_text.format(str(e)))
             else:
-                try:
-                    msg.delete()
-                except TelegramError:
-                    pass
+                del_msg(msg)
     except IndexError:
         if not rmsg:
             msg.reply_markdown("no u, use `/echo [text]` or reply to a message.")
         elif not msg.text:
             msg.reply_text("no u, messages with text only.")
         else:
+            ltext = rmsg.text.lower()
             try:
-                assert "@trainer_jono" not in rmsg.text
-                assert not ("[" in rmsg.text and "}(tg://user?id=-1001141544515)" in rmsg.text)
+                assert "@trainer_jono" not in ltext
+                assert not ("[" in ltext and "}(tg://user?id=-1001141544515)" in ltext)
                 msg.reply_text(rmsg.text, disable_web_page_preview=True,
                                quote=False)
             except AssertionError:
-                msg.reply_text("no u")
+                msg.reply_text("Tag your mother?!")
             except TimedOut:
                 pass
             except TelegramError as e:
                 msg.reply_text(markdown_error_text.format(str(e)))
             else:
-                try:
-                    msg.delete()
-                except TelegramError:
-                    pass
+                del_msg(msg)
 
 
 def yn_processor(var):
@@ -345,10 +336,7 @@ def check_number_dude(msg, user, is_new=False):
         except TelegramError:
             pass
         if not is_new:
-            try:
-                msg.delete()
-            except TelegramError:
-                pass
+            del_msg(msg)
         return True
 
 
@@ -373,7 +361,7 @@ def message_handler(bot, update):
         if user.id == 463998526 and text == "hello":
             msg.reply_text("Hey Jono! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
         elif user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
-            msg.reply_text("Tag你老母？！")
+            msg.reply_text("Tag your mother?!")
         elif user.id != 463998526 and [word for word in ("trainer", "jono", "leung") if word in text] and [word for word in ("on9", "nub","rubbish", "trash") if word in text]:
             msg.reply_markdown("I got this error when I tried dividing your IQ by itself:\n"
                                "`Traceback (most recent call last):\n  File \"<input>\", line 777, in <module>\n"
@@ -423,7 +411,7 @@ def feedback(bot, update):
 
 
 def error_handler(bot, update, error):
-    if str(error) == "Timed out":
+    if error == TimedOut:
         return
     logger.warning('Update "%s" caused error "%s"', update, error)
     msg = update.message
