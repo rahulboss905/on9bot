@@ -31,12 +31,21 @@ def bot_help(bot, update):
 def tag9js(bot, update):
     msg = update.message
     chat = msg.chat
-    if chat.id == -1001295361187:
+    if chat.id == -1001295361187 or msg.from_user.id == 463998526:
         chat.send_action("typing")
         js_info = chat.get_member(190726372)
         if js_info.user.username:
+            text = js_info.user.username
+            try:
+                text = msg.text.split(maxsplit=1)[1]
+                assert "{username}" in text
+                text = text.replace("{username}", js_info.user.username)
+            except AssertionError:
+                text = msg.text.split(maxsplit=1)[1] + js_info.user.username
+            except IndexError:
+                pass
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
-                                  "keyboard.", reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
+                                  "keyboard.", reply_markup=ReplyKeyboardMarkup([[text]]))
             sleep(15)
             msg.reply_text("Tag9js over, removing reply keyboard and deleting message if no one did so...",
                            reply_markup=ReplyKeyboardRemove(), quote=False)
@@ -116,9 +125,13 @@ def remove_keyboard(bot, update):
 def remove_keyboard2(bot, update):
     msg = update.message
     if msg.chat_id < 0:
-        msg.reply_text("Replacing reply keyboard if there was an existing reply keyboard...",
-                       reply_markup=ReplyKeyboardMarkup(
-                           [["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]), quote=False)
+        sent = msg.reply_text("Replacing reply keyboard if there was an existing reply keyboard...",
+                              reply_markup=ReplyKeyboardMarkup(
+                                  [["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]), quote=False)
+        try:
+            sent.delete()
+        except Exception:
+            pass
         msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
     else:
         msg.reply_text("no u")
