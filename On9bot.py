@@ -347,6 +347,10 @@ def message_handler(bot, update):
             msg.reply_text("Hey Jono! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
         elif user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
             msg.reply_text("Tag你老母？！")
+        elif user.id != 463998526 and [word for word in ("trainer", "jono", "leung") if word in text] and [word for word in ("on9", "nub","rubbish", "trash") if word in text]:
+            msg.reply_markdown("I got this error when I tried dividing your IQ by itself:\n"
+                               "`Traceback (most recent call last):\n  File \"<input>\", line 777, in <module>\n"
+                               "ZeroDivisionError: division by zero`")
         elif "ur mom gay" in text:
             msg.reply_text("no u")
         elif text == "no u":
@@ -355,10 +359,6 @@ def message_handler(bot, update):
             msg.reply_text(f"{'no'*3} u")
         elif "no no no u" in text:
             msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
-        elif [word for word in ("trainer", "jono", "leung") if word in text] and [word for word in ("on9", "nub", "rubbish", "trash") if word in text]:
-            msg.reply_markdown("I got this error when I tried dividing your IQ by itself:\n"
-                               "`Traceback (most recent call last):\n  File \"<input>\", line 777, in <module>\n"
-                               "ZeroDivisionError: division by zero`")
         elif text == "js is very on9":
             msg.reply_text("Your IQ is 500!")
         elif text == "trainer jono is rubbish":
