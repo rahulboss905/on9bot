@@ -106,7 +106,7 @@ def tag9_part2(msg, u_info):
 def remove_keyboard(bot, update):
     msg = update.message
     if msg.chat_id < 0:
-        msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove, quote=False)
+        msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
     else:
         msg.reply_text("no u")
 
@@ -116,7 +116,7 @@ def remove_keyboard2(bot, update):
     if msg.chat_id < 0:
         msg.reply_text("Replacing reply keyboard markup...", reply_markup=ReplyKeyboardMarkup(
             [["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]), quote=False)
-        msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove, quote=False)
+        msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
     else:
         msg.reply_text("no u")
 
