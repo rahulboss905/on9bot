@@ -35,7 +35,7 @@ def tag9js(bot, update):
         chat.send_action("typing")
         js_info = chat.get_member(190726372)
         if js_info.user.username:
-            username = js_info.user.username
+            username = "@" + js_info.user.username
             try:
                 text = msg.text.split(maxsplit=1)[1]
                 assert "{username}" in text
@@ -43,7 +43,7 @@ def tag9js(bot, update):
             except IndexError:
                 text = username
             except AssertionError:
-                text = msg.text.split(maxsplit=1)[1] + username
+                text = msg.text.split(maxsplit=1)[1] + " " + username
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
                                   "keyboard.", reply_markup=ReplyKeyboardMarkup([[text]]))
             sleep(15)
