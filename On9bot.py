@@ -23,13 +23,14 @@ def start(bot, update):
 
 
 def bot_help(bot, update):
-    update.message.reply_markdown("Look at the code [here](https://github.com/Tr-Jono/on9bot), lol")
+    update.message.reply_markdown("Look at the code [here](https://github.com/Tr-Jono/on9bot) to learn how I work, "
+                                  "lol")
 
 
 @run_async
 def tag9js(bot, update):
     msg = update.message
-    chat = update.effective_chat
+    chat = msg.chat
     if chat.id == -1001295361187:
         chat.send_action("typing")
         js_info = chat.get_member(190726372)
@@ -37,7 +38,7 @@ def tag9js(bot, update):
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
                                   "keyboard.", reply_markup=ReplyKeyboardMarkup([[js_info.user.name]]))
             sleep(15)
-            msg.reply_text("Tag9js over, removing reply keyboard and deleting message...",
+            msg.reply_text("Tag9js over, removing reply keyboard and deleting message if no one did so...",
                            reply_markup=ReplyKeyboardRemove(), quote=False)
             try:
                 sent.delete()
@@ -95,7 +96,7 @@ def tag9_part2(msg, u_info):
         sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
                               "keyboard.", reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
-        msg.reply_text("Tag9 over, removing reply keyboard and deleting message...",
+        msg.reply_text("Tag9 over, removing reply keyboard and deleting message if no one did so...",
                        reply_markup=ReplyKeyboardRemove(), quote=False)
         try:
             sent.delete()
@@ -106,7 +107,8 @@ def tag9_part2(msg, u_info):
 def remove_keyboard(bot, update):
     msg = update.message
     if msg.chat_id < 0:
-        msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
+        msg.reply_text("Removing reply keyboard if there was an existing reply keyboard...",
+                       reply_markup=ReplyKeyboardRemove(), quote=False)
     else:
         msg.reply_text("no u")
 
@@ -114,8 +116,9 @@ def remove_keyboard(bot, update):
 def remove_keyboard2(bot, update):
     msg = update.message
     if msg.chat_id < 0:
-        msg.reply_text("Replacing reply keyboard markup...", reply_markup=ReplyKeyboardMarkup(
-            [["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]), quote=False)
+        msg.reply_text("Replacing reply keyboard if there was an existing reply keyboard...",
+                       reply_markup=ReplyKeyboardMarkup(
+                           [["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]), quote=False)
         msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
     else:
         msg.reply_text("no u")
@@ -130,7 +133,7 @@ def echo(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     try:
-        args = msg.text.split(" ", 1)[1]
+        args = msg.text.split(maxsplit=1)[1]
         if msg.reply_to_message:
             try:
                 rmsg.reply_markdown(args, disable_web_page_preview=True)
@@ -255,27 +258,27 @@ def get_file_id(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     if not rmsg:
-        msg.reply_text("no u")
+        msg.reply_text("no u, reply to a message")
         return
     if rmsg.audio:
-        get_file_id_response(msg, "audio", rmsg.audio.file_id)
+        gfi_response(msg, "audio", rmsg.audio.file_id)
     elif rmsg.photo:
-        get_file_id_response(msg, "picture", rmsg.photo[-1].file_id)
+        gfi_response(msg, "picture", rmsg.photo[-1].file_id)
     elif rmsg.sticker:
-        get_file_id_response(msg, "sticker", rmsg.sticker.file_id)
+        gfi_response(msg, "sticker", rmsg.sticker.file_id)
     elif rmsg.video:
-        get_file_id_response(msg, "video", rmsg.video.file_id)
+        gfi_response(msg, "video", rmsg.video.file_id)
     elif rmsg.voice:
-        get_file_id_response(msg, "voice recording", rmsg.voice.file_id)
+        gfi_response(msg, "voice recording", rmsg.voice.file_id)
     elif rmsg.video_note:
-        get_file_id_response(msg, "video", rmsg.video_note.file_id)
+        gfi_response(msg, "video", rmsg.video_note.file_id)
     elif rmsg.document:
-        get_file_id_response(msg, "document", rmsg.document.file_id)
+        gfi_response(msg, "document", rmsg.document.file_id)
     else:
         msg.reply_text("no u, message has no media.")
 
 
-def get_file_id_response(msg, file_type, file_id):
+def gfi_response(msg, file_type, file_id):
     msg.reply_markdown(f"File id of this {file_type}: `{file_id}`")
 
 
@@ -298,9 +301,9 @@ def pinned(bot, update):
         return
     p_id = pmsg.message_id
     if not pmsg.from_user.is_bot or pmsg.from_user.id == bot.id:
-        msg.reply_text("⬆️Pinned message⬆️", reply_to_message_id=p_id)
+        pmsg.reply_text("⬆️Pinned message⬆️")
     elif chat.username:
-        link = "https://t.me/{}/{}".format(chat.username, p_id)
+        link = f"https://t.me/{chat.username}/{p_id}"
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
         msg.reply_text("⬇️Pinned message⬇️", reply_markup=reply_markup)
     else:
@@ -377,7 +380,7 @@ def feedback(bot, update):
     try:
         chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
         chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
-        fb = escape_markdown(msg.text.split(" ", 1)[1])
+        fb = escape_markdown(msg.text.split(maxsplit=1)[1])
         fb = f"Feedback for @On9Bot from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) " \
              f"sent in {chat_name}:\n\n{fb}"
         if chat_link:
