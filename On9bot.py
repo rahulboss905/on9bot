@@ -44,16 +44,16 @@ def tag9js(bot, update):
             username = "@" + js_info.user.username
             try:
                 text = msg.text.split(maxsplit=1)[1]
-                assert "{username}" in text
                 if "@trainer_jono" in text.lower():
                     raise IndexError
+                assert "{username}" in text
                 text = text.replace("{username}", username)
             except IndexError:
                 text = username
             except AssertionError:
                 text = f"{msg.text.split(maxsplit=1)[1]} {username}"
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
-                                  "keyboard.", reply_markup=ReplyKeyboardMarkup([[text]]))
+                                  "keyboard.", reply_markup=ReplyKeyboardMarkup([[text]]), quote=True)
             sleep(15)
             msg.reply_text("Tag9js over, removing reply keyboard and deleting message if no one did so...",
                            reply_markup=ReplyKeyboardRemove(), quote=False)
