@@ -151,8 +151,8 @@ def echo(bot, update):
         if rmsg:
             try:
                 assert "@trainer_jono" not in ltext
-                assert not ("[" in ltext and "}(tg://user?id=-1001141544515)" in ltext)
-                msg.reply_markdown(args, disable_web_page_preview=True)
+                assert not ("[" in ltext and "](tg://user?id=-1001141544515)" in ltext)
+                msg.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
             except AssertionError:
                 msg.reply_text("Tag your mother?!")
             except TimedOut:
@@ -164,7 +164,7 @@ def echo(bot, update):
         else:
             try:
                 assert "@trainer_jono" not in ltext
-                assert not ("[" in ltext and "}(tg://user?id=-1001141544515)" in ltext)
+                assert not ("[" in ltext and "](tg://user?id=-1001141544515)" in ltext)
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
             except AssertionError:
                 msg.reply_text("Tag your mother?!")
@@ -183,7 +183,7 @@ def echo(bot, update):
             ltext = rmsg.text.lower()
             try:
                 assert "@trainer_jono" not in ltext
-                assert not ("[" in ltext and "}(tg://user?id=-1001141544515)" in ltext)
+                assert not ("[" in ltext and "](tg://user?id=-1001141544515)" in ltext)
                 msg.reply_text(rmsg.text, disable_web_page_preview=True,
                                quote=False)
             except AssertionError:
