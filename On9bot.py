@@ -65,14 +65,13 @@ def tag9js(bot, update):
     else:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Join HK Duker", url="https://t.me/hkduker")]])
         msg.reply_text("This command can only be used in HK Duker. Click the following button join the group and try "
-                       "out the command", reply_markup=reply_markup)
+                       "out the command.", reply_markup=reply_markup)
 
 
 can_use_tag9 = (463998526, 190726372, 106665913)
 # respectively  Tr. Jono,  JS,        Jeffffffc
 
 
-@run_async
 def tag9(bot, update, args):
     msg = update.message
     chat = msg.chat
@@ -328,7 +327,7 @@ def pinned(bot, update):
 
 
 def check_number_dude(msg, user, is_new=False):
-    if len(user.first_name) == len(user.last_name) == 8 and user.first_name.isdigit() and user.last_name.isdigit():
+    if user.last_name and len(user.first_name) == len(user.last_name) == 8 and user.first_name.isdigit() and user.last_name.isdigit():
         msg.reply_text("Number man, on9. Ban!!!")
         try:
             msg.chat.kick_member(user.id)
@@ -368,9 +367,9 @@ def message_handler(bot, update):
         elif "ur mom gay" in text:
             msg.reply_text("no u")
         elif text == "no u":
-            msg.reply_text(f"{'no'*2} u")
+            msg.reply_text("no no u")
         elif text == "no no u":
-            msg.reply_text(f"{'no'*3} u")
+            msg.reply_text("no no no u")
         elif "no no no u" in text:
             msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
         elif text == "js is very on9":
@@ -410,7 +409,7 @@ def feedback(bot, update):
 
 
 def error_handler(bot, update, error):
-    if error == TimedOut:
+    if str(error) == "Timed out":
         return
     logger.warning('Update "%s" caused error "%s"', update, error)
     msg = update.message
@@ -446,12 +445,12 @@ def main():
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("ping", ping))
-    dp.add_handler(CommandHandler("r", echo, allow_edited=True))
+    dp.add_handler(CommandHandler("r", echo, edited_updates=True))
     dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("pinned", pinned))
     dp.add_handler(CommandHandler("feedback", feedback))
-    dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
-    dp.add_handler(MessageHandler(Filters.all, message_handler, allow_edited=True))
+    dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, edited_updates=True))
+    dp.add_handler(MessageHandler(Filters.all, message_handler, edited_updates=True))
     dp.add_error_handler(error_handler)
     if debug != "yes":
         updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=TOKEN, clean=True)
