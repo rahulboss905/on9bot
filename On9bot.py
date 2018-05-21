@@ -3,7 +3,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_a
 from telegram.error import TelegramError, TimedOut
 from telegram.utils.helpers import escape_markdown
 from time import sleep
-from re import match
 import logging
 import os
 
@@ -329,7 +328,7 @@ def pinned(bot, update):
 
 
 def check_number_dude(msg, user, is_new=False):
-    if match(r'\d\d\d\d\d\d\d\d', user.first_name) and match(r'\d\d\d\d\d\d\d\d', user.last_name):
+    if len(user.first_name) == len(user.last_name) == 8 and user.first_name.isdigit() and user.last_name.isdigit():
         msg.reply_text("Number man, on9. Ban!!!")
         try:
             msg.chat.kick_member(user.id)
