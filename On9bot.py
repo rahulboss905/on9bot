@@ -351,7 +351,7 @@ def message_handler(bot, update):
             msg.reply_text(f"Hi {OWNER_NAME}! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
         elif user.id != OWNER_ID and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
             msg.reply_text("Tag your mother?!")
-        elif user.id != OWNER_ID and (word for word in OWNER_NICKNAMES if word in text) and (word for word in INSULTS if word in text):
+        elif user.id != OWNER_ID and [word for word in OWNER_NICKNAMES if word in text] and [word for word in INSULTS if word in text]:
             msg.reply_markdown("I got this error when I tried dividing your IQ by itself:\n"
                                "`Traceback (most recent call last):\n  File \"<input>\", line 777, in <module>\n"
                                "ZeroDivisionError: division by zero`")
