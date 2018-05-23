@@ -1,50 +1,56 @@
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
+import os
+import logging
+from time import sleep
+
+from telegram import Bot, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton, Chat
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
 from telegram.error import TelegramError, TimedOut
+from telegram.parsemode import ParseMode
 from telegram.utils.helpers import escape_markdown
-from time import sleep
-import logging
-import os
 
+from config import *
+from utils import *
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-TOKEN = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
+assert type(BOT_TOKEN) == str and BOT_TOKEN != "", "Provide a valid bot token!"
+assert type(OWNER_ID) == int and OWNER_ID > 0, "Provide a valid user id!"
+assert OWNER_USERNAME, "Set a username! Go to Settings > Username to do so."
+assert type(ADMIN_GROUP_ID) == int and ADMIN_GROUP_ID < 0, "Set a group, supergroup or channel as the admin group!"
+assert type(HEROKU_APP_NAME) == str, "Your Heroku app name must be a string!"
+for user_id in CAN_USE_TAG9:
+    assert type(user_id) == int and user_id > 0, "You can only append CAN_USE_TAG9 with valid user ids!"
+for name in OWNER_NICKNAMES:
+    assert type(name) == str and name != "", "You can only append OWNER_NICKNAMES with non-empty strings!"
+for insult in INSULTS:
+    assert type(insult) == str and insult != "", "You can only append INSULTS with non-empty strings!"
 
 
 def start(bot, update):
     msg = update.message
     if msg.chat_id > 0:
-        msg.reply_text("Use /help to see my functions. Contact @Trainer_Jono if you have questions, suggestions or "
-                       "found a typo or error, lol.")
+        msg.reply_text(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, suggestions or "
+                       "found a typo or error.")
 
 
 def bot_help(bot, update):
-    update.message.reply_markdown("Look at the code [here](https://github.com/Tr-Jono/on9bot) to learn how I work, "
-                                  "lol")
-
-
-def del_msg(msg):
-    try:
-        msg.delete()
-    except TelegramError:
-        pass
+    update.message.reply_markdown(f"Look at the code [here]({GITHUB_SOURCE_CODE_LINK}) to learn how I work, lol")
 
 
 @run_async
 def tag9js(bot, update):
     msg = update.message
     chat = msg.chat
-    if chat.id == -1001295361187 or msg.from_user.id == 463998526:
+    if chat.id == -1001295361187 or msg.from_user.id == OWNER_ID:
         chat.send_action("typing")
         js_info = chat.get_member(190726372)
         if js_info.user.username:
             username = "@" + js_info.user.username
             try:
                 text = msg.text.split(maxsplit=1)[1]
-                if "@trainer_jono" in text.lower():
+                if OWNER_USERNAME.lower() in text.lower():
                     raise IndexError
                 assert "{username}" in text
                 text = text.replace("{username}", username)
@@ -68,29 +74,25 @@ def tag9js(bot, update):
                        "out the command.", reply_markup=reply_markup)
 
 
-can_use_tag9 = (463998526, 190726372, 106665913)
-# respectively  Tr. Jono,  JS,        Jeffffffc
-
-
 def tag9(bot, update, args):
     msg = update.message
     chat = msg.chat
     chat.send_action("typing")
-    if msg.from_user.id not in can_use_tag9 or msg.chat_id > 0:
+    if msg.from_user.id not in CAN_USE_TAG9 or msg.chat_id > 0:
         msg.reply_text("no u")
     elif msg.reply_to_message:
         tag9_part2(msg, chat.get_member(msg.reply_to_message.from_user.id))
     elif not args:
-        msg.reply_text("Please reply to an user's message or provide a valid user id as an argument.")
+        msg.reply_text("Please reply to a user's message or provide a valid user id as an argument.")
     else:
         try:
             user_id = int(args[0])
             assert user_id > 0
             tag9_part2(msg, chat.get_member(user_id))
-        except TimedOut:
-            pass
         except (ValueError, AssertionError):
             msg.reply_text("no u, user ids only.")
+        except TimedOut:
+            pass
         except TelegramError:
             msg.reply_text("no u, give a valid user id.")
 
@@ -99,7 +101,7 @@ def tag9(bot, update, args):
 def tag9_part2(msg, u_info):
     if u_info.status in ("restricted", "left", "kicked"):
         msg.reply_text("no u, not in group or restricted")
-    elif u_info.user.id in (463998526, 506548905):
+    elif u_info.user.id in (OWNER_ID, BOT_ID):
         msg.reply_text("no u")
     elif u_info.user.is_bot:
         msg.reply_text("no u, don't tag other bots.")
@@ -125,19 +127,14 @@ def remove_keyboard(bot, update):
 
 def remove_keyboard2(bot, update):
     msg = update.message
-    if msg.chat_id < 0:
-        sent = msg.reply_text("Replacing reply keyboard if there was an existing reply keyboard...",
-                              reply_markup=ReplyKeyboardMarkup(
-                                  [["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]), quote=False)
-        del_msg(sent)
-        msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
-    else:
+    if msg.chat_id > 0:
         msg.reply_text("no u")
-
-
-markdown_error_text = """no u, markdown error occured: {}.
-Parse mode = Markdown. Use a backslash (\"\\\") before a markdown character to escape it, like this:
-\"\_\", \"\*\", \"\`" """
+        return
+    sent = msg.reply_text("Replacing reply keyboard if there was an existing reply keyboard...",
+                          reply_markup=ReplyKeyboardMarkup([["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD "
+                                                             "BUTTONS"]]), quote=False)
+    del_msg(sent)
+    msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
 
 
 def echo(bot, update):
@@ -148,28 +145,26 @@ def echo(bot, update):
         ltext = msg.text.lower()
         if rmsg:
             try:
-                assert "@trainer_jono" not in ltext
-                assert not ("[" in ltext and "](tg://user?id=-1001141544515)" in ltext)
+                echo_owner_check(ltext)
                 msg.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
             except AssertionError:
                 msg.reply_text("Tag your mother?!")
             except TimedOut:
                 pass
             except TelegramError as e:
-                msg.reply_text(markdown_error_text.format(str(e)))
+                msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
             else:
                 del_msg(msg)
         else:
             try:
-                assert "@trainer_jono" not in ltext
-                assert not ("[" in ltext and "](tg://user?id=-1001141544515)" in ltext)
+                echo_owner_check(ltext)
                 msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
             except AssertionError:
                 msg.reply_text("Tag your mother?!")
             except TimedOut:
                 pass
             except TelegramError as e:
-                msg.reply_text(markdown_error_text.format(str(e)))
+                msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
             else:
                 del_msg(msg)
     except IndexError:
@@ -180,8 +175,7 @@ def echo(bot, update):
         else:
             ltext = rmsg.text.lower()
             try:
-                assert "@trainer_jono" not in ltext
-                assert not ("[" in ltext and "](tg://user?id=-1001141544515)" in ltext)
+                echo_owner_check(ltext)
                 msg.reply_text(rmsg.text, disable_web_page_preview=True,
                                quote=False)
             except AssertionError:
@@ -189,13 +183,9 @@ def echo(bot, update):
             except TimedOut:
                 pass
             except TelegramError as e:
-                msg.reply_text(markdown_error_text.format(str(e)))
+                msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
             else:
                 del_msg(msg)
-
-
-def yn_processor(var):
-    return "Yes" if var else "No"
 
 
 def user_info(bot, update):
@@ -264,7 +254,7 @@ def get_message_link(bot, update):
         msg.reply_text("no u")
         return
     chat = msg.chat
-    if chat.type == "supergroup" and chat.username:
+    if chat.type == Chat.SUPERGROUP and chat.username:
         msg.reply_text(f"https://t.me/{chat.username}/{rmsg.id}", disable_web_page_preview=True)
     else:
         msg.reply_markdown(f"no u, can only use in public supergroup, but the message id is `{rmsg.id}`.")
@@ -305,7 +295,7 @@ def ping(bot, update):
 def pinned(bot, update):
     msg = update.message
     chat = msg.chat
-    if chat.type != "supergroup":
+    if chat.type != Chat.SUPERGROUP:
         msg.reply_text("no u, supergroups only")
         return
     chat.send_action("typing")
@@ -327,15 +317,16 @@ def pinned(bot, update):
 
 
 def check_number_dude(msg, user, is_new=False):
-    if user.last_name and len(user.first_name) == len(user.last_name) == 8 and user.first_name.isdigit() and user.last_name.isdigit():
-        msg.reply_text("Number man, on9. Ban!!!")
-        try:
-            msg.chat.kick_member(user.id)
-        except TelegramError:
-            pass
-        if not is_new:
-            del_msg(msg)
-        return True
+    if user.last_name and len(user.first_name) == len(user.last_name) == 8:
+        if user.first_name.isdigit() and user.last_name.isdigit():
+            msg.reply_text("Number man, on9. Ban!!!")
+            try:
+                msg.chat.kick_member(user.id)
+            except TelegramError:
+                pass
+            if not is_new:
+                del_msg(msg)
+            return True
 
 
 def message_handler(bot, update):
@@ -344,7 +335,7 @@ def message_handler(bot, update):
     if msg.new_chat_members:
         for nub in msg.new_chat_members:
             if nub.id == bot.id:
-                msg.reply_markdown("Use /help to see my functions. Contact @Trainer_Jono if you have questions, "
+                msg.reply_markdown(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
                                    "suggestions or found typos or errors.")
             elif nub.is_bot:
                 msg.reply_text("Ooh, new bot!")
@@ -356,11 +347,11 @@ def message_handler(bot, update):
         return
     elif msg.text:
         text = msg.text.lower()
-        if user.id == 463998526 and text == "hello":
-            msg.reply_text("Hey Jono! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
-        elif user.id != 463998526 and msg.chat_id < 0 and "@trainer_jono" in text:
+        if user.id == OWNER_ID and text == "hello":
+            msg.reply_text(f"Hi {OWNER_NAME}! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
+        elif user.id != OWNER_ID and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
             msg.reply_text("Tag your mother?!")
-        elif user.id != 463998526 and [word for word in ("trainer", "jono", "leung") if word in text] and [word for word in ("on9", "nub","rubbish", "trash") if word in text]:
+        elif user.id != OWNER_ID and (word for word in OWNER_NICKNAMES if word in text) and (word for word in INSULTS if word in text):
             msg.reply_markdown("I got this error when I tried dividing your IQ by itself:\n"
                                "`Traceback (most recent call last):\n  File \"<input>\", line 777, in <module>\n"
                                "ZeroDivisionError: division by zero`")
@@ -374,7 +365,7 @@ def message_handler(bot, update):
             msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
         elif text == "js is very on9":
             msg.reply_text("Your IQ is 500!")
-        elif text == "trainer jono is rubbish":
+        elif text == f"{OWNER_NAME.lower()} is rubbish":
             msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
         elif "but can you do this" in text:
             msg.reply_sticker("CAADBAADbwIAAvkw6QUeD3c89PLAOAI")
@@ -399,42 +390,43 @@ def feedback(bot, update):
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
-            bot.send_message(-1001141544515, fb, parse_mode="Markdown", reply_markup=reply_markup,
-                             disable_web_page_preview=True)
+            ADMIN_GROUP.send_message(fb, parse_mode=ParseMode.MARKDOWN,
+                                     reply_markup=reply_markup, disable_web_page_preview=True)
         else:
-            bot.send_message(-1001141544515, fb, parse_mode="Markdown", disable_web_page_preview=True)
+            ADMIN_GROUP.send_message(fb, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
         msg.reply_text("Feedback sent successfully!")
     except IndexError:
         msg.reply_text("no u, put some constructive text behind it")
 
 
 def error_handler(bot, update, error):
-    if str(error) == "Timed out":
-        return
-    logger.warning('Update "%s" caused error "%s"', update, error)
-    msg = update.message
-    chat = msg.chat
-    error = escape_markdown(str(error))
-    forwarded = msg.forward(-1001141544515)
-    chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
-    chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
-    text = f"Error occurred in {chat_name}:\n\n{error}"
-    if chat_link:
-        message_link = f"{chat_link}/{msg.message_id}"
-        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
-        forwarded.reply_markdown(text, reply_markup=reply_markup, disable_web_page_preview=True)
-    else:
-        forwarded.reply_markdown(text, disable_web_page_preview=True)
-    forwarded.reply_markdown(f"Error: {error}, happened in {chat_name}", quote=True)
-    msg.reply_text(f"This message caused an error: {error}\nThe message was forwarded to the creator and he will try "
-                   "to fix it.")
+    try:
+        if str(error) == "Timed out":
+            return
+        logger.warning(f'Update "{update}" caused error "{error}"')
+        msg = update.message
+        chat = msg.chat
+        error = escape_markdown(str(error))
+        forwarded = msg.forward(ADMIN_GROUP_ID)
+        chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
+        chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
+        text = f"Error occurred in {chat_name}:\n\n{error}"
+        if chat_link:
+            message_link = f"{chat_link}/{msg.message_id}"
+            reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
+            forwarded.reply_markdown(text, reply_markup=reply_markup, disable_web_page_preview=True)
+        else:
+            forwarded.reply_markdown(text, disable_web_page_preview=True)
+        forwarded.reply_markdown(f"Error: {error}, happened in {chat_name}", quote=True)
+        msg.reply_text(f"This message caused an error: {error}\nThe message was forwarded to the creator and he will "
+                       "try to fix it.")
+    except TelegramError:
+        pass
 
 
 def main():
-    name = "on9bot"
-    port = os.environ.get('PORT', 80)
     debug = os.environ.get('DEBUG', "no")
-    updater = Updater(TOKEN)
+    updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", bot_help))
@@ -453,8 +445,9 @@ def main():
     dp.add_handler(MessageHandler(Filters.all, message_handler, allow_edited=True))
     dp.add_error_handler(error_handler)
     if debug != "yes":
-        updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=TOKEN, clean=True)
-        updater.bot.set_webhook(f"https://{name}.herokuapp.com/{TOKEN}")
+        port = os.environ.get('PORT', 80)
+        updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=BOT_TOKEN, clean=True)
+        updater.bot.set_webhook(f"https://{HEROKU_APP_NAME}.herokuapp.com/{BOT_TOKEN}")
     else:
         updater.start_polling(clean=True)
     updater.idle()
