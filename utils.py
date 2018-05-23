@@ -2,6 +2,7 @@ from telegram.error import TelegramError
 
 from config import OWNER_USERNAME, OWNER_ID
 
+
 # Constants
 
 
