@@ -2,7 +2,7 @@ import os
 import logging
 from time import sleep
 
-from telegram import Bot, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton, Chat
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton, Chat
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
 from telegram.error import TelegramError, TimedOut
 from telegram.parsemode import ParseMode
@@ -11,10 +11,13 @@ from telegram.utils.helpers import escape_markdown
 from config import *
 from utils import *
 
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+# Check if given information is valid
 assert type(BOT_TOKEN) == str and BOT_TOKEN != "", "Provide a valid bot token!"
 assert type(OWNER_ID) == int and OWNER_ID > 0, "Provide a valid user id!"
 assert OWNER_USERNAME, "Set a username! Go to Settings > Username to do so."
@@ -29,10 +32,8 @@ for insult in INSULTS:
 
 
 def start(bot, update):
-    msg = update.message
-    if msg.chat_id > 0:
-        msg.reply_text(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, suggestions or "
-                       "found a typo or error.")
+    update.message.reply_text(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
+                              "suggestions or found a typo or error.")
 
 
 def bot_help(bot, update):
@@ -169,7 +170,7 @@ def echo(bot, update):
                 del_msg(msg)
     except IndexError:
         if not rmsg:
-            msg.reply_markdown("no u, use `/echo [text]` or reply to a message.")
+            msg.reply_markdown("no u, use `/echo [text]` or reply to a message (or both).")
         elif not msg.text:
             msg.reply_text("no u, messages with text only.")
         else:
@@ -428,7 +429,7 @@ def main():
     debug = os.environ.get('DEBUG', "no")
     updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("start", start, Filters.private))
     dp.add_handler(CommandHandler("help", bot_help))
     dp.add_handler(CommandHandler("tag9js", tag9js))
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
@@ -442,7 +443,7 @@ def main():
     dp.add_handler(CommandHandler("pinned", pinned))
     dp.add_handler(CommandHandler("feedback", feedback))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
-    dp.add_handler(MessageHandler(Filters.all, message_handler, allow_edited=True))
+    dp.add_handler(MessageHandler(Filters.chat(chat_id=-1001295361187), message_handler, allow_edited=True))
     dp.add_error_handler(error_handler)
     if debug != "yes":
         port = os.environ.get('PORT', 80)
