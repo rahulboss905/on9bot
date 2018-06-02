@@ -37,7 +37,9 @@ def start(bot, update):
 
 
 def bot_help(bot, update):
-    update.message.reply_markdown(f"Look at the code [here]({GITHUB_SOURCE_CODE_LINK}) to learn how I work, lol")
+    msg = update.message
+    if msg.chat_id > 0:
+        update.message.reply_markdown(f"Look at the code [here]({GITHUB_SOURCE_CODE_LINK}) to learn how I work, lol")
 
 
 @run_async
@@ -375,6 +377,39 @@ def message_handler(bot, update):
             msg.reply_voice("AwADBQADKAAD8KLQVHrlKTFsd-qGAg")
 
 
+def owner_edit(bot, update):
+    msg = update.message
+    rmsg = msg.reply_to_message
+    if msg.from_user.id != OWNER_ID:
+        msg.reply_text("no u")
+    elif not rmsg:
+        msg.reply_text("no u, reply to a message")
+    elif rmsg.from_user.id != BOT_ID:
+        msg.reply_text("no u, not my message")
+    else:
+        try:
+            rmsg.edit_text(msg.split(maxsplit=1)[1])
+        except TimedOut:
+            pass
+        except TelegramError as e:
+            msg.reply_markdown(escape_markdown(str(e)))
+        del_msg(msg)
+
+
+def owner_delmsg(bot, update):
+    msg = update.message
+    rmsg = msg.reply_to_message
+    if msg.from_user.id != OWNER_ID:
+        msg.reply_text("no u")
+    elif not rmsg:
+        msg.reply_text("no u, reply to a message")
+    elif rmsg.from_user.id != BOT_ID:
+        msg.reply_text("no u, not my message")
+    else:
+        del_msg(rmsg)
+        del_msg(msg)
+
+
 def feedback(bot, update):
     msg = update.message
     user = msg.from_user
@@ -426,7 +461,7 @@ def main():
     debug = os.environ.get('DEBUG', "no")
     updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler("start", start, Filters.private))
+    dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", bot_help))
     dp.add_handler(CommandHandler("tag9js", tag9js))
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
@@ -435,10 +470,12 @@ def main():
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("ping", ping))
-    dp.add_handler(CommandHandler("r", echo, allow_edited=True))
     dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("pinned", pinned))
+    dp.add_handler(CommandHandler("edit", owner_edit))
+    dp.add_handler(CommandHandler("delmsg", owner_delmsg))
     dp.add_handler(CommandHandler("feedback", feedback))
+    dp.add_handler(CommandHandler("r", echo, allow_edited=True))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
     dp.add_handler(MessageHandler(Filters.chat(chat_id=-1001295361187), message_handler, edited_updates=True))
     dp.add_error_handler(error_handler)
