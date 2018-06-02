@@ -243,7 +243,7 @@ def get_id(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     if rmsg:
-        ff = rmsg.forwarded_from
+        ff = rmsg.forward_from
         if ff:
             msg.reply_markdown(f"User id of original message's sender: `{ff.id}`")
         else:
@@ -451,7 +451,7 @@ def main():
     dp.add_handler(CommandHandler("pinned", pinned))
     dp.add_handler(CommandHandler("feedback", feedback))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
-    dp.add_handler(MessageHandler(Filters.chat(chat_id=-1001295361187), message_handler, allow_edited=True))
+    dp.add_handler(MessageHandler(Filters.chat(chat_id=-1001295361187), message_handler, edited_updates=True))
     dp.add_error_handler(error_handler)
     if debug != "yes":
         port = os.environ.get('PORT', 80)
