@@ -32,8 +32,8 @@ BOT_LINK = f"https://t.me/{BOT_USERNAME}"
 # Owner information
 OWNER = bot.get_chat_member(OWNER_ID, OWNER_ID).user
 OWNER_NAME = OWNER.full_name
-OWNER_USERNAME = OWNER.username
-OWNER_LINK = f"https://t.me/{OWNER_USERNAME}"
+OWNER_USERNAME = "@" + OWNER.username
+OWNER_LINK = f"https://t.me/{OWNER.username}"
 OWNER_MENTION = f"[{OWNER_NAME}]({OWNER_LINK})"
 
 # Admin group information
