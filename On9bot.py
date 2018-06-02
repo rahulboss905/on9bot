@@ -253,7 +253,7 @@ def get_id(bot, update):
         if msg.chat_id > 0:
             msg.reply_markdown(f"`{user_id}`")
         else:
-            msg.reply_markdown(f"C\Chat id: `{msg.chat_id}`\nYour user id: `{user_id}`")
+            msg.reply_markdown(f"Chat id: `{msg.chat_id}`\nYour user id: `{user_id}`")
 
 
 def get_message_link(bot, update):
