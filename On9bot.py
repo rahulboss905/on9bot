@@ -168,8 +168,7 @@ def echo(bot, update):
             text = rmsg.text_markdown_urled
             try:
                 echo_owner_check(text)
-                msg.reply_text(text, disable_web_page_preview=True,
-                               quote=False)
+                msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
             except AssertionError:
                 msg.reply_text("Tag your mother?!")
             except TimedOut:
@@ -365,7 +364,7 @@ def message_handler(bot, update):
             msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
         elif text == "js is very on9":
             msg.reply_text("Your IQ is 500!")
-        elif text == f"{OWNER_NAME.lower()} is rubbish":
+        elif text == f"trainer jono is rubbish":
             msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
         elif "but can you do this" in text:
             msg.reply_sticker("CAADBAADbwIAAvkw6QUeD3c89PLAOAI")
