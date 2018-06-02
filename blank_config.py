@@ -26,8 +26,8 @@ bot = Bot(BOT_TOKEN)
 BOT = bot.get_me()
 BOT_ID = BOT.id
 BOT_NAME = BOT.first_name
-BOT_USERNAME = BOT.username
-BOT_LINK = f"https://t.me/{BOT_USERNAME}"
+BOT_USERNAME = "@" + BOT.username
+BOT_LINK = f"https://t.me/{BOT.username}"
 
 # Owner information
 OWNER = bot.get_chat_member(OWNER_ID, OWNER_ID).user
@@ -79,4 +79,4 @@ INSULTS = ("on9", "nub", "rubbish", "trash")  # Append insults used with your na
 # git commit -am "{commit message}"*
 # git push heroku master*
 
-# *From now on, you have two run these two commands when you push changes.
+# *From now on, you have to run these two commands when you push changes.

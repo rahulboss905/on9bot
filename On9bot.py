@@ -394,7 +394,7 @@ def feedback(bot, update):
         chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
         chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
         fb = escape_markdown(msg.text.split(maxsplit=1)[1])
-        fb = f"Feedback for @On9Bot from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) " \
+        fb = f"Feedback for {BOT_USERNAME} from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) " \
              f"sent in {chat_name}:\n\n{fb}"
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"

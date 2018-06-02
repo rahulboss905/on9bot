@@ -15,8 +15,8 @@ Parse mode = Markdown. Use a backslash (\"\\\") before a markdown character to e
 # Functions
 
 
-def yn_processor(var):
-    return "Yes" if var else "No"
+def yn_processor(expression):
+    return "Yes" if expression else "No"
 
 
 def del_msg(msg):
@@ -27,5 +27,4 @@ def del_msg(msg):
 
 
 def echo_owner_check(text):
-    assert OWNER_USERNAME.lower() not in text
-    assert not ("[" in text and f"](tg://user?id={OWNER_ID})" in text)
+    assert OWNER_USERNAME.lower() not in text and not ("[" in text and f"](tg://user?id={OWNER_ID})" in text)
