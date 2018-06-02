@@ -51,7 +51,7 @@ def tag9js(bot, update):
             username = "@" + js_info.user.username
             try:
                 text = msg.text.split(maxsplit=1)[1]
-                if OWNER_USERNAME.lower() in text.lower():
+                if "@" in text:
                     raise IndexError
                 assert "{username}" in text
                 text = text.replace("{username}", username)
@@ -233,7 +233,7 @@ def user_info(bot, update):
                 text += f"\nCan send stickers and GIFs: {yn_processor(nub.can_send_other_messages)}"
                 text += f"\nCan add web page previews: {yn_processor(nub.can_add_web_page_previews)}"
     elif s == "left":
-        text += f"\n\n*Was a member* of {title}"
+        text += f"\n\n*Previously a member* of {title}"
     elif s == "kicked":
         text += f"\n\n*Banned* from {title}"
     msg.reply_markdown(text)
@@ -243,16 +243,24 @@ def get_id(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     if rmsg:
-        msg.reply_markdown(f"This user's id: `{rmsg.from_user.id}`")
+        ff = rmsg.forwarded_from
+        if ff:
+            msg.reply_markdown(f"User id of original message's sender: `{ff.id}`")
+        else:
+            msg.reply_markdown(f"`{rmsg.from_user.id}`")
     else:
-        msg.reply_markdown(f"This chat's id: `{msg.chat_id}`\nYour id: `{msg.from_user.id}`")
+        user_id = msg.from_user.id
+        if msg.chat_id > 0:
+            msg.reply_markdown(f"`{user_id}`")
+        else:
+            msg.reply_markdown(f"C\Chat id: `{msg.chat_id}`\nYour user id: `{user_id}`")
 
 
 def get_message_link(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     if not rmsg:
-        msg.reply_text("no u")
+        msg.reply_text("no u, reply to a message")
         return
     chat = msg.chat
     if chat.type == Chat.SUPERGROUP and chat.username:
