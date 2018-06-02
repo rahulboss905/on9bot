@@ -27,4 +27,5 @@ def del_msg(msg):
 
 
 def echo_owner_check(text):
-    assert OWNER_USERNAME.lower() not in text and not ("[" in text and f"](tg://user?id={OWNER_ID})" in text)
+    text = text.lower()
+    assert OWNER_USERNAME.lower() not in text or not ("[" in text and f"](tg://user?id={OWNER_ID})" in text)

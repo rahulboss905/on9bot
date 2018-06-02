@@ -142,42 +142,31 @@ def echo(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     try:
-        args = msg.text.split(maxsplit=1)[1]
-        ltext = msg.text.lower()
-        if rmsg:
-            try:
-                echo_owner_check(ltext)
-                msg.reply_to_message.reply_markdown(args, disable_web_page_preview=True)
-            except AssertionError:
-                msg.reply_text("Tag your mother?!")
-            except TimedOut:
-                pass
-            except TelegramError as e:
-                msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
-            else:
-                del_msg(msg)
+        text = msg.text_markdown_urled.split(maxsplit=1)[1]
+        try:
+            echo_owner_check(text)
+            if rmsg:  # if message has args and replies to another message
+                rmsg.reply_markdown(text, disable_web_page_preview=True)
+            else:  # if message has args but does not reply to another message
+                msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
+        except AssertionError:
+            msg.reply_text("Tag your mother?!")
+        except TimedOut:
+            pass
+        except TelegramError as e:
+            msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
         else:
-            try:
-                echo_owner_check(ltext)
-                msg.reply_markdown(args, disable_web_page_preview=True, quote=False)
-            except AssertionError:
-                msg.reply_text("Tag your mother?!")
-            except TimedOut:
-                pass
-            except TelegramError as e:
-                msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
-            else:
-                del_msg(msg)
+            del_msg(msg)
     except IndexError:
-        if not rmsg:
-            msg.reply_markdown("no u, use `/echo [text]` or reply to a message (or both).")
-        elif not msg.text:
+        if not rmsg:  # if message has no arguments and does not reply to another message
+            msg.reply_markdown("no u, use `/r [text]` or reply to a message (or both).")
+        elif not rmsg.text:  # if message has no arguments and replied message does not have text
             msg.reply_text("no u, messages with text only.")
-        else:
-            ltext = rmsg.text.lower()
+        else:  # if message has no arguments and replies to a message with text
+            text = rmsg.text_markdown_urled.split(maxsplit=1)[1]
             try:
-                echo_owner_check(ltext)
-                msg.reply_text(rmsg.text, disable_web_page_preview=True,
+                echo_owner_check(text)
+                msg.reply_text(text, disable_web_page_preview=True,
                                quote=False)
             except AssertionError:
                 msg.reply_text("Tag your mother?!")
