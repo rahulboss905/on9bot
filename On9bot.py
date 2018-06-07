@@ -144,7 +144,7 @@ def echo(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
     try:
-        text = msg.text_markdown_urled.split(maxsplit=1)[1]
+        text = msg.text.split(maxsplit=1)[1]
         try:
             echo_owner_check(text)
             if rmsg:  # if message has args and replies to another message
@@ -165,7 +165,7 @@ def echo(bot, update):
         elif not rmsg.text:  # if message has no arguments and replied message does not have text
             msg.reply_text("no u, messages with text only.")
         else:  # if message has no arguments and replies to a message with text
-            text = rmsg.text_markdown_urled
+            text = rmsg.text
             try:
                 echo_owner_check(text)
                 msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
