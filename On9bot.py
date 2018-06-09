@@ -466,7 +466,7 @@ amount is HK$10. CLICK CLICK CLICK... Current amount is HK${}.""".split("\n"))
 
 def jeff_bday_start():
     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$0.01", callback_data="donate")]])
-    msg = bot.send_markdown(463998526, jeff_bday_text.format(10),
+    msg = bot.send_message(463998526, jeff_bday_text.format(10),
                            parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
     with open("donate.txt", "w") as f:
         f.write("10")
