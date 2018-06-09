@@ -460,13 +460,13 @@ jeff_bday_text = " ".join("""To celebrate Jeff's birthday and his take over of a
 lead in the development of @werewolfbot, JS is going to *cough* donate an amount of money to
 @werewolfbot and @Mud9bot. And you can support the development of both bots by clicking the inline button below to
 *increase* the amount of money that JS is going to donate to both bots. This amount of money will be split and
-separately donated to both bots. Each click will add a whopping total of HK$0.01 to the amount of donation. The starting
-amount is HK$10. CLICK CLICK CLICK... Current amount is HK${}.""".split("\n"))
+separately donated to both bots. Each click will add a whopping total of HK$1 to the amount of donation. The starting
+amount is HK$10. This ends tomorrow, so you'd better CLICK CLICK CLICK... Current amount is HK${}.""".split("\n"))
 
 
 def jeff_bday_start():
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$0.01", callback_data="donate")]])
-    msg = bot.send_message(463998526, jeff_bday_text.format(10),
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="donate")]])
+    msg = bot.send_message(-1001295361187, jeff_bday_text.format(10),
                            parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
     with open("message_id.txt", "w") as f:
         f.write(str(msg.message_id))
@@ -475,19 +475,19 @@ def jeff_bday_start():
 def jeff_bday_donate(bot, update):
     with open("donate.txt", "r+") as f:
         amount = f.read()
-        f.write(str(float(amount) + 0.01))
-    update.callback_query.edit_message_text(jeff_bday_text.format(float(amount) + 0.01))
-    update.callback_query.edit_message_reply_markup(reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$0.01", callback_data="donate")]]))
+    open('donate.txt', 'w').close()
+    open('donate.txt', 'w').write(str(int(amount) + 1))
+    update.callback_query.edit_message_text(jeff_bday_text.format(int(amount) + 1), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="donate")]]))
 
 
 def jeff_bday_end(bot, update):
     with open("message_id.txt", "r") as f:
         text = f.read()
-    bot.edit_reply_markup(chat_id=463998526, message_id=int(text))
+    bot.edit_reply_markup(chat_id=-1001295361187, message_id=int(text))
     with open("donate.txt", "r") as a:
         amount = a.read()
-    bot.send_message(463998526, "Jeff's birthday has concluded! Jeff will receive a whopping total of HK${} from "
-                                     "JS. Thank me later, heh heh heh.".format(float(amount)))
+    bot.send_message(-1001295361187, "Jeff's birthday has concluded! Jeff will receive a whopping total of HK${} from "
+                                     "JS. Thank me later, heh heh heh.".format(int(amount)))
 
 
 def main():
@@ -520,6 +520,10 @@ def main():
     dp.add_handler(RegexHandler(r".*([Nn][Oo])+ [Uu].*", no_u_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.text, other_msg_handler, edited_updates=True))
     dp.add_error_handler(error_handler)
+    file = open('donate.txt', 'w')
+    file.write("10")
+    file.close()
+    open('message_id.txt', 'w').close()
     jeff_bday_start()
     job_queue = updater.job_queue
     job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 11, 0, 0, 0))
