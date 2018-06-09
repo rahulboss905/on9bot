@@ -3,10 +3,11 @@ import logging
 from time import sleep
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton, Chat
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, run_async
+from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters, run_async
+from telegram.ext.filters import MergedFilter
 from telegram.error import TelegramError, TimedOut
-from telegram.parsemode import ParseMode
 from telegram.utils.helpers import escape_markdown
+from telegram.parsemode import ParseMode
 
 from config import *
 from utils import *
@@ -32,14 +33,14 @@ for insult in INSULTS:
 
 
 def start(bot, update):
-    update.message.reply_text(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
-                              "suggestions or found a typo or error.")
+    msg = update.message
+    if msg.chat_id > 0:
+        msg.reply_markdown(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
+                           "suggestions or found a typo or error.")
 
 
 def bot_help(bot, update):
-    msg = update.message
-    if msg.chat_id > 0:
-        update.message.reply_markdown(f"Look at the code [here]({GITHUB_SOURCE_CODE_LINK}) to learn how I work, lol")
+    update.message.reply_markdown(f"Look at the code [here]({GITHUB_SOURCE_CODE_LINK}) to learn how I work, lol")
 
 
 @run_async
@@ -149,7 +150,7 @@ def echo(bot, update):
             echo_owner_check(text)
             if rmsg:  # if message has args and replies to another message
                 rmsg.reply_markdown(text, disable_web_page_preview=True)
-            else:  # if message has args but does not reply to another message
+            else:  # if message has args and does not reply to another message
                 msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
         except AssertionError:
             msg.reply_text("Tag your mother?!")
@@ -315,69 +316,8 @@ def pinned(bot, update):
         msg.reply_text(f"no u, sender is bot and group is private, but the id of that message is `{p_id}`.")
 
 
-def check_number_dude(msg, user, is_new=False):
-    if user.last_name and len(user.first_name) == len(user.last_name) == 8:
-        if user.first_name.isdigit() and user.last_name.isdigit():
-            msg.reply_text("Number man, on9. Ban!!!")
-            try:
-                msg.chat.kick_member(user.id)
-            except TelegramError:
-                pass
-            if not is_new:
-                del_msg(msg)
-            return True
-
-
-def message_handler(bot, update):
-    msg = update.effective_message
-    user = msg.from_user
-    if msg.new_chat_members:
-        for nub in msg.new_chat_members:
-            if nub.id == bot.id:
-                msg.reply_markdown(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
-                                   "suggestions or found typos or errors.")
-            elif nub.is_bot:
-                msg.reply_text("Ooh, new bot!")
-            else:
-                check_number_dude(msg, nub, is_new=True)
-    elif msg.left_chat_member:
-        msg.reply_text("Bey.")
-    elif check_number_dude(msg, msg.from_user):
-        return
-    elif msg.text:
-        text = msg.text.lower()
-        if user.id == OWNER_ID and text == "hello":
-            msg.reply_text(f"Hi {OWNER_NAME}! Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
-        elif user.id != OWNER_ID and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
-            msg.reply_text("Tag your mother?!")
-        elif user.id != OWNER_ID and [word for word in OWNER_NICKNAMES if word in text] and [word for word in INSULTS if word in text]:
-            msg.reply_markdown("I got this error when I tried dividing your IQ by itself:\n"
-                               "`Traceback (most recent call last):\n  File \"<input>\", line 777, in <module>\n"
-                               "ZeroDivisionError: division by zero`")
-        elif "ur mom gay" in text:
-            msg.reply_text("no u")
-        elif text == "no u":
-            msg.reply_text("no no u")
-        elif text == "no no u":
-            msg.reply_text("no no no u")
-        elif "no no no u" in text:
-            msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
-        elif text == "js is very on9":
-            msg.reply_text("Your IQ is 500!")
-        elif text == f"trainer jono is rubbish":
-            msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
-        elif "but can you do this" in text:
-            msg.reply_sticker("CAADBAADbwIAAvkw6QUeD3c89PLAOAI")
-        elif text == "goodest english":
-            msg.reply_voice("AwADBQADJgAD8KLQVNdHdLAHdLMzAg")
-        elif text == "my english is very good":
-            msg.reply_voice("AwADBQADJwAD8KLQVFu-e5gh4i8RAg")
-        elif "too good" in text or "very good" in text:
-            msg.reply_voice("AwADBQADKAAD8KLQVHrlKTFsd-qGAg")
-
-
 def owner_edit(bot, update):
-    msg = update.message
+    msg = update.effective_message
     rmsg = msg.reply_to_message
     if msg.from_user.id != OWNER_ID:
         msg.reply_text("no u")
@@ -388,11 +328,13 @@ def owner_edit(bot, update):
     else:
         try:
             rmsg.edit_text(msg.text.split(maxsplit=1)[1])
+            del_msg(msg)
+        except IndexError:
+            msg.reply_text("no u, tell me what to edit")
         except TimedOut:
             pass
         except TelegramError as e:
             msg.reply_markdown(escape_markdown(str(e)))
-        del_msg(msg)
 
 
 def owner_delmsg(bot, update):
@@ -409,6 +351,64 @@ def owner_delmsg(bot, update):
         del_msg(msg)
 
 
+def service_msg_handler(bot, update):
+    msg = update.message
+    if msg.new_chat_members:
+        for nub in msg.new_chat_members:
+            if nub.id == bot.id:
+                msg.reply_markdown(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
+                                   "suggestions or found typos or errors.", quote=False)
+            elif nub.is_bot:
+                msg.reply_text("Ooh, new bot!")
+            elif check_number_man(nub):
+                kick_member(msg.chat, nub.id)
+    elif msg.left_chat_member:
+        msg.reply_text("Bey.")
+
+
+def number_man_handler(bot, update):
+    msg = update.effective_message
+    kick_member(msg.chat, msg.from_user)
+
+
+def owner_msg_handler(bot, update):
+    update.effective_message.reply_text(f"Hi {OWNER.full_name}! "
+                                        "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
+
+
+def no_u_handler(bot, update):
+    msg = update.effective_message
+    text = msg.text.lower()
+    no_count = len([word for word in text.split() if word == 'no'])
+    if 100 > no_count > 0:
+        msg.reply_text(f"{'no'*(no_count + 1)} u")
+    else:
+        msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
+
+
+def other_msg_handler(bot, update):
+    msg = update.effective_message
+    user = msg.from_user
+    text = msg.text.lower()
+    if user.id != OWNER_ID and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
+        msg.reply_text("Tag your mother?!")
+    elif user.id != OWNER_ID and [word for word in OWNER_NICKNAMES if word in text] and [
+        word for word in INSULTS if word in text] or "ur mom gay" in text:
+        msg.reply_text("no u")
+    elif text == "js is very on9":
+        msg.reply_text("Your IQ is 500!")
+    elif text == "trainer jono is rubbish":
+        msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
+    elif "but can you do this" in text:
+        msg.reply_sticker("CAADBAADbwIAAvkw6QUeD3c89PLAOAI")
+    elif text == "goodest english":
+        msg.reply_voice("AwADBQADJgAD8KLQVNdHdLAHdLMzAg")
+    elif text == "my english is very good":
+        msg.reply_voice("AwADBQADJwAD8KLQVFu-e5gh4i8RAg")
+    elif "too good" in text or "very good" in text:
+        msg.reply_voice("AwADBQADKAAD8KLQVHrlKTFsd-qGAg")
+
+
 def feedback(bot, update):
     msg = update.message
     user = msg.from_user
@@ -417,8 +417,8 @@ def feedback(bot, update):
         chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
         chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
         fb = escape_markdown(msg.text.split(maxsplit=1)[1])
-        fb = f"Feedback for {BOT_USERNAME} from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) " \
-             f"sent in {chat_name}:\n\n{fb}"
+        fb = (f"Feedback for {BOT_USERNAME} from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) "
+              f"sent in {chat_name}:\n\n{fb}")
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
@@ -462,21 +462,28 @@ def main():
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", bot_help))
+    dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
     dp.add_handler(CommandHandler("tag9js", tag9js))
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
     dp.add_handler(CommandHandler("remove_keyboard2", remove_keyboard2))
+    dp.add_handler(CommandHandler("r", echo, allow_edited=True))
     dp.add_handler(CommandHandler("id", get_id))
     dp.add_handler(CommandHandler("link", get_message_link))
-    dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("ping", ping))
-    dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("pinned", pinned))
-    dp.add_handler(CommandHandler("edit", owner_edit))
-    dp.add_handler(CommandHandler("delmsg", owner_delmsg))
+    dp.add_handler(CommandHandler("file_id", get_file_id))
+    dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("feedback", feedback))
-    dp.add_handler(CommandHandler("r", echo, allow_edited=True))
-    dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
-    dp.add_handler(MessageHandler(Filters.chat(chat_id=-1001295361187), message_handler, edited_updates=True))
+    dp.add_handler(CommandHandler("edit", owner_edit, allow_edited=True))
+    dp.add_handler(CommandHandler("delmsg", owner_delmsg))
+    dp.add_handler(MessageHandler(Filters.status_update, service_msg_handler))
+    dp.add_handler(MessageHandler(MergedFilter(Filters.chat(-1001295361187), MergedFilter(
+        check_number_man_filter, bot_is_admin_filter)), number_man_handler, edited_updates=True))
+    dp.add_handler(MessageHandler(MergedFilter(base_filter=Filters.user(OWNER_ID),
+                                               and_filter=Filters.regex(r"^[Hh][Ee][Ll][Ll][Oo]$")),
+                                  owner_msg_handler, edited_updates=True))
+    dp.add_handler(RegexHandler(r".*([Nn][Oo])+ [Uu].*", no_u_handler))
+    dp.add_handler(MessageHandler(Filters.text, other_msg_handler))
     dp.add_error_handler(error_handler)
     if debug != "yes":
         port = os.environ.get('PORT', 80)

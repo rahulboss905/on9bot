@@ -9,7 +9,7 @@ bot = Bot(BOT_TOKEN)
 
 BOT = bot.get_me()
 BOT_ID = BOT.id
-BOT_NAME = BOT.first_name
+BOT_NAME = BOT.full_name
 BOT_USERNAME = "@" + BOT.username
 BOT_LINK = f"https://t.me/{BOT.username}"
 

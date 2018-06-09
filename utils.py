@@ -1,6 +1,7 @@
+from telegram.ext import BaseFilter
 from telegram.error import TelegramError
 
-from config import OWNER_USERNAME, OWNER_ID
+from config import OWNER_USERNAME, OWNER_ID, BOT_ID
 
 
 # Constants
@@ -26,7 +27,45 @@ def del_msg(msg):
         pass
 
 
+def kick_member(chat, user_id):
+    try:
+        chat.kick_member(user_id)
+    except TelegramError:
+        pass
+
+
 def echo_owner_check(text):
     text = text.lower()
     assert OWNER_USERNAME.lower() not in text
     assert not ("[" in text and f"](tg://user?id={OWNER_ID})" in text)
+
+
+def check_number_man(user):
+    if user.last_name and len(user.first_name) == len(user.last_name) == 8:
+        if user.first_name.isdigit() and user.last_name.isdigit():
+            return True
+    return False
+
+
+# Custom Filters
+
+
+class CheckNumberMan(BaseFilter):
+    name = 'CheckNumberMan'
+
+    def filter(self, message):
+        return check_number_man(message.from_user)
+
+
+class BotIsAdmin(BaseFilter):
+    name = 'BotIsAdmin'
+
+    def filter(self, message):
+        admins = message.chat.get_administrators
+        if BOT_ID in [admin.id for admin in admins]:
+            return True
+        return False
+
+
+check_number_man_filter = CheckNumberMan()
+bot_is_admin_filter = BotIsAdmin()
