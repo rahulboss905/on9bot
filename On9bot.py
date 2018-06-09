@@ -524,7 +524,7 @@ def main():
     file.write("10")
     file.close()
     open('message_id.txt', 'w').close()
-    jeff_bday_start()
+    jeff_bday_start() # kek
     job_queue = updater.job_queue
     job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 11, 0, 0, 0))
     if debug != "yes":
