@@ -1,1 +1,1 @@
-web: python On9bot.py
+web: python on9bot.py
