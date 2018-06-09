@@ -1,9 +1,10 @@
 import os
 import logging
+import datetime
 from time import sleep
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton, Chat
-from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters, run_async
+from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, CallbackQueryHandler, Filters, run_async
 from telegram.ext.filters import MergedFilter
 from telegram.error import TelegramError, TimedOut
 from telegram.utils.helpers import escape_markdown
@@ -62,8 +63,8 @@ def tag9js(bot, update):
                 text = username
             except AssertionError:
                 text = f"{msg.text.split(maxsplit=1)[1]} {username}"
-            sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
-                                  "keyboard.", reply_markup=ReplyKeyboardMarkup([[text]]), quote=True)
+            sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
+                                  reply_markup=ReplyKeyboardMarkup([[text]]), quote=True)
             sleep(15)
             msg.reply_text("Tag9js over, removing reply keyboard and deleting message if no one did so...",
                            reply_markup=ReplyKeyboardRemove(), quote=False)
@@ -74,8 +75,7 @@ def tag9js(bot, update):
         msg.reply_text("no u")
     else:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Join HK Duker", url="https://t.me/hkduker")]])
-        msg.reply_text("This command can only be used in HK Duker. Click the following button join the group and try "
-                       "out the command.", reply_markup=reply_markup)
+        msg.reply_text("This command can only be used in HK Duker.", reply_markup=reply_markup)
 
 
 def tag9(bot, update, args):
@@ -90,9 +90,9 @@ def tag9(bot, update, args):
         msg.reply_text("Please reply to a user's message or provide a valid user id as an argument.")
     else:
         try:
-            user_id = int(args[0])
-            assert user_id > 0
-            tag9_part2(msg, chat.get_member(user_id))
+            nub_id = int(args[0])
+            assert nub_id > 0
+            tag9_part2(msg, chat.get_member(nub_id))
         except (ValueError, AssertionError):
             msg.reply_text("no u, user ids only.")
         except TimedOut:
@@ -112,8 +112,8 @@ def tag9_part2(msg, u_info):
     elif u_info.user.username is None:
         msg.reply_text("no u, user has no username.")
     else:
-        sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard or /remove_keyboard2 to remove the reply "
-                              "keyboard.", reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
+        sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
+                              reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
         msg.reply_text("Tag9 over, removing reply keyboard and deleting message if no one did so...",
                        reply_markup=ReplyKeyboardRemove(), quote=False)
@@ -231,7 +231,7 @@ def user_info(bot, update):
 
 
 def get_id(bot, update):
-    msg = update.message
+    msg = update.effective_message
     rmsg = msg.reply_to_message
     if rmsg:
         ff = rmsg.forward_from
@@ -456,10 +456,46 @@ def error_handler(bot, update, error):
         pass
 
 
+jeff_bday_text = " ".join("""To celebrate [Jeff](tg://user?id=106665913)'s birthday and his take over of administration
+lead in the development of @werewolfbot, [JS](tg://user?id=190726372) is going to \*cough\* donate an amount of money to
+@werewolfbot and @Mud9bot. And you can support the development of both bots by clicking the inline button below to
+\*increase\* the amount of money that JS is going to donate to both bots. This amount of money will be split and
+separately donated to both bots. Each click will add a whopping total of HK$0.01 to the amount of donation. The starting
+amount is HK$10. CLICK CLICK CLICK... Current amount is HK${}.""".split("\n"))
+
+
+def jeff_bday_start():
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$0.01", callback_data="donate")]])
+    msg = bot.send_message(463998526, jeff_bday_text.format(10),
+                           parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
+    with open("donate.txt", "w") as f:
+        f.write("10")
+    with open("message_id.txt", "w") as f:
+        f.write(str(msg.message_id))
+
+
+def jeff_bday_donate(bot, update):
+    with open("donate.txt", "r+") as f:
+        amount = f.read()
+        f.write(str(float(amount) + 0.01))
+    update.callback_query.edit_message_text(jeff_bday_text.format(float(amount) + 0.01))
+
+
+def jeff_bday_end(bot, update):
+    with open("message_id.txt", "r") as f:
+        text = f.read()
+    bot.edit_reply_markup(chat_id=463998526, message_id=int(text))
+    with open("donate.txt", "r") as a:
+        amount = a.read()
+    bot.send_message(463998526, "Jeff's birthday has concluded! Jeff will receive a whopping total of HK${} from "
+                                     "JS. Thank me later, heh heh heh.".format(float(amount)))
+
+
 def main():
     debug = os.environ.get('DEBUG', "no")
     updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
+    dp.add_handler(CallbackQueryHandler(jeff_bday_donate))
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", bot_help))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
@@ -467,7 +503,7 @@ def main():
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
     dp.add_handler(CommandHandler("remove_keyboard2", remove_keyboard2))
     dp.add_handler(CommandHandler("r", echo, allow_edited=True))
-    dp.add_handler(CommandHandler("id", get_id))
+    dp.add_handler(CommandHandler("id", get_id, allow_edited=True))
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("pinned", pinned))
@@ -482,9 +518,12 @@ def main():
     dp.add_handler(MessageHandler(MergedFilter(base_filter=Filters.user(OWNER_ID),
                                                and_filter=Filters.regex(r"^[Hh][Ee][Ll][Ll][Oo]$")),
                                   owner_msg_handler, edited_updates=True))
-    dp.add_handler(RegexHandler(r".*([Nn][Oo])+ [Uu].*", no_u_handler))
-    dp.add_handler(MessageHandler(Filters.text, other_msg_handler))
+    dp.add_handler(RegexHandler(r".*([Nn][Oo])+ [Uu].*", no_u_handler, edited_updates=True))
+    dp.add_handler(MessageHandler(Filters.text, other_msg_handler, edited_updates=True))
     dp.add_error_handler(error_handler)
+    jeff_bday_start()
+    job_queue = updater.job_queue
+    job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 11, 0, 0, 0))
     if debug != "yes":
         port = os.environ.get('PORT', 80)
         updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=BOT_TOKEN, clean=True)
