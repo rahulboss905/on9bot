@@ -78,7 +78,7 @@ def tag9js(bot, update):
 
 
 def tag9(bot, update, args):
-    msg = update.message
+    msg = update.effective_message
     chat = msg.chat
     chat.send_action("typing")
     if msg.from_user.id not in CAN_USE_TAG9 or msg.chat_id > 0:
@@ -141,7 +141,7 @@ def remove_keyboard2(bot, update):
 
 
 def echo(bot, update):
-    msg = update.message
+    msg = update.effective_message
     rmsg = msg.reply_to_message
     try:
         text = msg.text.split(maxsplit=1)[1]
@@ -329,7 +329,7 @@ def check_number_dude(msg, user, is_new=False):
 
 
 def message_handler(bot, update):
-    msg = update.message
+    msg = update.effective_message
     user = msg.from_user
     if msg.new_chat_members:
         for nub in msg.new_chat_members:
@@ -387,7 +387,7 @@ def owner_edit(bot, update):
         msg.reply_text("no u, not my message")
     else:
         try:
-            rmsg.edit_text(msg.split(maxsplit=1)[1])
+            rmsg.edit_text(msg.text.split(maxsplit=1)[1])
         except TimedOut:
             pass
         except TelegramError as e:
