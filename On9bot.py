@@ -479,6 +479,7 @@ def jeff_bday_donate(bot, update):
         amount = f.read()
         f.write(str(float(amount) + 0.01))
     update.callback_query.edit_message_text(jeff_bday_text.format(float(amount) + 0.01))
+    update.callback_query.edit_message_reply_markup(InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$0.01", callback_data="donate"))
 
 
 def jeff_bday_end(bot, update):
