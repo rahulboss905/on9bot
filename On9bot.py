@@ -456,10 +456,10 @@ def error_handler(bot, update, error):
         pass
 
 
-jeff_bday_text = " ".join("""To celebrate [Jeff](tg://user?id=106665913)'s birthday and his take over of administration
-lead in the development of @werewolfbot, [JS](tg://user?id=190726372) is going to \*cough\* donate an amount of money to
+jeff_bday_text = " ".join("""To celebrate Jeff's birthday and his take over of administration
+lead in the development of @werewolfbot, JS is going to *cough* donate an amount of money to
 @werewolfbot and @Mud9bot. And you can support the development of both bots by clicking the inline button below to
-\*increase\* the amount of money that JS is going to donate to both bots. This amount of money will be split and
+*increase* the amount of money that JS is going to donate to both bots. This amount of money will be split and
 separately donated to both bots. Each click will add a whopping total of HK$0.01 to the amount of donation. The starting
 amount is HK$10. CLICK CLICK CLICK... Current amount is HK${}.""".split("\n"))
 
@@ -468,8 +468,6 @@ def jeff_bday_start():
     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$0.01", callback_data="donate")]])
     msg = bot.send_message(463998526, jeff_bday_text.format(10),
                            parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
-    with open("donate.txt", "w") as f:
-        f.write("10")
     with open("message_id.txt", "w") as f:
         f.write(str(msg.message_id))
 
@@ -479,7 +477,7 @@ def jeff_bday_donate(bot, update):
         amount = f.read()
         f.write(str(float(amount) + 0.01))
     update.callback_query.edit_message_text(jeff_bday_text.format(float(amount) + 0.01))
-    update.callback_query.edit_message_reply_markup(InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$0.01", callback_data="donate")]]))
+    update.callback_query.edit_message_reply_markup(reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$0.01", callback_data="donate")]]))
 
 
 def jeff_bday_end(bot, update):
