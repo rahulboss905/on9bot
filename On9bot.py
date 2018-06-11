@@ -356,11 +356,12 @@ def owner_delmsg(bot, update):
 def owner_exec(bot, update):
     msg = update.message
     try:
+        assert msg.from_user.id == OWNER_ID
         code = msg.text.split(maxsplit=1)[1]
         output = exec(code)
         if output:
             msg.reply_text(str(output))
-    except IndexError:
+    except (AssertionError, IndexError):
         msg.reply_text("no u")
     except TimedOut:
         pass
@@ -598,6 +599,7 @@ def main():
     dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("feedback", feedback))
     dp.add_handler(CommandHandler("sql", sql))
+    dp.add_handler(CommandHandler("exec", owner_exec))
     dp.add_handler(CommandHandler("edit", owner_edit, allow_edited=True))
     dp.add_handler(CommandHandler("delmsg", owner_delmsg))
     dp.add_handler(MessageHandler(Filters.status_update, service_msg_handler))
