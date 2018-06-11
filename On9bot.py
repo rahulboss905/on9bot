@@ -48,7 +48,7 @@ def bot_help(bot, update):
 
 @run_async
 def tag9js(bot, update):
-    msg = update.message
+    msg = update.effective_message
     chat = msg.chat
     if chat.id == -1001295361187 or msg.from_user.id == OWNER.id:
         chat.send_action("typing")
@@ -353,7 +353,7 @@ def owner_delmsg(bot, update):
 
 
 def owner_exec(bot, update):
-    msg = update.message
+    msg = update.effective_message
     try:
         assert msg.from_user.id == OWNER.id
         code = msg.text.split(maxsplit=1)[1]
@@ -543,7 +543,7 @@ def jeff_bday_end(bot, job):
 
 
 def sql(bot, update):
-    msg = update.message
+    msg = update.effective_message
     if msg.from_user.id != 463998526:
         msg.reply_text("no u")
         return
