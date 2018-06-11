@@ -464,13 +464,20 @@ jeff_bday_text = "".join("""為咗慶祝Jeff生日同，JS將會捐錢比 @werew
 下面個掣就可以提高JS捐額HK$1(係咪好多呢)。全部人同我撳撳撳撳撳...\n\n捐額暫時為HK${}""".split("\n", 1))
 
 
+HK_DUKER_ID = -1001295361187
+
+
 def jeff_bday_start():
     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="jeff_bday_donate")]])
-    msg = bot.send_message(-1001295361187, jeff_bday_text.format(0), reply_markup=reply_markup)
-    bot.pin_chat_message(-1001295361187, msg.message_id, False)
+    msg = bot.send_message(HK_DUKER_ID, jeff_bday_text.format(0), reply_markup=reply_markup)
+    try:
+        bot.pin_chat_message(HK_DUKER_ID, msg.message_id, disable_notification=True)
+    except TelegramError:
+        pass
     cur = conn.cursor()
     try:
-        cur.execute("INSERT msg_id INTO jeff_bday_temp VALUES (%s)", (msg.message_id,))
+        cur.execute("INSERT INTO jeff_bday_temp VALUES (%s)", (msg.message_id,))
+        conn.commit()
     finally:
         cur.close()
 
@@ -483,10 +490,10 @@ def jeff_bday_donate(bot, update):
     try:
         cur.execute("SELECT amount FROM jeff_bday_donate WHERE user_id = %s", (nub_id,))
         nub = cur.fetchone()
-        if nub:
+        if not nub:
             cur.execute("INSERT INTO jeff_bday_donate VALUES (%s, 1)", (nub_id,))
         else:
-            cur.execute("UPDATE jeff_bday_donate SET amount = %s WHERE user_id = %s", (nub_id,))
+            cur.execute("UPDATE jeff_bday_donate SET amount = %s WHERE user_id = %s", (nub[0] + 1, nub_id))
         conn.commit()
     finally:
         cur.close()
@@ -499,28 +506,30 @@ def jeff_bday_edit_msg_wait(bot, job):
         cur.execute("SELECT amount FROM jeff_bday_donate")
         amounts = cur.fetchall()
         cur.execute("SELECT msg_id FROM jeff_bday_temp")
-        msg_id = cur.fetchone
+        msg_id = cur.fetchone()[0]
     finally:
         cur.close()
     total = sum([a[0] for a in amounts])
     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="donate")]])
     try:
-        bot.edit_message_text(jeff_bday_text.format(total), -1001295361187, msg_id, reply_markup=reply_markup)
-    except TelegramError:
+        bot.edit_message_text(jeff_bday_text.format(total), HK_DUKER_ID, msg_id, reply_markup=reply_markup)
+    except TelegramError as e:
         pass
-    sleep(3)
 
 
-def jeff_bday_end(bot, update):
-    bot.edit_reply_markup(chat_id=-1001295361187, message_id=729172)
+def jeff_bday_end(bot, job):
     cur = conn.cursor()
     try:
         cur.execute("SELECT amount FROM jeff_bday_donate")
         amounts = cur.fetchall()
+        cur.execute("SELECT msg_id FROM jeff_bday_temp")
+        msg_id = cur.fetchone()[0]
     finally:
         cur.close()
+    bot.edit_reply_markup(chat_id=HK_DUKER_ID, message_id=msg_id)
     total = sum([a[0] for a in amounts])
     bot.send_message(-1001295361187, "活動完結！Jeff會收到JS HK${}嘅捐款。".format(total))
+    job.job_queue.stop()
 
 
 def sql(bot, update):
@@ -552,13 +561,14 @@ def main():
     try:
         cur.execute("CREATE TABLE IF NOT EXISTS jeff_bday_donate (user_id BIGINT UNIQUE NOT NULL, amount BIGINT NOT NULL)")
         cur.execute("CREATE TABLE IF NOT EXISTS jeff_bday_temp (msg_id BIGINT NOT NULL)")
+        cur.execute("DELETE FROM jeff_bday_temp")
         conn.commit()
     finally:
         cur.close()
     debug = os.environ.get('DEBUG', "no")
     updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
-    dp.add_handler(CallbackQueryHandler(jeff_bday_donate, pattern=r"^jeff_bday_donate$"))
+    dp.add_handler(CallbackQueryHandler(jeff_bday_donate))
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", bot_help))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
@@ -586,7 +596,7 @@ def main():
     dp.add_error_handler(error_handler)
     jeff_bday_start()
     job_queue = updater.job_queue
-    job_queue.run_repeating(jeff_bday_edit_msg_wait, 3)
+    job_queue.run_repeating(jeff_bday_edit_msg_wait, 15)
     job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 13, 0, 0, 0))
     if debug != "yes":
         port = os.environ.get('PORT', 80)
