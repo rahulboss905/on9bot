@@ -14,14 +14,12 @@ from telegram.parsemode import ParseMode
 from config import *
 from utils import *
 
-
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-
 
 # Check if given information is valid
 assert type(BOT_TOKEN) == str and BOT_TOKEN != "", "Provide a valid bot token!"
@@ -355,6 +353,21 @@ def owner_delmsg(bot, update):
         del_msg(msg)
 
 
+def owner_exec(bot, update):
+    msg = update.message
+    try:
+        code = msg.text.split(maxsplit=1)[1]
+        output = exec(code)
+        if output:
+            msg.reply_text(str(output))
+    except IndexError:
+        msg.reply_text("no u")
+    except TimedOut:
+        pass
+    except Exception as e:
+        msg.reply_text(str(e))
+
+
 def service_msg_handler(bot, update):
     msg = update.message
     if msg.new_chat_members:
@@ -396,8 +409,8 @@ def other_msg_handler(bot, update):
     text = msg.text.lower()
     if user.id != OWNER_ID and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
         msg.reply_text("Tag your mother?!")
-    elif user.id != OWNER_ID and [word for word in OWNER_NICKNAMES if word in text] and [
-        word for word in INSULTS if word in text] or "ur mom gay" in text:
+    elif (user.id != OWNER_ID and [word for word in OWNER_NICKNAMES if word in text] and
+          [word for word in INSULTS if word in text] or "ur mom gay" in text):
         msg.reply_text("no u")
     elif text == "js is very on9":
         msg.reply_text("Your IQ is 500!")
@@ -463,23 +476,22 @@ def error_handler(bot, update, error):
 jeff_bday_text = "".join("""為咗慶祝Jeff生日，JS將會捐錢比 @werewolfbot 同 @Mud9bot。你亦可以支持兩個bot嘅發展，只要撳
 下面個掣就可以提高JS捐額HK$1(係咪好多呢)。全部人同我撳撳撳撳撳...\n\n捐額暫時為HK${}""".split("\n", 1))
 
-
 HK_DUKER_ID = -1001295361187
 
 
-def jeff_bday_start():
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="jeff_bday_donate")]])
-    msg = bot.send_message(HK_DUKER_ID, jeff_bday_text.format(0), reply_markup=reply_markup)
-    try:
-        bot.pin_chat_message(HK_DUKER_ID, msg.message_id, disable_notification=True)
-    except TelegramError:
-        pass
-    cur = conn.cursor()
-    try:
-        cur.execute("INSERT INTO jeff_bday_temp VALUES (%s)", (msg.message_id,))
-        conn.commit()
-    finally:
-        cur.close()
+# def jeff_bday_start():
+#     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="jeff_bday_donate")]])
+#     msg = bot.send_message(HK_DUKER_ID, jeff_bday_text.format(0), reply_markup=reply_markup)
+#     try:
+#         bot.pin_chat_message(HK_DUKER_ID, msg.message_id, disable_notification=True)
+#     except TelegramError:
+#         pass
+#     cur = conn.cursor()
+#     try:
+#         cur.execute("INSERT INTO jeff_bday_temp VALUES (%s)", (msg.message_id,))
+#         conn.commit()
+#     finally:
+#         cur.close()
 
 
 def jeff_bday_donate(bot, update):
@@ -556,12 +568,14 @@ def sql(bot, update):
             cur.close()
 
 
+INIT_DB_SQL = """CREATE TABLE IF NOT EXISTS jeff_bday_donate (user_id BIGINT UNIQUE NOT NULL, amount BIGINT NOT NULL);
+CREATE TABLE IF NOT EXISTS jeff_bday_temp (msg_id BIGINT NOT NULL);"""
+
+
 def main():
     cur = conn.cursor()
     try:
-        cur.execute("CREATE TABLE IF NOT EXISTS jeff_bday_donate (user_id BIGINT UNIQUE NOT NULL, amount BIGINT NOT NULL)")
-        cur.execute("CREATE TABLE IF NOT EXISTS jeff_bday_temp (msg_id BIGINT NOT NULL)")
-        cur.execute("DELETE FROM jeff_bday_temp")
+        cur.execute(INIT_DB_SQL)
         conn.commit()
     finally:
         cur.close()
@@ -594,10 +608,9 @@ def main():
     dp.add_handler(RegexHandler(r".*([Nn][Oo])+ [Uu].*", no_u_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.text, other_msg_handler, edited_updates=True))
     dp.add_error_handler(error_handler)
-    jeff_bday_start()
     job_queue = updater.job_queue
     job_queue.run_repeating(jeff_bday_edit_msg_wait, 4)
-    job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 13, 0, 0, 0))
+    job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 12, 0, 0, 0))
     if debug != "yes":
         port = os.environ.get('PORT', 80)
         updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=BOT_TOKEN, clean=True)
