@@ -3,6 +3,7 @@ import logging
 import datetime
 from time import sleep
 
+import psycopg2
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton, Chat
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, CallbackQueryHandler, Filters, run_async
 from telegram.ext.filters import MergedFilter
@@ -17,6 +18,9 @@ from utils import *
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 
 # Check if given information is valid
@@ -381,7 +385,7 @@ def no_u_handler(bot, update):
     text = msg.text.lower()
     no_count = len([word for word in text.split() if word == 'no'])
     if 100 > no_count > 0:
-        msg.reply_text(f"{'no'*(no_count + 1)} u")
+        msg.reply_text(f"{'no '*(no_count + 1)}u")
     else:
         msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
 
@@ -456,45 +460,105 @@ def error_handler(bot, update, error):
         pass
 
 
-jeff_bday_text = " ".join("""To celebrate Jeff's birthday and his take over of administration
-lead in the development of @werewolfbot, JS is going to *cough* donate an amount of money to
-@werewolfbot and @Mud9bot. And you can support the development of both bots by clicking the inline button below to
-*increase* the amount of money that JS is going to donate to both bots. This amount of money will be split and
-separately donated to both bots. Each click will add a whopping total of HK$1 to the amount of donation. The starting
-amount is HK$10. This ends tomorrow, so you'd better CLICK CLICK CLICK... Current amount is HK${}.""".split("\n"))
+jeff_bday_text = "".join("""為咗慶祝Jeff生日同，JS將會捐錢比 @werewolfbot 同 @Mud9bot。你亦可以支持兩個bot嘅發展，你只要撳
+下面個掣就可以提高JS捐額HK$1(係咪好多呢)。全部人同我撳撳撳撳撳...\n\n捐額暫時為HK${}""".split("\n", 1))
 
 
 def jeff_bday_start():
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="donate")]])
-    msg = bot.send_message(-1001295361187, jeff_bday_text.format(10),
-                           parse_mode=ParseMode.MARKDOWN, reply_markup=reply_markup)
-    with open("message_id.txt", "w") as f:
-        f.write(str(msg.message_id))
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="jeff_bday_donate")]])
+    msg = bot.send_message(-1001295361187, jeff_bday_text.format(0), reply_markup=reply_markup)
+    bot.pin_chat_message(-1001295361187, msg.message_id, False)
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT msg_id INTO jeff_bday_temp VALUES (%s)", (msg.message_id,))
+    finally:
+        cur.close()
 
 
 def jeff_bday_donate(bot, update):
-    with open("donate.txt", "r+") as f:
-        amount = f.read()
-    open('donate.txt', 'w').close()
-    open('donate.txt', 'w').write(str(int(amount) + 1))
-    update.callback_query.edit_message_text(jeff_bday_text.format(int(amount) + 1), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="donate")]]))
+    query = update.callback_query
+    query.answer()
+    nub_id = query.from_user.id
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT amount FROM jeff_bday_donate WHERE user_id = %s", (nub_id,))
+        nub = cur.fetchone()
+        if nub:
+            cur.execute("INSERT INTO jeff_bday_donate VALUES (%s, 1)", (nub_id,))
+        else:
+            cur.execute("UPDATE jeff_bday_donate SET amount = %s WHERE user_id = %s", (nub_id,))
+        conn.commit()
+    finally:
+        cur.close()
+
+
+@run_async
+def jeff_bday_edit_msg_wait(bot, job):
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT amount FROM jeff_bday_donate")
+        amounts = cur.fetchall()
+        cur.execute("SELECT msg_id FROM jeff_bday_temp")
+        msg_id = cur.fetchone
+    finally:
+        cur.close()
+    total = sum([a[0] for a in amounts])
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Add HK$1", callback_data="donate")]])
+    try:
+        bot.edit_message_text(jeff_bday_text.format(total), -1001295361187, msg_id, reply_markup=reply_markup)
+    except TelegramError:
+        pass
+    sleep(3)
 
 
 def jeff_bday_end(bot, update):
-    with open("message_id.txt", "r") as f:
-        text = f.read()
-    bot.edit_reply_markup(chat_id=-1001295361187, message_id=int(text))
-    with open("donate.txt", "r") as a:
-        amount = a.read()
-    bot.send_message(-1001295361187, "Jeff's birthday has concluded! Jeff will receive a whopping total of HK${} from "
-                                     "JS. Thank me later, heh heh heh.".format(int(amount)))
+    bot.edit_reply_markup(chat_id=-1001295361187, message_id=729172)
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT amount FROM jeff_bday_donate")
+        amounts = cur.fetchall()
+    finally:
+        cur.close()
+    total = sum([a[0] for a in amounts])
+    bot.send_message(-1001295361187, "活動完結！Jeff會收到JS HK${}嘅捐款。".format(total))
+
+
+def sql(bot, update):
+    msg = update.message
+    if msg.from_user.id != 463998526:
+        msg.reply_text("no u")
+        return
+    else:
+        cur = conn.cursor()
+        try:
+            query = msg.text.split(" ", 1)[1]
+        except IndexError:
+            msg.reply_text("no u")
+            return
+        try:
+            cur.execute(query)
+            output = cur.fetchall()
+            conn.commit()
+            if output:
+                msg.reply_markdown(escape_markdown(str(output)))
+            else:
+                msg.reply_markdown("No output was returned.")
+        finally:
+            cur.close()
 
 
 def main():
+    cur = conn.cursor()
+    try:
+        cur.execute("CREATE TABLE IF NOT EXISTS jeff_bday_donate (user_id BIGINT UNIQUE NOT NULL, amount BIGINT NOT NULL)")
+        cur.execute("CREATE TABLE IF NOT EXISTS jeff_bday_temp (msg_id BIGINT NOT NULL)")
+        conn.commit()
+    finally:
+        cur.close()
     debug = os.environ.get('DEBUG', "no")
     updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
-    dp.add_handler(CallbackQueryHandler(jeff_bday_donate))
+    dp.add_handler(CallbackQueryHandler(jeff_bday_donate, pattern=r"^jeff_bday_donate$"))
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", bot_help))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
@@ -509,24 +573,21 @@ def main():
     dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("user_info", user_info))
     dp.add_handler(CommandHandler("feedback", feedback))
+    dp.add_handler(CommandHandler("sql", sql))
     dp.add_handler(CommandHandler("edit", owner_edit, allow_edited=True))
     dp.add_handler(CommandHandler("delmsg", owner_delmsg))
     dp.add_handler(MessageHandler(Filters.status_update, service_msg_handler))
     dp.add_handler(MessageHandler(MergedFilter(Filters.chat(-1001295361187), MergedFilter(
         check_number_man_filter, bot_is_admin_filter)), number_man_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(MergedFilter(base_filter=Filters.user(OWNER_ID),
-                                               and_filter=Filters.regex(r"^[Hh][Ee][Ll][Ll][Oo]$")),
+    dp.add_handler(MessageHandler(MergedFilter(Filters.user(OWNER_ID), Filters.regex(r"^[Hh][Ee][Ll][Ll][Oo]$")),
                                   owner_msg_handler, edited_updates=True))
     dp.add_handler(RegexHandler(r".*([Nn][Oo])+ [Uu].*", no_u_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.text, other_msg_handler, edited_updates=True))
     dp.add_error_handler(error_handler)
-    file = open('donate.txt', 'w')
-    file.write("10")
-    file.close()
-    open('message_id.txt', 'w').close()
-    jeff_bday_start() # kek
+    jeff_bday_start()
     job_queue = updater.job_queue
-    job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 11, 0, 0, 0))
+    job_queue.run_repeating(jeff_bday_edit_msg_wait, 3)
+    job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 13, 0, 0, 0))
     if debug != "yes":
         port = os.environ.get('PORT', 80)
         updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=BOT_TOKEN, clean=True)
