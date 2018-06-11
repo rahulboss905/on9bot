@@ -1,7 +1,7 @@
 from telegram.ext import BaseFilter
 from telegram.error import TelegramError
 
-from config import OWNER_USERNAME, OWNER_ID, BOT_ID
+from config import OWNER_USERNAME, OWNER, BOT
 
 
 # Constants
@@ -37,12 +37,12 @@ def kick_member(chat, user_id):
 def echo_owner_check(text):
     text = text.lower()
     assert OWNER_USERNAME.lower() not in text
-    assert not ("[" in text and f"](tg://user?id={OWNER_ID})" in text)
+    assert not ("[" in text and f"](tg://user?id={OWNER.id})" in text)
 
 
 def check_number_man(user):
-    if user.last_name and len(user.first_name) == len(user.last_name) == 8:
-        if user.first_name.isdigit() and user.last_name.isdigit():
+    if (user.last_name and len(user.first_name) == len(user.last_name) == 8 and
+            user.first_name.isdigit() and user.last_name.isdigit()):
             return True
     return False
 
@@ -62,7 +62,7 @@ class BotIsAdmin(BaseFilter):
 
     def filter(self, message):
         admins = message.chat.get_administrators
-        if BOT_ID in [admin.id for admin in admins]:
+        if BOT.id in [admin.id for admin in admins]:
             return True
         return False
 

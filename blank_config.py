@@ -20,24 +20,24 @@ HEROKU_APP_NAME = ""  # Paste your Heroku app name here if you are going to host
 # DO NOT AMEND THE FOLLOWING EXCEPT VARIABLES IN "YOUR PREFERENCES":.
 
 # Bot instance to retrieve (updated) information of itself and you.
-bot = Bot(BOT_TOKEN)
+nubbot = Bot(BOT_TOKEN)
 
 # Bot information
-BOT = bot.get_me()
+BOT = nubbot.get_me()
 BOT_ID = BOT.id
 BOT_NAME = BOT.first_name
 BOT_USERNAME = "@" + BOT.username
 BOT_LINK = f"https://t.me/{BOT.username}"
 
 # Owner information
-OWNER = bot.get_chat_member(OWNER_ID, OWNER_ID).user
+OWNER = nubbot.get_chat_member(OWNER_ID, OWNER_ID).user
 OWNER_NAME = OWNER.full_name
 OWNER_USERNAME = "@" + OWNER.username
 OWNER_LINK = f"https://t.me/{OWNER.username}"
 OWNER_MENTION = f"[{OWNER_NAME}]({OWNER_LINK})"
 
 # Admin group information
-ADMIN_GROUP = bot.get_chat(ADMIN_GROUP_ID)
+ADMIN_GROUP = nubbot.get_chat(ADMIN_GROUP_ID)
 
 # Your preferences                                                                    | | | | |
 CAN_USE_TAG9 = (OWNER_ID,)  # Append user ids of users to let them use /tag9.        \/\/\/\/\/

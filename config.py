@@ -5,21 +5,21 @@ OWNER_ID = 463998526
 ADMIN_GROUP_ID = -1001141544515
 HEROKU_APP_NAME = "on9bot"
 
-bot = Bot(BOT_TOKEN)
+nubbot = Bot(BOT_TOKEN)
 
-BOT = bot.get_me()
+BOT = nubbot.get_me()
 BOT_ID = BOT.id
-BOT_NAME = BOT.full_name
+BOT_NAME = BOT.first_name
 BOT_USERNAME = "@" + BOT.username
 BOT_LINK = f"https://t.me/{BOT.username}"
 
-OWNER = bot.get_chat_member(OWNER_ID, OWNER_ID).user
+OWNER = nubbot.get_chat_member(OWNER_ID, OWNER_ID).user
 OWNER_NAME = OWNER.full_name
 OWNER_USERNAME = "@" + OWNER.username
 OWNER_LINK = f"https://t.me/{OWNER.username}"
 OWNER_MENTION = f"[{OWNER_NAME}]({OWNER_LINK})"
 
-ADMIN_GROUP = bot.get_chat(ADMIN_GROUP_ID)
+ADMIN_GROUP = nubbot.get_chat(ADMIN_GROUP_ID)
 
 CAN_USE_TAG9 = (OWNER_ID, 190726372, 106665913)  # Append user ids of users to let them use /tag9.
 OWNER_NICKNAMES = tuple(OWNER_NAME.lower().split()) + ("leung",)  # Append your nicknames in lowercase in the tuple.

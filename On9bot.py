@@ -50,7 +50,7 @@ def bot_help(bot, update):
 def tag9js(bot, update):
     msg = update.message
     chat = msg.chat
-    if chat.id == -1001295361187 or msg.from_user.id == OWNER_ID:
+    if chat.id == -1001295361187 or msg.from_user.id == OWNER.id:
         chat.send_action("typing")
         js_info = chat.get_member(190726372)
         if js_info.user.username:
@@ -107,7 +107,7 @@ def tag9(bot, update, args):
 def tag9_part2(msg, u_info):
     if u_info.status in ("restricted", "left", "kicked"):
         msg.reply_text("no u, not in group or restricted")
-    elif u_info.user.id in (OWNER_ID, BOT_ID):
+    elif u_info.user.id in (OWNER.id, BOT.id):
         msg.reply_text("no u")
     elif u_info.user.is_bot:
         msg.reply_text("no u, don't tag other bots.")
@@ -149,7 +149,8 @@ def echo(bot, update):
     try:
         text = msg.text.split(maxsplit=1)[1]
         try:
-            echo_owner_check(text)
+            if msg.from_user.id != OWNER.id:
+                echo_owner_check(text)
             if rmsg:  # if message has args and replies to another message
                 rmsg.reply_markdown(text, disable_web_page_preview=True)
             else:  # if message has args and does not reply to another message
@@ -170,7 +171,8 @@ def echo(bot, update):
         else:  # if message has no arguments and replies to a message with text
             text = rmsg.text
             try:
-                echo_owner_check(text)
+                if msg.from_user.id != OWNER.id:
+                    echo_owner_check(text)
                 msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
             except AssertionError:
                 msg.reply_text("Tag your mother?!")
@@ -187,12 +189,9 @@ def user_info(bot, update):
     if msg.chat_id > 0:
         msg.reply_text("no u, groups only.")
         return
-    if not msg.reply_to_message:
-        msg.reply_text("no u, reply to a message.")
-        return
     chat = msg.chat
     chat.send_action("typing")
-    user = msg.reply_to_message.from_user
+    user = msg.reply_to_message.from_user if msg.reply_to_message else msg.from_user
     title = escape_markdown(chat.title)
     text = "*Information of this bot*" if user.is_bot else "*Information of this user*"
     text += f"\n\nUser id: `{user.id}`\nName: {escape_markdown(user.full_name)}"
@@ -321,7 +320,7 @@ def pinned(bot, update):
 def owner_edit(bot, update):
     msg = update.effective_message
     rmsg = msg.reply_to_message
-    if msg.from_user.id != OWNER_ID:
+    if msg.from_user.id != OWNER.id:
         msg.reply_text("no u")
     elif not rmsg:
         msg.reply_text("no u, reply to a message")
@@ -342,7 +341,7 @@ def owner_edit(bot, update):
 def owner_delmsg(bot, update):
     msg = update.message
     rmsg = msg.reply_to_message
-    if msg.from_user.id != OWNER_ID:
+    if msg.from_user.id != OWNER.id:
         msg.reply_text("no u")
     elif not rmsg:
         msg.reply_text("no u, reply to a message")
@@ -356,17 +355,15 @@ def owner_delmsg(bot, update):
 def owner_exec(bot, update):
     msg = update.message
     try:
-        assert msg.from_user.id == OWNER_ID
+        assert msg.from_user.id == OWNER.id
         code = msg.text.split(maxsplit=1)[1]
-        output = exec(code)
-        if output:
-            msg.reply_text(str(output))
+        exec(code)
     except (AssertionError, IndexError):
         msg.reply_text("no u")
     except TimedOut:
         pass
     except Exception as e:
-        msg.reply_text(str(e))
+        msg.reply_markdown(f"An error ocurred: ```{str(e)}```")
 
 
 def service_msg_handler(bot, update):
@@ -408,7 +405,7 @@ def other_msg_handler(bot, update):
     msg = update.effective_message
     user = msg.from_user
     text = msg.text.lower()
-    if user.id != OWNER_ID and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
+    if user.id != OWNER.id and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
         msg.reply_text("Tag your mother?!")
     elif (user.id != OWNER_ID and [word for word in OWNER_NICKNAMES if word in text] and
           [word for word in INSULTS if word in text] or "ur mom gay" in text):
