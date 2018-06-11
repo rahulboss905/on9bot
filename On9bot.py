@@ -460,7 +460,7 @@ def error_handler(bot, update, error):
         pass
 
 
-jeff_bday_text = "".join("""為咗慶祝Jeff生日同，JS將會捐錢比 @werewolfbot 同 @Mud9bot。你亦可以支持兩個bot嘅發展，你只要撳
+jeff_bday_text = "".join("""為咗慶祝Jeff生日，JS將會捐錢比 @werewolfbot 同 @Mud9bot。你亦可以支持兩個bot嘅發展，只要撳
 下面個掣就可以提高JS捐額HK$1(係咪好多呢)。全部人同我撳撳撳撳撳...\n\n捐額暫時為HK${}""".split("\n", 1))
 
 
