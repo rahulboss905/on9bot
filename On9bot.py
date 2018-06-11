@@ -565,12 +565,15 @@ def sql(bot, update):
             return
         try:
             cur.execute(query)
-            output = cur.fetchall()
+            try:
+                output = cur.fetchall()
+            except Exception:
+                output=None
             conn.commit()
             if output:
                 msg.reply_markdown(escape_markdown(str(output)))
             else:
-                msg.reply_markdown("No output was returned.")
+                msg.reply_markdown("Success! No output was returned.")
         finally:
             cur.close()
 
