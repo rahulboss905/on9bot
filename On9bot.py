@@ -27,8 +27,8 @@ assert type(OWNER_ID) == int and OWNER_ID > 0, "Provide a valid user id!"
 assert OWNER_USERNAME, "Set a username! Go to Settings > Username to do so."
 assert type(ADMIN_GROUP_ID) == int and ADMIN_GROUP_ID < 0, "Set a group, supergroup or channel as the admin group!"
 assert type(HEROKU_APP_NAME) == str, "Your Heroku app name must be a string!"
-for user_id in CAN_USE_TAG9:
-    assert type(user_id) == int and user_id > 0, "You can only append CAN_USE_TAG9 with valid user ids!"
+for id in CAN_USE_TAG9:
+    assert type(id) == int and id > 0, "You can only append CAN_USE_TAG9 with valid user ids!"
 for name in OWNER_NICKNAMES:
     assert type(name) == str and name != "", "You can only append OWNER_NICKNAMES with non-empty strings!"
 for insult in INSULTS:
@@ -568,7 +568,7 @@ def sql(bot, update):
             try:
                 output = cur.fetchall()
             except Exception:
-                output=None
+                output = None
             conn.commit()
             if output:
                 msg.reply_markdown(escape_markdown(str(output)))
@@ -617,7 +617,7 @@ def main():
     dp.add_handler(MessageHandler(MergedFilter(Filters.user(OWNER_ID), Filters.regex(r"^[Hh][Ee][Ll][Ll][Oo]$")),
                                   owner_msg_handler, edited_updates=True))
     dp.add_handler(RegexHandler(r".*([Nn][Oo])+ [Uu].*", no_u_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.text, other_msg_handler, edited_updates=True))
+    dp.add_handler(MessageHandler(Filters.text & Filters.chat(-1001295361187), other_msg_handler, edited_updates=True))
     dp.add_error_handler(error_handler)
     job_queue = updater.job_queue
     job_queue.run_repeating(jeff_bday_edit_msg_wait, 4)
