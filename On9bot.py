@@ -584,7 +584,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", bot_help))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
-    dp.add_handler(CommandHandler("tag9js", tag9js))
+    dp.add_handler(CommandHandler("tag9js", tag9js, allow_edited=True))
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
     dp.add_handler(CommandHandler("remove_keyboard2", remove_keyboard2))
     dp.add_handler(CommandHandler("r", echo, allow_edited=True))
