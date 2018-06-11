@@ -354,12 +354,14 @@ def owner_delmsg(bot, update):
 
 def owner_exec(bot, update):
     msg = update.effective_message
+    code = ""
     try:
         assert msg.from_user.id == OWNER.id
         code = msg.text.split(maxsplit=1)[1]
-        exec(code)
     except (AssertionError, IndexError):
         msg.reply_text("no u")
+    try:
+        exec(code)
     except TimedOut:
         pass
     except Exception as e:
