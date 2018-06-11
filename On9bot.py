@@ -356,16 +356,22 @@ def owner_exec(bot, update):
     msg = update.effective_message
     code = ""
     try:
-        assert msg.from_user.id == OWNER.id
+        if msg.from_user.id != OWNER.id:
+            msg.reply_text("no u")
+            return
         code = msg.text.split(maxsplit=1)[1]
-    except (AssertionError, IndexError):
-        msg.reply_text("no u")
+    except IndexError:
+        if msg.reply_to_message:
+            code = msg.reply_to_message.text
+        else:
+            msg.reply_text("no u")
+            return
     try:
         exec(code)
     except TimedOut:
         pass
     except Exception as e:
-        msg.reply_markdown(f"An error ocurred: ```{str(e)}```")
+        msg.reply_markdown(f"An error occured: ```{str(e)}```")
 
 
 def service_msg_handler(bot, update):
@@ -389,16 +395,17 @@ def number_man_handler(bot, update):
 
 
 def owner_msg_handler(bot, update):
-    update.effective_message.reply_text(f"Hi {OWNER.full_name}! "
+    update.effective_message.reply_text(f"Hi {OWNER_MENTION}! "
                                         "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
 
 
 def no_u_handler(bot, update):
     msg = update.effective_message
     text = msg.text.lower()
-    no_count = len([word for word in text.split() if word == 'no'])
-    if 100 > no_count > 0:
-        msg.reply_text(f"{'no '*(no_count + 1)}u")
+    for no_count in range(100, 1, -1):
+        if f"{'no '*no_count} u" in text:
+            msg.reply_text(f"{'no '*(no_count + 1)}u")
+            return
     else:
         msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
 
