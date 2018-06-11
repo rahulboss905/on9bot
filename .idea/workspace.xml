@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6a6d30c9-8976-410f-bf2e-65c86365ea28" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/On9bot.py" afterPath="$PROJECT_DIR$/On9bot.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="On9bot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/On9bot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="467" column="0" lean-forward="true" selection-start-line="467" selection-start-column="0" selection-end-line="467" selection-end-column="0" />
+            <state relative-caret-position="489">
+              <caret line="596" column="21" lean-forward="true" selection-start-line="596" selection-start-column="21" selection-end-line="596" selection-end-column="21" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -393,8 +394,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/On9bot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="467" column="0" lean-forward="true" selection-start-line="467" selection-start-column="0" selection-end-line="467" selection-end-column="0" />
+        <state relative-caret-position="489">
+          <caret line="596" column="21" lean-forward="true" selection-start-line="596" selection-start-column="21" selection-end-line="596" selection-end-column="21" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

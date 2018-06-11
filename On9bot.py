@@ -596,7 +596,7 @@ def main():
     dp.add_error_handler(error_handler)
     jeff_bday_start()
     job_queue = updater.job_queue
-    job_queue.run_repeating(jeff_bday_edit_msg_wait, 15)
+    job_queue.run_repeating(jeff_bday_edit_msg_wait, 4)
     job_queue.run_once(jeff_bday_end, datetime.datetime(2018, 6, 13, 0, 0, 0))
     if debug != "yes":
         port = os.environ.get('PORT', 80)
