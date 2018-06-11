@@ -371,7 +371,7 @@ def owner_exec(bot, update):
     except TimedOut:
         pass
     except Exception as e:
-        msg.reply_markdown(f"An error occured: ```{str(e)}```")
+        msg.reply_markdown(f"An error occured: ```{escape_markdown(str(e))}```")
 
 
 def service_msg_handler(bot, update):
@@ -574,6 +574,8 @@ def sql(bot, update):
                 msg.reply_markdown(escape_markdown(str(output)))
             else:
                 msg.reply_markdown("Success! No output was returned.")
+        except Exception as e:
+            msg.reply_markdown(f"An error occured: ```{escape_markdown(str(e))}```")
         finally:
             cur.close()
 
