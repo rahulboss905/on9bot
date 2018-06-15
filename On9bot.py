@@ -306,7 +306,7 @@ def pinned(bot: Bot, update: Update) -> None:
     chat_info = bot.get_chat(chat.id)
     pmsg = chat_info.pinned_message
     if not pmsg:
-        msg.reply_text("No pinned message (sometimes wrong, especially if a bot sent the pinned message, unstable function)")
+        msg.reply_text("No pinned message (sometimes wrong, unstable function)")
         return
     p_id = pmsg.message_id
     if not pmsg.from_user.is_bot or pmsg.from_user.id == bot.id:
