@@ -28,7 +28,7 @@ def del_msg(msg: Message) -> None:
         pass
 
 
-def kick_member(chat: Chat, user_id: int):
+def kick_member(chat: Chat, user_id: int) -> None:
     try:
         chat.kick_member(user_id)
     except TelegramError:

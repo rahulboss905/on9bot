@@ -402,7 +402,8 @@ def owner_msg_handler(bot: Bot, update: Update) -> None:
 
 def no_u_handler(bot: Bot, update: Update) -> None:
     msg = update.effective_message
-    no_count = max([p.count("no") for p in [s.strip() for s in msg.text.lower().split("u") if "no" in s]])
+    no_count = max([p.count("no") for p in  # get maximum count of linked "no"s followed by "u"
+                    [s.strip() for s in msg.text.lower().split("u") if "no" in s]])  # split lowercase msg by "u"
     if no_count < 100:
         msg.reply_text(f"{'no '*(no_count + 1)}u")
     else:
@@ -519,7 +520,8 @@ def main():
     dp.add_handler(CommandHandler("restart", restart))
 
     # Message handlers
-    dp.add_handler(MessageHandler(Filters.status_update, service_msg_handler))
+    dp.add_handler(MessageHandler(Filters.status_update.new_chat_members & Filters.status_update.left_chat_member,
+                                  service_msg_handler))
     dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & check_number_man_filter & bot_is_admin_filter,
                                   number_man_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.regex(r"(?i)test"),
