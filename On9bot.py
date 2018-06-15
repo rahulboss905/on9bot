@@ -7,7 +7,7 @@ from threading import Thread
 
 from telegram import (Bot, Chat, Message, ChatMember, ChatAction, Update,
                       ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton)
-from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, CallbackQueryHandler, Filters, run_async
+from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters, run_async
 from telegram.error import TelegramError, TimedOut
 from telegram.utils.helpers import escape_markdown
 from telegram.parsemode import ParseMode
@@ -490,7 +490,7 @@ def main():
 
     def restart(bot, update):
         msg = update.message
-        if msg.from_user != OWNER.id:
+        if msg.from_user.id != OWNER.id:
             msg.reply_text("no u")
             return
         msg.reply_text("Restarting bot...")
