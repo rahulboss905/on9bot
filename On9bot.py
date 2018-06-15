@@ -207,7 +207,7 @@ def user_info(bot: Bot, update: Update) -> None:
         nub = chat.get_member(user.id)
         s = nub.status
     except TelegramError:
-        msg.reply_text(text)
+        msg.reply_markdown(text, disable_web_page_preview=True)
         return
     if s == ChatMember.CREATOR:
         text += f"\n\n*Creator* of {title}"
@@ -229,10 +229,10 @@ def user_info(bot: Bot, update: Update) -> None:
                 text += f"\nCan send stickers and GIFs: {yn_processor(nub.can_send_other_messages)}"
                 text += f"\nCan add web page previews: {yn_processor(nub.can_add_web_page_previews)}"
     elif s == ChatMember.LEFT:
-        text += f"\n\n*Previously a member* of {title}"
+        text += f"\n\n*Not a member* of {title}"
     elif s == ChatMember.KICKED:
         text += f"\n\n*Banned* from {title}"
-    msg.reply_markdown(text)
+    msg.reply_markdown(text, disable_web_page_preview=True)
 
 
 def get_id(bot: Bot, update: Update) -> None:
