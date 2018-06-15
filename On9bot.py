@@ -196,8 +196,7 @@ def user_info(bot: Bot, update: Update) -> None:
     chat.send_action("typing")
     user = rmsg.forward_from if rmsg and rmsg.forward_from else rmsg.from_user if rmsg else msg.from_user
     title = escape_markdown(chat.title)
-    text = f"*Information of {'me' if user.id = bot.id else 'this bot'}*" if user.is_bot else \
-        f"*Information of {'you' if user.id = msg.from_user.id else 'this user'}*"
+    text = "*Information of this bot*" if user.is_bot else "*Information of this user*"
     text += f"\n\nName: *{user.mention_markdown(user.full_name)}\nUser id: `{user.id}`*"
     if user.username:
         text += f"\nUsername: @{escape_markdown(user.username)}"
