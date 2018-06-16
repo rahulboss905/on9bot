@@ -69,9 +69,9 @@ def tag9js(bot: Bot, update: Update) -> None:
             sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                                   reply_markup=ReplyKeyboardMarkup([[text]]), quote=True)
             sleep(15)
-            msg.reply_text("Tag9js over, removing reply keyboard and deleting message if no one did so...",
-                           reply_markup=ReplyKeyboardRemove(), quote=False)
             del_msg(sent)
+            msg.reply_text("Tag9js over, removed reply keyboard and deleted message if no one did so...",
+                           reply_markup=ReplyKeyboardRemove(), quote=False)
         else:
             msg.reply_text("no u, JS removed username.")
     elif chat.id < 0:
@@ -119,26 +119,17 @@ def tag9_part2(msg: Message, u_info: ChatMember) -> None:
         sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
                               reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
         sleep(15)
-        msg.reply_text("Tag9 over, removing reply keyboard and deleting message if no one did so...",
-                       reply_markup=ReplyKeyboardRemove(), quote=False)
         del_msg(sent)
+        msg.reply_text("Tag9 over, removed reply keyboard and deleted message if no one did so...",
+                       reply_markup=ReplyKeyboardRemove(), quote=False)
 
 
 def remove_keyboard(bot: Bot, update: Update) -> None:
     msg = update.message
-    if msg.chat_id < 0:
-        msg.reply_text("Removed reply keyboard if there was an existing one...",
-                       reply_markup=ReplyKeyboardRemove(), quote=False)
-    else:
-        msg.reply_text("no u")
-
-
-def remove_keyboard2(bot: Bot, update: Update) -> None:
-    msg = update.message
     if msg.chat_id > 0:
         msg.reply_text("no u")
         return
-    sent = msg.reply_text("Replacing reply keyboard if there was an existing one...",
+    sent = msg.reply_text("Replacing reply keyboard markup if there was an existing one...",
                           reply_markup=ReplyKeyboardMarkup([["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD "
                                                              "BUTTONS"]]), quote=False)
     del_msg(sent)
@@ -189,24 +180,22 @@ def echo(bot: Bot, update: Update) -> None:
 def user_info(bot: Bot, update: Update) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
-    if msg.chat_id > 0:
-        msg.reply_text("no u, groups only.")
-        return
     chat = msg.chat
     chat.send_action("typing")
     user = rmsg.forward_from if rmsg and rmsg.forward_from else rmsg.from_user if rmsg else msg.from_user
     title = f"[{chat.title}](t.me/{chat.username})" if chat.username else f"[{chat.title}]({chat.invite_link})" \
         if chat.invite_link else f"*{chat.title}*"
-    text = "*Information of this bot*" if user.is_bot else "*Information of this user*"
+    text = f"*{'Bot' if user.is_bot else 'User'} info*"
     text += f"\n\nName: {user.mention_markdown(user.full_name)}\nUser id: `{user.id}`"
     if user.username:
         text += f"\nUsername: @{escape_markdown(user.username)}"
     if user.language_code:
         text += f"\nLanguage code: {user.language_code}"
     try:
+        assert chat.type in (Chat.GROUP, Chat.SUPERGROUP)
         nub = chat.get_member(user.id)
         s = nub.status
-    except TelegramError:
+    except (TelegramError, AssertionError):
         msg.reply_markdown(text, disable_web_page_preview=True)
         return
     if s == ChatMember.CREATOR:
@@ -503,7 +492,6 @@ def main():
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
     dp.add_handler(CommandHandler("tag9js", tag9js, allow_edited=True))
     dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
-    dp.add_handler(CommandHandler("remove_keyboard2", remove_keyboard2))
     dp.add_handler(CommandHandler("r", echo, allow_edited=True))
     dp.add_handler(CommandHandler("id", get_id))
     dp.add_handler(CommandHandler("ping", ping))
