@@ -50,7 +50,7 @@ def tag9js(bot: Bot, update: Update) -> None:
         chat.send_action(ChatAction.TYPING)
         try:
             js_info = chat.get_member(190726372)
-            assert js_info.status in (ChatMember.LEFT, ChatMember.RESTRICTED, ChatMember.KICKED)
+            assert js_info.status in (ChatMember.CREATOR, ChatMember.ADMINISTRATOR, ChatMember.MEMBER)
         except (TelegramError, AssertionError):
             msg.reply_text("no u, he is not in this group")
             return
@@ -127,7 +127,7 @@ def tag9_part2(msg: Message, u_info: ChatMember) -> None:
 def remove_keyboard(bot: Bot, update: Update) -> None:
     msg = update.message
     if msg.chat_id < 0:
-        msg.reply_text("Removing reply keyboard if there was an existing reply keyboard...",
+        msg.reply_text("Removed reply keyboard if there was an existing one...",
                        reply_markup=ReplyKeyboardRemove(), quote=False)
     else:
         msg.reply_text("no u")
@@ -138,11 +138,11 @@ def remove_keyboard2(bot: Bot, update: Update) -> None:
     if msg.chat_id > 0:
         msg.reply_text("no u")
         return
-    sent = msg.reply_text("Replacing reply keyboard if there was an existing reply keyboard...",
+    sent = msg.reply_text("Replacing reply keyboard if there was an existing one...",
                           reply_markup=ReplyKeyboardMarkup([["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD "
                                                              "BUTTONS"]]), quote=False)
     del_msg(sent)
-    msg.reply_text("Removing reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
+    msg.reply_text("Removed reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
 
 
 def echo(bot: Bot, update: Update) -> None:
