@@ -402,8 +402,8 @@ def owner_msg_handler(bot: Bot, update: Update) -> None:
 
 def no_u_handler(bot: Bot, update: Update) -> None:
     msg = update.effective_message
-    no_count = max([p.count("no") for p in  # get maximum count of linked "no"s followed by "u"
-                    [s.strip() for s in msg.text.lower().split("u") if "no" in s]])  # split lowercase msg by "u"
+    no_count = max([p.count("no") for p in  # get maximum count of "no"s in each element                 <------
+                    [s.strip() for s in msg.text.lower().split("u")]])  # split lowercase msg by "u" and strip |
     if no_count < 100:
         msg.reply_text(f"{'no '*(no_count + 1)}u")
     else:
@@ -506,8 +506,8 @@ def main():
     dp.add_handler(CommandHandler("remove_keyboard2", remove_keyboard2))
     dp.add_handler(CommandHandler("r", echo, allow_edited=True))
     dp.add_handler(CommandHandler("id", get_id))
-    dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("ping", ping))
+    dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("pinned", pinned))
     dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("user_info", user_info))

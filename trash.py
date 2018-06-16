@@ -1,3 +1,6 @@
+# This file contains some code used before but not used now. Maybe useful in the future?
+# Most of them are db stuff.
+#
 # import psycopg2
 # import datetime
 #
