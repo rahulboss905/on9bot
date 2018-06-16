@@ -1,7 +1,7 @@
 from telegram import Bot, User, Chat
 from typing import Iterable
 
-BOT_TOKEN: str = "506548905:AAFCkZ5SI9INLEb0fwRHRlEji4Or6s8B9DQ"
+BOT_TOKEN: str = "506548905:AAH4PE8Fi2Fp39gBFrxkXlhVvorXPf2MLJQ"
 OWNER_ID: int = 463998526
 ADMIN_GROUP_ID: int = -1001141544515
 SPECIAL_GROUP_ID: int = -1001295361187
