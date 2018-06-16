@@ -509,7 +509,7 @@ def main():
                                   service_msg_handler))
     dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & check_number_man_filter & bot_is_admin_filter,
                                   number_man_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.regex(r"(?i)test"),
+    dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.text & Filters.regex(r"(?i)test"),
                                   owner_msg_handler, edited_updates=True))
     dp.add_handler(RegexHandler(r"(?i).*(no)+ u.*", no_u_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.text & Filters.chat(-1001295361187), other_msg_handler, edited_updates=True))
