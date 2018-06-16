@@ -39,7 +39,7 @@ INSULTS: Iterable[str] = ("on9", "nub", "rubbish", "trash")  # Append insults to
 
 # Running locally (YOU MUST MAKE SURE YOU ARE RUNNING Python 3.6+, I USE F-STRINGS):
 # You only need to copy the three .py files in the repo to the folder.
-# Run "pip install python-telegram-bot" and append with "--upgrade" if you haven't updated. Ignore if ptb** is updated.
+# Run "pip install python-telegram-bot" if you haven't. Remember to update it.
 # Rename blank_config.py to config.py and fill in the required information.
 # Add a environmental variable with the name "debug" and value "yes".*
 # Running the bot in PyCharm: Open On9bot.py, scroll to the bottom and press the run button on the left.
@@ -52,8 +52,6 @@ INSULTS: Iterable[str] = ("on9", "nub", "rubbish", "trash")  # Append insults to
 # Select the "+" sign, type "debug" on the left and "yes" on the right.
 # Press OK to close the window, then press Apply.
 # You have added the environmental variable and make sure to run the code in PyCharm as well.
-
-# **ptb stands for python-telegram-bot if you don't know
 
 
 # Deploying to Heroku

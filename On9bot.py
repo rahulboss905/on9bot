@@ -229,10 +229,7 @@ def get_id(bot: Bot, update: Update) -> None:
     rmsg = msg.reply_to_message
     if rmsg:
         ff = rmsg.forward_from
-        if ff:
-            msg.reply_markdown(f"User id of original message's sender: `{ff.id}`")
-        else:
-            msg.reply_markdown(f"`{rmsg.from_user.id}`")
+        msg.reply_markdown(f"`{ff.id if ff else rmsg.from_user.id}`")
     else:
         user_id = msg.from_user.id
         if msg.chat_id > 0:
@@ -249,9 +246,9 @@ def get_message_link(bot: Bot, update: Update) -> None:
         return
     chat = msg.chat
     if chat.type == Chat.SUPERGROUP and chat.username:
-        msg.reply_markdown(f"```https://t.me/{chat.username}/{rmsg.id}```", disable_web_page_preview=True)
+        msg.reply_markdown(f"```https://t.me/{chat.username}/{rmsg.id}```")
     else:
-        msg.reply_markdown(f"no u, can only use in public supergroup, but the message id is `{rmsg.id}`.")
+        msg.reply_markdown(f"no u, can only be used in public supergroup, but the replied message's id is `{rmsg.id}`.")
 
 
 def get_file_id(bot: Bot, update: Update) -> None:
@@ -305,7 +302,7 @@ def pinned(bot: Bot, update: Update) -> None:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
         msg.reply_text("⬇️Pinned message⬇️", reply_markup=reply_markup)
     else:
-        msg.reply_text(f"no u, sender is bot and group is private, but pinned message's id is `{p_id}`.")
+        msg.reply_text(f"no u, sender is bot and group is private, but the pinned message's id is `{p_id}`.")
 
 
 def owner_edit(bot: Bot, update: Update) -> None:
@@ -373,7 +370,7 @@ def service_msg_handler(bot: Bot, update: Update) -> None:
                                    "suggestions or found typos or errors.", quote=False)
             elif nub.is_bot:
                 msg.reply_text("Ooh, new bot!")
-            elif check_number_man(nub):
+            elif msg.chat.id == -1001295361187 and check_number_man(nub):
                 kick_member(msg.chat, nub.id)
     elif msg.left_chat_member:
         msg.reply_text("Bey.")
@@ -391,8 +388,8 @@ def owner_msg_handler(bot: Bot, update: Update) -> None:
 
 def no_u_handler(bot: Bot, update: Update) -> None:
     msg = update.effective_message
-    no_count = max([p.count("no") for p in  # get maximum count of "no"s in each element                 <------
-                    [s.strip() for s in msg.text.lower().split("u")]])  # split lowercase msg by "u" and strip |
+    no_count = max([p.count("no") for p in  # get maximum count of "no"s in each element                    <------
+                    [s.strip() for s in msg.text.lower().split("u") if "no" in s]])  # split msg by "u" and strip |
     if no_count < 100:
         msg.reply_text(f"{'no '*(no_count + 1)}u")
     else:
