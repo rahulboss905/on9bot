@@ -390,10 +390,7 @@ def no_u_handler(bot: Bot, update: Update) -> None:
     msg = update.effective_message
     no_count = max([p.count("no") for p in  # get maximum count of "no"s in each element                    <------
                     [s.strip() for s in msg.text.lower().split("u") if "no" in s]])  # split msg by "u" and strip |
-    if no_count < 100:
-        msg.reply_text(f"{'no '*(no_count + 1)}u")
-    else:
-        msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
+    msg.reply_text(f"{'no '*(no_count + 1)}u") if no_count < 100 else msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
 
 
 def other_msg_handler(bot: Bot, update: Update) -> None:
