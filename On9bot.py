@@ -158,7 +158,7 @@ def echo(bot: Bot, update: Update) -> None:
         elif not rmsg.text:  # if message has no arguments and replied message does not have text
             msg.reply_text("no u, messages with text only.")
         else:  # if message has no arguments and replies to a message with text
-            text = rmsg.text
+            text = rmsg.text_markdown
             try:
                 if msg.from_user.id != OWNER.id:
                     echo_owner_check(text)
