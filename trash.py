@@ -1,4 +1,4 @@
-# This file contains some code used before but not used now. Maybe useful in the future?
+# This file contains some code used before but not used now. Perhaps useful in the future? (Nein.)
 # Most of them are db stuff.
 #
 # import psycopg2

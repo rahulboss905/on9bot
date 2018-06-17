@@ -87,7 +87,7 @@ Replies "Bey.".
 Greets owner.
 
 ### "no u" in text
-Counts the amount of linked "no"s before a "u".
+Counts the amount of linked "no"s before a "u" (as shown below).
 ```Python
 no_count = max([p.count("no") for p in [s.strip() for s in update.message.text.lower().split("u") if "no" in s]])
 ```

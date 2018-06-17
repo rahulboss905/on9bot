@@ -48,7 +48,7 @@ def check_number_man(user: User) -> bool:
     return False
 
 
-# Custom Filters
+# Filters
 
 
 class CheckNumberMan(BaseFilter):

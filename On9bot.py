@@ -483,7 +483,7 @@ def main():
         msg.reply_text("Restarting bot...")
         Thread(target=stop_and_restart).start()
 
-    # Commands for all nubs
+    # Commands for all users
     dp.add_handler(CommandHandler("start", start, filters=Filters.private))
     dp.add_handler(CommandHandler("help", bot_help))
     dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
