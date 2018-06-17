@@ -378,8 +378,8 @@ def number_man_handler(bot: Bot, update: Update) -> None:
 
 
 def owner_msg_handler(bot: Bot, update: Update) -> None:
-    update.effective_message.reply_text(f"Hi {OWNER_MENTION}! "
-                                        "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
+    update.effective_message.reply_markdown(f"Hi {OWNER_MENTION}! "
+                                            "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
 
 
 def no_u_handler(bot: Bot, update: Update) -> None:
@@ -498,7 +498,7 @@ def main():
                                   service_msg_handler))
     dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & check_number_man_filter & bot_is_admin_filter,
                                   number_man_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.text & Filters.regex(r"(?i)test"),
+    dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.text & Filters.regex(r"(?i)hello"),
                                   owner_msg_handler, edited_updates=True))
     dp.add_handler(RegexHandler(r"(?i).*(no)+ u.*", no_u_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.text & Filters.chat(-1001295361187), other_msg_handler, edited_updates=True))
