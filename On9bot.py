@@ -399,9 +399,6 @@ def other_msg_handler(bot: Bot, update: Update) -> None:
     text = msg.text.lower()
     if user.id != OWNER.id and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
         msg.reply_text("Tag your mother?!")
-    elif (user.id != OWNER_ID and [word for word in OWNER_NICKNAMES if word in text] and
-          [word for word in INSULTS if word in text] or "ur mom gay" in text):
-        msg.reply_text("no u")
     elif text == "js is very on9":
         msg.reply_text("Your IQ is 500!")
     elif text == "trainer jono is rubbish":
@@ -464,7 +461,6 @@ def error_handler(bot: Bot, update: Update, error: TelegramError):
 
 
 def main():
-    debug = os.environ.get('DEBUG', "no")
     updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
 
@@ -514,8 +510,9 @@ def main():
     # Error handler
     dp.add_error_handler(error_handler)
 
+    debug = os.environ.get("DEBUG", "no")
     if debug != "yes":
-        port = os.environ.get('PORT', 80)
+        port = os.environ.get("PORT", 80)
         updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=BOT_TOKEN, clean=True)
         updater.bot.set_webhook(f"https://{HEROKU_APP_NAME}.herokuapp.com/{BOT_TOKEN}")
     else:
