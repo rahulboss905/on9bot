@@ -27,10 +27,6 @@ assert OWNER.username, "Set a username! Go to Settings > Username to do so."
 assert ADMIN_GROUP_ID < 0, "Set a group, supergroup or channel as the admin group!"
 for uid in CAN_USE_TAG9:
     assert uid > 0, "You can only append CAN_USE_TAG9 with valid user ids!"
-for name in OWNER_NICKNAMES:
-    assert name != "", "You can only append OWNER_NICKNAMES with non-empty strings!"
-for insult in INSULTS:
-    assert insult != "", "You can only append INSULTS with non-empty strings!"
 
 
 def start(bot: Bot, update: Update) -> None:
