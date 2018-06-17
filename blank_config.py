@@ -18,6 +18,7 @@ ADMIN_GROUP_ID: int = 0
 SPECIAL_GROUP_ID: int = 0
 HEROKU_APP_NAME: str = ""
 
+# Don't modify
 nubbot: Bot = Bot(BOT_TOKEN)
 
 BOT: User = nubbot.get_me()
@@ -32,8 +33,9 @@ OWNER_MENTION: str = f"[{OWNER.full_name}]({OWNER_LINK})"
 ADMIN_GROUP: Chat = nubbot.get_chat(ADMIN_GROUP_ID)
 SPECIAL_GROUP: Chat = nubbot.get_chat(SPECIAL_GROUP_ID)
 
-CAN_USE_TAG9: Iterable[int] = (OWNER_ID, 190726372, 106665913)  # Append user ids of users to let them use /tag9.
-OWNER_NICKNAMES: Iterable[str] = tuple(OWNER.full_name.lower().split()) + ("leung",)  # Your nicknames in LOWERCASE
+# Fill in your preferences
+CAN_USE_TAG9: Iterable[int] = (OWNER_ID,)  # Append user ids of users to let them use /tag9.
+OWNER_NICKNAMES: Iterable[str] = tuple(OWNER.full_name.lower().split()) + ()  # Your nicknames in LOWERCASE
 INSULTS: Iterable[str] = ("on9", "nub", "rubbish", "trash")  # Append insults to respond.
 
 
