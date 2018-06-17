@@ -506,7 +506,7 @@ def main():
     # Error handler
     dp.add_error_handler(error_handler)
 
-    debug = os.environ.get("DEBUG", "no")
+    debug = os.environ.get("DEBUG")
     if debug != "yes":
         port = os.environ.get("PORT", 80)
         updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=BOT_TOKEN, clean=True)
