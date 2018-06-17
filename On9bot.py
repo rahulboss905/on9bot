@@ -35,7 +35,7 @@ def start(bot: Bot, update: Update) -> None:
 
 
 def bot_help(bot: Bot, update: Update) -> None:
-    update.message.reply_markdown(f"Look at the code [here]({GITHUB_SOURCE_CODE_LINK}) to learn how I work, lol")
+    update.message.reply_markdown(f"[Help and Source Code]({GITHUB_SOURCE_CODE_LINK})")
 
 
 @run_async
@@ -361,7 +361,7 @@ def service_msg_handler(bot: Bot, update: Update) -> None:
     msg = update.message
     if msg.new_chat_members:
         for nub in msg.new_chat_members:
-            if nub.id == BOT.id:
+            if nub.id == bot.id:
                 msg.reply_markdown(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
                                    "suggestions or found typos or errors.", quote=False)
             elif nub.is_bot:
@@ -379,7 +379,8 @@ def number_man_handler(bot: Bot, update: Update) -> None:
 
 def owner_msg_handler(bot: Bot, update: Update) -> None:
     update.effective_message.reply_markdown(f"Hi {OWNER_MENTION}! "
-                                            "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?")
+                                            "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?",
+                                            disable_web_page_preview=True)
 
 
 def no_u_handler(bot: Bot, update: Update) -> None:
