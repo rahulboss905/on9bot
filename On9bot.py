@@ -312,7 +312,7 @@ def owner_edit(bot: Bot, update: Update) -> None:
         msg.reply_text("no u, not my message")
     else:
         try:
-            rmsg.edit_text(msg.text.split(maxsplit=1)[1])
+            rmsg.edit_text(msg.text.split(maxsplit=1)[1], parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
             del_msg(msg)
         except IndexError:
             msg.reply_text("no u, no args")
