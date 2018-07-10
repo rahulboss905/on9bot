@@ -173,7 +173,7 @@ def echo(bot: Bot, update: Update) -> None:
                 del_msg(msg)
 
 
-def user_info(bot: Bot, update: Update) -> None:
+def stalk(bot: Bot, update: Update) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
     chat = msg.chat
@@ -383,6 +383,10 @@ def owner_msg_handler(bot: Bot, update: Update) -> None:
                                             disable_web_page_preview=True)
 
 
+def voice_handler(bot: Bot, update: Update) -> None:
+    update.effective_message.reply_sticker("CAADBQADRwADPg6oG0_Q77bKIOH8Ag")
+
+
 def no_u_handler(bot: Bot, update: Update) -> None:
     msg = update.effective_message
     no_count = max([p.count("no") for p in  # get maximum count of "no"s in each element                    <------
@@ -485,7 +489,7 @@ def main():
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("pinned", pinned))
     dp.add_handler(CommandHandler("file_id", get_file_id))
-    dp.add_handler(CommandHandler("user_info", user_info))
+    dp.add_handler(CommandHandler("stalk", stalk))
     dp.add_handler(CommandHandler("feedback", feedback))
 
     # Commands for the holy owner
@@ -501,8 +505,9 @@ def main():
                                   number_man_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.text & Filters.regex(r"(?i)hello"),
                                   owner_msg_handler, edited_updates=True))
-    dp.add_handler(RegexHandler(r"(?i).*(no)+ u.*", no_u_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.text & Filters.chat(-1001295361187), other_msg_handler, edited_updates=True))
+    dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.voice, ..., edited_updates=True))
+    dp.add_handler(RegexHandler(r"(?i).*(no)+ u", no_u_handler, edited_updates=True))
+    dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.text, other_msg_handler, edited_updates=True))
 
     # Error handler
     dp.add_error_handler(error_handler)
