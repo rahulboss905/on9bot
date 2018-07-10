@@ -505,7 +505,7 @@ def main():
                                   number_man_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.text & Filters.regex(r"(?i)hello"),
                                   owner_msg_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.voice, ..., edited_updates=True))
+    dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.voice, voice_handler, edited_updates=True))
     dp.add_handler(RegexHandler(r"(?i).*(no)+ u", no_u_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.text, other_msg_handler, edited_updates=True))
 
