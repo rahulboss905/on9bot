@@ -1,16 +1,17 @@
+import logging
 import os
 import sys
-import logging
+from threading import Thread
 from time import sleep
 from typing import List
-from threading import Thread
 
+# import psycopg2
 from telegram import (Bot, Chat, Message, ChatMember, ChatAction, Update,
                       ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton)
-from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters, run_async
 from telegram.error import TelegramError, TimedOut
-from telegram.utils.helpers import escape_markdown
+from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters, run_async
 from telegram.parsemode import ParseMode
+from telegram.utils.helpers import escape_markdown
 
 from config import *
 from utils import *
@@ -19,6 +20,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# conn = psycopg2.connect(os.environ['DATABASE_URL'], sslmode='require')
 
 # Check if given information is valid
 assert BOT_TOKEN != "", "Provide a bot token!"
@@ -383,15 +385,16 @@ def owner_msg_handler(bot: Bot, update: Update) -> None:
                                             disable_web_page_preview=True)
 
 
-def voice_handler(bot: Bot, update: Update) -> None:
-    update.effective_message.reply_sticker("CAADBQADRwADPg6oG0_Q77bKIOH8Ag")
+# def voice_handler(bot: Bot, update: Update) -> None:
+#     update.effective_message.reply_sticker("CAADBQADRwADPg6oG0_Q77bKIOH8Ag")
 
 
 def no_u_handler(bot: Bot, update: Update) -> None:
     msg = update.effective_message
     no_count = max([p.count("no") for p in  # get maximum count of "no"s in each element                    <------
                     [s.strip() for s in msg.text.lower().split("u") if "no" in s]])  # split msg by "u" and strip |
-    msg.reply_text(f"{'no '*(no_count + 1)}u") if no_count < 100 else msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
+    msg.reply_text(f"{'no '*(no_count + 1)}u") if no_count < 100 else msg.reply_sticker(
+        "CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
 
 
 def other_msg_handler(bot: Bot, update: Update) -> None:
@@ -461,6 +464,34 @@ def error_handler(bot: Bot, update: Update, error: TelegramError):
         pass
 
 
+# def teledong_calls_start():
+#     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Stop 🛑", callback_data="stop")]])
+#     msg = bot.send_message(HK_DUKER_ID, teledong_calls_text.format(0), reply_markup=reply_markup)
+#     cur = conn.cursor()
+#     try:
+#         cur.execute("INSERT INTO teledong_calls_temp VALUES (%s)", (msg.message_id,))
+#         conn.commit()
+#     finally:
+#         cur.close()
+#
+#
+# def teledong_calls_donate(bot, update):
+#     query = update.callback_query
+#     query.answer()
+#     nub_id = query.from_user.id
+#     cur = conn.cursor()
+#     try:
+#         cur.execute("SELECT amount FROM t_donate WHERE user_id = %s", (nub_id,))
+#         nub = cur.fetchone()
+#         if not nub:
+#             cur.execute("INSERT INTO jeff_bday_donate VALUES (%s, 1)", (nub_id,))
+#         else:
+#             cur.execute("UPDATE jeff_bday_donate SET amount = %s WHERE user_id = %s", (nub[0] + 1, nub_id))
+#         conn.commit()
+#     finally:
+#         cur.close()
+
+
 def main():
     updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
@@ -505,7 +536,7 @@ def main():
                                   number_man_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.text & Filters.regex(r"(?i)hello"),
                                   owner_msg_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.voice, voice_handler, edited_updates=True))
+    # dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.voice, voice_handler, edited_updates=True))
     dp.add_handler(RegexHandler(r"(?i).*(no)+ u", no_u_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.text, other_msg_handler, edited_updates=True))
 
