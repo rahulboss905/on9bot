@@ -300,7 +300,7 @@ def pinned(bot: Bot, update: Update) -> None:
         msg.reply_text(f"no u, sender is bot and group is private, but the pinned message's id is `{p_id}`.")
 
 
-def get_random(bot: Bot, update: Update, args: List[str] = None, dice_faces: Union[int, False] = False) -> None:
+def get_random(bot: Bot, update: Update, args: List[str] = None, dice_faces: Union[int, bool] = False) -> None:
     if args:
         random_choice = f"{random.choice(args)}!"
         try:
@@ -517,6 +517,7 @@ def main():
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("pinned", pinned))
     dp.add_handler(CommandHandler("random", get_random))
+    dp.add_handler(CommandHandler("dice", dice))
     dp.add_handler(CommandHandler("file_id", get_file_id))
     dp.add_handler(CommandHandler("stalk", stalk))
     dp.add_handler(CommandHandler("feedback", feedback))
