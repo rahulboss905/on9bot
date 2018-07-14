@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-from random import choice
+import random
 from threading import Thread
 from time import sleep
 from typing import List, Union
