@@ -308,7 +308,7 @@ def get_random(bot: Bot, update: Update, args: List[str] = None, dice_faces: Uni
         except TelegramError:
             update.message.reply_text(random_choice)
     elif dice_faces:
-        update.mesage.reply_text(f"{random.randint(1, dice_faces)}!")
+        update.message.reply_text(f"{random.randint(1, dice_faces)}!")
     else:
         update.message.reply_text(random.choice(("Heads!", "Tails!")))
 
