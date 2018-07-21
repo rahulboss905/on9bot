@@ -54,7 +54,7 @@ def tag9js(bot: Bot, update: Update) -> None:
             username = "@" + js_info.user.username
             try:
                 text = msg.text.split(maxsplit=1)[1]
-                if "@" in text or text.startswith("/"):
+                if "@" in text or text.startswith(("/", ".", "#", "!", "?")):
                     raise IndexError
                 assert "{username}" in text
                 text = text.replace("{username}", username)
