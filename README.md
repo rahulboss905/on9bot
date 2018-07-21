@@ -3,8 +3,6 @@
 A [Telegram](https://telegram.org) [bot](https://core.telegram.org/bots) providing simple utilities.
 You may find it [here](https://t.me/On9Bot).
 
-(Moved repository here so no one can see my stupid commits, heh)
-
 ## Commands (in alphabetical order)
 
 Some commands require/allow you to reply to a message.\
@@ -84,13 +82,4 @@ Responds on:
 - Self added to chat
 - Bot added to chat
 - Member left chat
-- "no u" in text message*
-
-*Replies one more "no" plus the number of linked "no"s plus a "u". If message has 100+ linked "no"s,
-sends the ["No U Infinity" sticker](https://t.me/jsisveryon9/3) instead.
-
-Works like this:
-```Python
-no_count = max([p.count("no") for p in [s.strip() for s in update.message.text.lower().split("u") if "no" in s]])
-update.message.reply_text(f"{'no '*(no_count + 1)}u") if no_count < 100 else update.message.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
-```
+- "no u" in text message

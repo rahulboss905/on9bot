@@ -1,7 +1,7 @@
 import os  # remove this import and change BOT_TOKEN below to your bot token
+from typing import Iterable
 
 from telegram import Bot, User, Chat
-from typing import Iterable
 
 # Create a bot by talking to BotFather (t.me/BotFather).
 # You are required to set a username and suggested to disable your bot's privacy mode.
@@ -12,7 +12,9 @@ OWNER_ID: int = 463998526  # Your user id
 ADMIN_GROUP_ID: int = -1001141544515  # Admin group chat id
 SPECIAL_GROUP_ID: int = -1001295361187  # Special group chat id
 HEROKU_APP_NAME: str = "on9bot"  # Heroku app name
-CAN_USE_TAG9: Iterable[int] = (OWNER_ID, 190726372, 106665913)  # Append user ids of users to let them use /tag9.
+
+#                              C A N  U S E  F O R E V E R,    1 week,    2 weeks,   3 weeks
+CAN_USE_TAG9: Iterable[int] = (OWNER_ID, 190726372, 106665913, 537248339, 540933895, 238596163)
 
 # Do not modify these
 nubbot: Bot = Bot(BOT_TOKEN)

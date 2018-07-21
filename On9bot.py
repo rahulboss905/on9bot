@@ -1,18 +1,19 @@
 import logging
-import os
 import sys
-import random
 from threading import Thread
 from time import sleep
-from typing import List, Union
+from typing import List
 
-from config import *
-from telegram import (Bot, Chat, Message, ChatMember, ChatAction, Update,
-                      ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton)
-from telegram.error import TelegramError, TimedOut
+from telegram import (Update, ChatMember, ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove,
+                      InlineKeyboardMarkup,
+                      InlineKeyboardButton)
+from telegram.error import TimedOut
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters, run_async
 from telegram.parsemode import ParseMode
 from telegram.utils.helpers import escape_markdown
+
+from config import *
+# from randfuncs import *
 from utils import *
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -300,32 +301,10 @@ def pinned(bot: Bot, update: Update) -> None:
         msg.reply_text(f"no u, sender is bot and group is private, but the pinned message's id is `{p_id}`.")
 
 
-def get_random(bot: Bot, update: Update, args: List[str] = None, dice_faces: Union[int, bool] = False) -> None:
-    if args:
-        random_choice = f"{random.choice(args)}!"
-        try:
-            update.message.reply_markdown(random_choice)
-        except TelegramError:
-            update.message.reply_text(random_choice)
-    elif dice_faces:
-        update.message.reply_text(f"{random.randint(1, dice_faces)}!")
-    else:
-        update.message.reply_text(random.choice(("Heads!", "Tails!")))
-
-
-def dice(bot: Bot, update: Update, args: List[str]) -> None:
-    faces = 6
-    if args:
-        try:
-            faces = int(args[0])
-            assert faces > 1
-        except ValueError:
-            update.message.reply_text("That's not a number!")
-            return
-        except AssertionError:
-            update.message.reply_text("The number must be larger than 1!")
-            return
-    get_random(bot, update, dice_faces=faces)
+def slap(bot: Bot, update: Update) -> None:
+    msg = update.message
+    rmsg = msg.reply_to_message
+    rmsg.reply_text("Oof!") if rmsg else msg.reply_text("Oof!")
 
 
 def owner_edit(bot: Bot, update: Update) -> None:
@@ -361,27 +340,6 @@ def owner_delmsg(bot: Bot, update: Update) -> None:
     else:
         del_msg(rmsg)
         del_msg(msg)
-
-
-def owner_exec(bot: Bot, update: Update) -> None:
-    msg = update.effective_message
-    if msg.from_user.id != OWNER.id:
-        msg.reply_text("no u")
-        return
-    try:
-        code = msg.text.split(maxsplit=1)[1]
-    except IndexError:
-        if msg.reply_to_message:
-            code = msg.reply_to_message.text
-        else:
-            msg.reply_text("no u")
-            return
-    try:
-        exec(code)
-    except TimedOut:
-        pass
-    except Exception as e:
-        msg.reply_markdown(f"An error occured: `{escape_markdown(str(e))}`")
 
 
 def service_msg_handler(bot: Bot, update: Update) -> None:
@@ -493,6 +451,26 @@ def main():
     updater = Updater(BOT_TOKEN)
     dp = updater.dispatcher
 
+    def owner_exec(bot: Bot, update: Update) -> None:
+        msg = update.effective_message
+        if msg.from_user.id != OWNER.id:
+            msg.reply_text("no u")
+            return
+        try:
+            code = msg.text.split(maxsplit=1)[1]
+        except IndexError:
+            if msg.reply_to_message:
+                code = msg.reply_to_message.text
+            else:
+                msg.reply_text("no u")
+                return
+        try:
+            exec(code)
+        except TimedOut:
+            pass
+        except Exception as e:
+            msg.reply_markdown(f"An error occured: `{escape_markdown(str(e))}`")
+
     def stop_and_restart():
         updater.stop()
         os.execl(sys.executable, sys.executable, *sys.argv)
@@ -501,9 +479,9 @@ def main():
         msg = update.message
         if msg.from_user.id != OWNER.id:
             msg.reply_text("no u")
-            return
-        msg.reply_text("Restarting bot...")
-        Thread(target=stop_and_restart).start()
+        else:
+            msg.reply_text("Restarting bot...")
+            Thread(target=stop_and_restart).start()
 
     # Commands for all users
     dp.add_handler(CommandHandler("start", start, filters=Filters.private))
@@ -516,14 +494,13 @@ def main():
     dp.add_handler(CommandHandler("ping", ping))
     dp.add_handler(CommandHandler("link", get_message_link))
     dp.add_handler(CommandHandler("pinned", pinned))
-    dp.add_handler(CommandHandler("random", get_random, pass_args=True, allow_edited=True))
-    dp.add_handler(CommandHandler("dice", dice, pass_args=True, allow_edited=True))
+    # dp.add_handler(CommandHandler("dice", dice, pass_args=True, allow_edited=True))
     dp.add_handler(CommandHandler("file_id", get_file_id))
-    dp.add_handler(CommandHandler("stalk", stalk))
+    dp.add_handler(CommandHandler(("user_info", "stalk"), stalk))
     dp.add_handler(CommandHandler("feedback", feedback))
 
     # Commands for the holy owner
-    dp.add_handler(CommandHandler("exec", owner_exec, allow_edited=True))
+    dp.add_handler(CommandHandler(("exec", "ex"), owner_exec, allow_edited=True))
     dp.add_handler(CommandHandler("edit", owner_edit, allow_edited=True))
     dp.add_handler(CommandHandler("delmsg", owner_delmsg))
     dp.add_handler(CommandHandler("restart", restart))
@@ -544,8 +521,7 @@ def main():
 
     debug = os.environ.get("DEBUG")
     if debug != "yes":
-        port = os.environ.get("PORT", 80)
-        updater.start_webhook(listen="0.0.0.0", port=int(port), url_path=BOT_TOKEN, clean=True)
+        updater.start_webhook(listen="0.0.0.0", port=int(os.environ.get("PORT", 80)), url_path=BOT_TOKEN, clean=True)
         updater.bot.set_webhook(f"https://{HEROKU_APP_NAME}.herokuapp.com/{BOT_TOKEN}")
     else:
         updater.start_polling()
