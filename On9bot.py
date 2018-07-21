@@ -56,7 +56,7 @@ def tag9js(bot: Bot, update: Update) -> None:
                 text = msg.text.split(maxsplit=1)[1]
                 if "@" in text:
                     raise IndexError
-                assert "{username}" in text
+                assert "/" not in text and "{username}" in text
                 text = text.replace("{username}", username)
             except IndexError:
                 text = username
