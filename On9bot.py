@@ -399,6 +399,9 @@ def other_msg_handler(bot: Bot, update: Update) -> None:
     elif "too good" in text or "very good" in text:
         msg.reply_voice("AwADBQADKAAD8KLQVHrlKTFsd-qGAg")
 
+def ketchup(bot: Bot, update: Update) -> None:
+    bot.forward_message(-1001312239961, -1001208896598, update.effective_message.message_id)
+
 
 def feedback(bot: Bot, update: Update) -> None:
     msg = update.message
@@ -515,6 +518,7 @@ def main():
     # dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.voice, voice_handler, edited_updates=True))
     dp.add_handler(RegexHandler(r"(?i).*(no)+ u", no_u_handler, edited_updates=True))
     dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.text, other_msg_handler, edited_updates=True))
+    dp.add_handler(MessageHandler(Filters.chat(-1001208896598), ketchup, edited_updates=True))
 
     # Error handler
     dp.add_error_handler(error_handler)
