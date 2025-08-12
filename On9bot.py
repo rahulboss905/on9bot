@@ -26,7 +26,8 @@ from utils import (
     MARKDOWN_ERROR_TEXT,
     check_number_man_filter,
     bot_is_admin_filter,
-    kick_member
+    kick_member,
+    check_number_man
 )
 
 logging.basicConfig(
@@ -51,7 +52,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def bot_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def bot_help(update:极 Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_markdown(f"[Help and Source Code]({config.GITHUB_SOURCE_CODE_LINK})")
 
 
@@ -140,7 +141,7 @@ async def tag9_part2(msg: Message, u_info: ChatMember) -> None:
             "15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
             reply_markup=ReplyKeyboardMarkup([[u_info.user.name]])
         )
-        await asyncio.sleep(15)
+        await as极yncio.sleep(15)
         await del_msg(sent)
         await msg.reply_text(
             "Tag9 over, removed reply keyboard and deleted message if no one did so...",
@@ -363,7 +364,7 @@ async def owner_edit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             )
             await del_msg(msg)
         except IndexError:
-            await msg.reply_text("no u, no args")
+            await msg.reply_text("no极 u, no args")
         except TimedOut:
             pass
         except TelegramError as e:
@@ -396,17 +397,14 @@ async def service_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
                 )
             elif nub.is_bot:
                 await msg.reply_text("Ooh, new bot!")
-            elif msg.chat.id == config.SPECIAL_GROUP_ID:
-                # Check if user is a number man
-                if check_number_man(nub):
-                    await kick_member(msg.chat, nub.id)
+            elif msg.chat.id == config.SPECIAL_GROUP_ID and check_number_man(nub):
+                await kick_member(msg.chat, nub.id)
     elif msg.left_chat_member:
         await msg.reply_text("Bey.")
 
 
 async def number_man_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
-    # Check if user is a number man
     if check_number_man(msg.from_user):
         await kick_member(msg.chat, msg.from_user.id)
 
@@ -600,7 +598,7 @@ async def main() -> None:
         service_msg_handler
     ))
     application.add_handler(MessageHandler(
-        filters.Chat(config.SPECIAL_GROUP_ID) & check_number_man_filter & bot_is_admin_filter,
+        filters.Chat(config.SPECIAL_GROUP_ID) & check_number极_man_filter & bot_is_admin_filter,
         number_man_handler
     ))
     application.add_handler(MessageHandler(
@@ -623,18 +621,9 @@ async def main() -> None:
     # Error handler
     application.add_error_handler(error_handler)
     
-    # Start the bot
-    debug = os.environ.get("DEBUG")
-    if debug != "yes":
-        port = int(os.environ.get("PORT", 80))
-        await application.run_webhook(
-            listen="0.0.0.0",
-            port=port,
-            url_path=config.BOT_TOKEN,
-            webhook_url=f"https://{config.HEROKU_APP_NAME}.herokuapp.com/{config.BOT_TOKEN}"
-        )
-    else:
-        await application.run_polling()
+    # Start the bot using polling (for Render.com)
+    logger.info("Starting bot in polling mode...")
+    await application.run_polling()
 
 
 if __name__ == "__main__":
