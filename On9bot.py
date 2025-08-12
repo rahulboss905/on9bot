@@ -52,7 +52,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def bot_help(update:极 Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def bot_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_markdown(f"[Help and Source Code]({config.GITHUB_SOURCE_CODE_LINK})")
 
 
