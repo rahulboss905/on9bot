@@ -46,6 +46,9 @@ class CheckNumberManFilter(filters.MessageFilter):
         return check_number_man(message.from_user)
 
 class BotIsAdminFilter(filters.MessageFilter):
+    def __init__(self):
+        super().__init__()
+
     async def check_admin(self, chat: Chat, bot_id: int) -> bool:
         try:
             admins = await chat.get_administrators()
