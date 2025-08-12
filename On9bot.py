@@ -141,7 +141,7 @@ async def tag9_part2(msg: Message, u_info: ChatMember) -> None:
             "15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
             reply_markup=ReplyKeyboardMarkup([[u_info.user.name]])
         )
-        await as极yncio.sleep(15)
+        await asyncio.sleep(15)
         await del_msg(sent)
         await msg.reply_text(
             "Tag9 over, removed reply keyboard and deleted message if no one did so...",
@@ -364,7 +364,7 @@ async def owner_edit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
             )
             await del_msg(msg)
         except IndexError:
-            await msg.reply_text("no极 u, no args")
+            await msg.reply_text("no u, no args")
         except TimedOut:
             pass
         except TelegramError as e:
@@ -598,7 +598,7 @@ async def main() -> None:
         service_msg_handler
     ))
     application.add_handler(MessageHandler(
-        filters.Chat(config.SPECIAL_GROUP_ID) & check_number极_man_filter & bot_is_admin_filter,
+        filters.Chat(config.SPECIAL_GROUP_ID) & check_number_man_filter & bot_is_admin_filter,
         number_man_handler
     ))
     application.add_handler(MessageHandler(
