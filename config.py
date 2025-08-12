@@ -8,9 +8,9 @@ from telegram import Bot, User, Chat
 
 # Replace all of these constants
 BOT_TOKEN: str = os.environ["BOT_TOKEN"]  # Replace with bot token. Delete this env var thing and remove os import
-OWNER_ID: int = 463998526  # Your user id
-ADMIN_GROUP_ID: int = -1001141544515  # Admin group chat id
-SPECIAL_GROUP_ID: int = -1001295361187  # Special group chat id
+OWNER_ID: int = 7456681709  # Your user id
+ADMIN_GROUP_ID: int = -1002897249216  # Admin group chat id
+SPECIAL_GROUP_ID: int = -1002897249216  # Special group chat id
 HEROKU_APP_NAME: str = "on9bot"  # Heroku app name
 
 #                              C A N  U S E  F O R E V E R
