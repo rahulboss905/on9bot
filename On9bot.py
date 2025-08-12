@@ -1,13 +1,15 @@
 import logging
 import sys
+import os
 from threading import Thread
 from time import sleep
 from typing import List
 
-from telegram import (Update, ChatMember, ChatAction, ReplyKeyboardMarkup, ReplyKeyboardRemove,
-                      InlineKeyboardMarkup,
-                      InlineKeyboardButton)
-from telegram.error import TimedOut
+# Updated imports
+from telegram import (Update, ChatMember, ReplyKeyboardMarkup, ReplyKeyboardRemove,
+                      InlineKeyboardMarkup, InlineKeyboardButton, Chat, Bot, Message)
+from telegram.constants import ChatAction  # Correct import for ChatAction
+from telegram.error import TimedOut, TelegramError
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters, run_async
 from telegram.parsemode import ParseMode
 from telegram.utils.helpers import escape_markdown
@@ -177,7 +179,7 @@ def stalk(bot: Bot, update: Update) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
     chat = msg.chat
-    chat.send_action("typing")
+    chat.send_action(ChatAction.TYPING)  # Fixed: replaced string with constant
     user = rmsg.forward_from if rmsg and rmsg.forward_from else rmsg.from_user if rmsg else msg.from_user
     title = f"[{chat.title}](t.me/{chat.username})" if chat.username else f"[{chat.title}]({chat.invite_link})" \
         if chat.invite_link else f"*{chat.title}*"
