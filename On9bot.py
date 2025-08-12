@@ -3,19 +3,22 @@ import sys
 import os
 import asyncio
 from threading import Thread
-from time import sleep
 from typing import List
 
 # Updated imports for v20.x
-from telegram import (Update, ChatMember, ReplyKeyboardMarkup, ReplyKeyboardRemove,
-                      InlineKeyboardMarkup, InlineKeyboardButton, Chat, Bot, Message)
-from telegram.constants import ChatAction  # Correct import for ChatAction
+from telegram import (
+    Update, ChatMember, ReplyKeyboardMarkup, ReplyKeyboardRemove,
+    InlineKeyboardMarkup, InlineKeyboardButton, Chat, Bot, Message, User
+)
+from telegram.constants import ChatAction, ParseMode
 from telegram.error import TimedOut, TelegramError
-from telegram.ext import (Application, CommandHandler, MessageHandler, ContextTypes,
-                          filters, ApplicationBuilder)
+from telegram.ext import (
+    Application, CommandHandler, MessageHandler, ContextTypes,
+    filters, ApplicationBuilder
+)
 from telegram.helpers import escape_markdown
 
-from config import *
+import config
 from utils import *
 
 logging.basicConfig(
@@ -25,29 +28,29 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Check if given information is valid
-assert BOT_TOKEN != "", "Provide a bot token!"
-assert OWNER_ID > 0, "Provide a valid user id!"
-assert OWNER.username, "Set a username! Go to Settings > Username to do so."
-assert ADMIN_GROUP_ID < 0, "Set a group, supergroup or channel as the admin group!"
-for uid in CAN_USE_TAG9:
+assert config.BOT_TOKEN != "", "Provide a bot token!"
+assert config.OWNER_ID > 0, "Provide a valid user id!"
+assert config.OWNER_USERNAME, "Set a username! Go to Settings > Username to do so."
+assert config.ADMIN_GROUP_ID < 0, "Set a group, supergroup or channel as the admin group!"
+for uid in config.CAN_USE_TAG9:
     assert uid > 0, "You can only append CAN_USE_TAG9 with valid user ids!"
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_markdown(
-        f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
+        f"Use /help to see my functions. Contact {config.OWNER_MENTION} if you have questions, "
         "suggestions or found a typo or error."
     )
 
 
 async def bot_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_markdown(f"[Help and Source Code]({GITHUB_SOURCE_CODE_LINK})")
+    await update.message.reply_markdown(f"[Help and Source Code]({config.GITHUB_SOURCE_CODE_LINK})")
 
 
 async def tag9js(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     chat = msg.chat
-    if chat.id == SPECIAL_GROUP.id or (msg.from_user.id == OWNER.id and chat.type in (Chat.GROUP, Chat.SUPERGROUP)):
+    if chat.id == config.SPECIAL_GROUP_ID or (msg.from_user.id == config.OWNER_ID and chat.type in (Chat.GROUP, Chat.SUPERGROUP)):
         await chat.send_action(ChatAction.TYPING)
         try:
             js_info = await chat.get_member(190726372)
@@ -94,7 +97,7 @@ async def tag9(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat = msg.chat
     args = context.args
     await chat.send_action(ChatAction.TYPING)
-    if msg.from_user.id not in CAN_USE_TAG9 or msg.chat_id > 0:
+    if msg.from_user.id not in config.CAN_USE_TAG9 or msg.chat_id > 0:
         await msg.reply_text("no u")
     elif msg.reply_to_message:
         u_info = await chat.get_member(msg.reply_to_message.from_user.id)
@@ -118,7 +121,7 @@ async def tag9(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def tag9_part2(msg: Message, u_info: ChatMember) -> None:
     if u_info.status in (ChatMember.LEFT, ChatMember.RESTRICTED, ChatMember.KICKED):
         await msg.reply_text("no u, not in group or restricted")
-    elif u_info.user.id in (OWNER.id, BOT.id):
+    elif u_info.user.id in (config.OWNER_ID, context.bot.id):
         await msg.reply_text("no u")
     elif u_info.user.is_bot:
         await msg.reply_text("no u, don't tag other bots.")
@@ -162,7 +165,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         text = msg.text.split(maxsplit=1)[1]
         try:
-            if msg.from_user.id != OWNER.id:
+            if msg.from_user.id != config.OWNER_ID:
                 echo_owner_check(text)
             if rmsg:  # if message has args and replies to another message
                 await rmsg.reply_markdown(text, disable_web_page_preview=True)
@@ -173,7 +176,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         except TimedOut:
             pass
         except TelegramError as e:
-            await msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
+            await msg.reply_text(config.MARKDOWN_ERROR_TEXT.format(str(e)))
         else:
             await del_msg(msg)
     except IndexError:
@@ -184,7 +187,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         else:  # if message has no arguments and replies to a message with text
             text = rmsg.text_markdown
             try:
-                if msg.from_user.id != OWNER.id:
+                if msg.from_user.id != config.OWNER_ID:
                     echo_owner_check(text)
                 await msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
             except AssertionError:
@@ -192,7 +195,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             except TimedOut:
                 pass
             except TelegramError as e:
-                await msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
+                await msg.reply_text(config.MARKDOWN_ERROR_TEXT.format(str(e)))
             else:
                 await del_msg(msg)
 
@@ -337,7 +340,7 @@ async def slap(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def owner_edit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     rmsg = msg.reply_to_message
-    if msg.from_user.id != OWNER.id:
+    if msg.from_user.id != config.OWNER_ID:
         await msg.reply_text("no u")
     elif not rmsg:
         await msg.reply_text("no u, reply to a message")
@@ -347,7 +350,7 @@ async def owner_edit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         try:
             await rmsg.edit_text(
                 msg.text.split(maxsplit=1)[1],
-                parse_mode="Markdown",
+                parse_mode=ParseMode.MARKDOWN,
                 disable_web_page_preview=True
             )
             await del_msg(msg)
@@ -362,7 +365,7 @@ async def owner_edit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 async def owner_delmsg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
-    if msg.from_user.id != OWNER.id:
+    if msg.from_user.id != config.OWNER_ID:
         await msg.reply_text("no u")
     elif not rmsg:
         await msg.reply_text("no u, reply to a message")
@@ -379,13 +382,13 @@ async def service_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
         for nub in msg.new_chat_members:
             if nub.id == context.bot.id:
                 await msg.reply_markdown(
-                    f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
+                    f"Use /help to see my functions. Contact {config.OWNER_MENTION} if you have questions, "
                     "suggestions or found typos or errors.",
                     quote=False
                 )
             elif nub.is_bot:
                 await msg.reply_text("Ooh, new bot!")
-            elif msg.chat.id == -1001295361187 and check_number_man(nub):
+            elif msg.chat.id == config.SPECIAL_GROUP_ID and check_number_man(nub):
                 await kick_member(msg.chat, nub.id)
     elif msg.left_chat_member:
         await msg.reply_text("Bey.")
@@ -398,7 +401,7 @@ async def number_man_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def owner_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.effective_message.reply_markdown(
-        f"Hi {OWNER_MENTION}! "
+        f"Hi {config.OWNER_MENTION}! "
         "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?",
         disable_web_page_preview=True
     )
@@ -418,7 +421,7 @@ async def other_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     msg = update.effective_message
     user = msg.from_user
     text = msg.text.lower()
-    if user.id != OWNER.id and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
+    if user.id != config.OWNER_ID and msg.chat_id < 0 and config.OWNER_USERNAME.lower() in text:
         await msg.reply_text("Tag your mother?!")
     elif text == "js is very on9":
         await msg.reply_text("Your IQ is 500!")
@@ -447,23 +450,23 @@ async def feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
         chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
         fb = escape_markdown(msg.text.split(maxsplit=1)[1])
-        fb = (f"Feedback for {BOT_USERNAME} from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) "
+        fb = (f"Feedback for {config.BOT_USERNAME} from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) "
               f"sent in {chat_name}:\n\n{fb}")
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
             await context.bot.send_message(
-                ADMIN_GROUP_ID,
+                config.ADMIN_GROUP_ID,
                 fb,
-                parse_mode="Markdown",
+                parse_mode=ParseMode.MARKDOWN,
                 reply_markup=reply_markup,
                 disable_web_page_preview=True
             )
         else:
             await context.bot.send_message(
-                ADMIN_GROUP_ID,
+                config.ADMIN_GROUP_ID,
                 fb,
-                parse_mode="Markdown",
+                parse_mode=ParseMode.MARKDOWN,
                 disable_web_page_preview=True
             )
         await msg.reply_text("Feedback sent successfully!")
@@ -484,7 +487,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
         msg = update.message
         chat = msg.chat
         error = escape_markdown(str(context.error))
-        forwarded = await msg.forward(ADMIN_GROUP_ID)
+        forwarded = await msg.forward(config.ADMIN_GROUP_ID)
         chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
         chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
         text = f"Error occurred in {chat_name}:\n\n{error}"
@@ -504,16 +507,23 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
         pass
 
 
-def main() -> None:
-    application = ApplicationBuilder().token(BOT_TOKEN).build()
+async def main() -> None:
+    # Initialize application
+    application = ApplicationBuilder().token(config.BOT_TOKEN).build()
     
+    # Fetch bot information asynchronously
+    bot_info = await application.bot.get_me()
+    config.BOT_USERNAME = bot_info.username
+    logger.info(f"Bot initialized with username: @{config.BOT_USERNAME}")
+    
+    # Define restart function
     def stop_and_restart():
         application.stop()
         os.execl(sys.executable, sys.executable, *sys.argv)
     
     async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         msg = update.message
-        if msg.from_user.id != OWNER.id:
+        if msg.from_user.id != config.OWNER_ID:
             await msg.reply_text("no u")
         else:
             await msg.reply_text("Restarting bot...")
@@ -534,7 +544,7 @@ def main() -> None:
     application.add_handler(CommandHandler("stalk", stalk))
     application.add_handler(CommandHandler("feedback", feedback))
     
-    # Commands for the holy owner
+    # Commands for the owner
     application.add_handler(CommandHandler(["exec", "ex"], owner_exec))
     application.add_handler(CommandHandler("edit", owner_edit))
     application.add_handler(CommandHandler("delmsg", owner_delmsg))
@@ -546,11 +556,11 @@ def main() -> None:
         service_msg_handler
     ))
     application.add_handler(MessageHandler(
-        filters.Chat(-1001295361187) & check_number_man_filter & bot_is_admin_filter,
+        filters.Chat(config.SPECIAL_GROUP_ID) & check_number_man_filter & bot_is_admin_filter,
         number_man_handler
     ))
     application.add_handler(MessageHandler(
-        filters.User(OWNER.id) & filters.TEXT & filters.Regex(r"(?i)hello"),
+        filters.User(config.OWNER_ID) & filters.TEXT & filters.Regex(r"(?i)hello"),
         owner_msg_handler
     ))
     application.add_handler(MessageHandler(
@@ -558,7 +568,7 @@ def main() -> None:
         no_u_handler
     ))
     application.add_handler(MessageHandler(
-        filters.Chat(-1001295361187) & filters.TEXT,
+        filters.Chat(config.SPECIAL_GROUP_ID) & filters.TEXT,
         other_msg_handler
     ))
     application.add_handler(MessageHandler(
@@ -569,17 +579,18 @@ def main() -> None:
     # Error handler
     application.add_error_handler(error_handler)
     
+    # Start the bot
     debug = os.environ.get("DEBUG")
     if debug != "yes":
-        application.run_webhook(
+        await application.run_webhook(
             listen="0.0.0.0",
             port=int(os.environ.get("PORT", 80)),
-            url_path=BOT_TOKEN,
-            webhook_url=f"https://{HEROKU_APP_NAME}.herokuapp.com/{BOT_TOKEN}"
+            url_path=config.BOT_TOKEN,
+            webhook_url=f"https://{config.HEROKU_APP_NAME}.herokuapp.com/{config.BOT_TOKEN}"
         )
     else:
-        application.run_polling()
+        await application.run_polling()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
