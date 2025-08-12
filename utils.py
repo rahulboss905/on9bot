@@ -1,7 +1,7 @@
 import re
 from typing import Union
 
-from telegram import User, Chat, Message
+from telegram import User, Chat, Message, ChatMember
 from telegram.error import TelegramError
 from telegram.ext import filters
 from config import OWNER_USERNAME, OWNER_ID
@@ -27,7 +27,7 @@ async def del_msg(msg: Message) -> None:
 
 async def kick_member(chat: Chat, user_id: int) -> None:
     try:
-        await chat.kick_member(user_id)
+        await chat.ban_member(user_id)
     except TelegramError:
         pass
 
@@ -40,20 +40,23 @@ def check_number_man(user: User) -> bool:
     return bool(re.match(r"(\d{8}) \1", user.full_name))
 
 
-# Filter factories
-def create_check_number_man_filter() -> filters.BaseFilter:
-    return filters.create(
-        lambda _, message: check_number_man(message.from_user)
-    )
+# Custom filter classes
+class CheckNumberManFilter(filters.MessageFilter):
+    def filter(self, message: Message) -> bool:
+        return check_number_man(message.from_user)
 
-def create_bot_is_admin_filter() -> filters.BaseFilter:
-    return filters.create(
-        lambda _, message: message.bot.id in [
-            admin.user.id for admin in message.chat.get_administrators()
-        ]
-    )
+class BotIsAdminFilter(filters.MessageFilter):
+    async def check_admin(self, chat: Chat, bot_id: int) -> bool:
+        try:
+            admins = await chat.get_administrators()
+            return any(admin.user.id == bot_id for admin in admins)
+        except TelegramError:
+            return False
+
+    async def filter(self, message: Message) -> bool:
+        return await self.check_admin(message.chat, message.bot.id)
 
 
 # Create filter instances
-check_number_man_filter: filters.BaseFilter = create_check_number_man_filter()
-bot_is_admin_filter: filters.BaseFilter = create_bot_is_admin_filter()
+check_number_man_filter = CheckNumberManFilter()
+bot_is_admin_filter = BotIsAdminFilter()
