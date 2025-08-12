@@ -1,25 +1,27 @@
 import logging
 import sys
 import os
+import asyncio
 from threading import Thread
 from time import sleep
 from typing import List
 
-# Updated imports
+# Updated imports for v20.x
 from telegram import (Update, ChatMember, ReplyKeyboardMarkup, ReplyKeyboardRemove,
                       InlineKeyboardMarkup, InlineKeyboardButton, Chat, Bot, Message)
 from telegram.constants import ChatAction  # Correct import for ChatAction
 from telegram.error import TimedOut, TelegramError
-from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters, run_async
-from telegram.parsemode import ParseMode
-from telegram.utils.helpers import escape_markdown
+from telegram.ext import (Application, CommandHandler, MessageHandler, ContextTypes,
+                          filters, ApplicationBuilder)
+from telegram.helpers import escape_markdown
 
 from config import *
-# from randfuncs import *
 from utils import *
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 logger = logging.getLogger(__name__)
 
 # Check if given information is valid
@@ -31,26 +33,27 @@ for uid in CAN_USE_TAG9:
     assert uid > 0, "You can only append CAN_USE_TAG9 with valid user ids!"
 
 
-def start(bot: Bot, update: Update) -> None:
-    update.message.reply_markdown(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
-                                  "suggestions or found a typo or error.")
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_markdown(
+        f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
+        "suggestions or found a typo or error."
+    )
 
 
-def bot_help(bot: Bot, update: Update) -> None:
-    update.message.reply_markdown(f"[Help and Source Code]({GITHUB_SOURCE_CODE_LINK})")
+async def bot_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_markdown(f"[Help and Source Code]({GITHUB_SOURCE_CODE_LINK})")
 
 
-@run_async
-def tag9js(bot: Bot, update: Update) -> None:
+async def tag9js(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     chat = msg.chat
-    if chat.id == SPECIAL_GROUP.id or (msg.from_user.id == OWNER.id and msg.chat.type in (Chat.GROUP, Chat.SUPERGROUP)):
-        chat.send_action(ChatAction.TYPING)
+    if chat.id == SPECIAL_GROUP.id or (msg.from_user.id == OWNER.id and chat.type in (Chat.GROUP, Chat.SUPERGROUP)):
+        await chat.send_action(ChatAction.TYPING)
         try:
-            js_info = chat.get_member(190726372)
+            js_info = await chat.get_member(190726372)
             assert js_info.status in (ChatMember.CREATOR, ChatMember.ADMINISTRATOR, ChatMember.MEMBER)
         except (TelegramError, AssertionError):
-            msg.reply_text("no u, he is not in this group")
+            await msg.reply_text("no u, he is not in this group")
             return
         if js_info.user.username:
             username = "@" + js_info.user.username
@@ -64,77 +67,96 @@ def tag9js(bot: Bot, update: Update) -> None:
                 text = username
             except AssertionError:
                 text = f"{msg.text.split(maxsplit=1)[1]} {username}"
-            sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
-                                  reply_markup=ReplyKeyboardMarkup([[text]]), quote=True)
-            sleep(15)
-            del_msg(sent)
-            msg.reply_text("Tag9js over, removed reply keyboard and deleted message if no one did so...",
-                           reply_markup=ReplyKeyboardRemove(), quote=False)
+            sent = await msg.reply_text(
+                "15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
+                reply_markup=ReplyKeyboardMarkup([[text]]),
+                quote=True
+            )
+            await asyncio.sleep(15)
+            await del_msg(sent)
+            await msg.reply_text(
+                "Tag9js over, removed reply keyboard and deleted message if no one did so...",
+                reply_markup=ReplyKeyboardRemove(),
+                quote=False
+            )
         else:
-            msg.reply_text("no u, JS removed username.")
+            await msg.reply_text("no u, JS removed username.")
     elif chat.id < 0:
-        msg.reply_text("no u")
+        await msg.reply_text("no u")
     else:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton(
             "Join HK Duker", url="https://t.me/hkduker")]])
-        msg.reply_text("This command can only be used in HK Duker.", reply_markup=reply_markup)
+        await msg.reply_text("This command can only be used in HK Duker.", reply_markup=reply_markup)
 
 
-def tag9(bot: Bot, update: Update, args: List[str]) -> None:
+async def tag9(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     chat = msg.chat
-    chat.send_action(ChatAction.TYPING)
+    args = context.args
+    await chat.send_action(ChatAction.TYPING)
     if msg.from_user.id not in CAN_USE_TAG9 or msg.chat_id > 0:
-        msg.reply_text("no u")
+        await msg.reply_text("no u")
     elif msg.reply_to_message:
-        tag9_part2(msg, chat.get_member(msg.reply_to_message.from_user.id))
+        u_info = await chat.get_member(msg.reply_to_message.from_user.id)
+        await tag9_part2(msg, u_info)
     elif not args:
-        msg.reply_text("Please reply to a user's message or provide a valid user id as an argument.")
+        await msg.reply_text("Please reply to a user's message or provide a valid user id as an argument.")
     else:
         try:
             nub_id = int(args[0])
             assert nub_id > 0
-            tag9_part2(msg, chat.get_member(nub_id))
+            u_info = await chat.get_member(nub_id)
+            await tag9_part2(msg, u_info)
         except (ValueError, AssertionError):
-            msg.reply_text("no u, user ids only.")
+            await msg.reply_text("no u, user ids only.")
         except TimedOut:
             pass
         except TelegramError:
-            msg.reply_text("no u, give a valid user id.")
+            await msg.reply_text("no u, give a valid user id.")
 
 
-@run_async
-def tag9_part2(msg: Message, u_info: ChatMember) -> None:
+async def tag9_part2(msg: Message, u_info: ChatMember) -> None:
     if u_info.status in (ChatMember.LEFT, ChatMember.RESTRICTED, ChatMember.KICKED):
-        msg.reply_text("no u, not in group or restricted")
+        await msg.reply_text("no u, not in group or restricted")
     elif u_info.user.id in (OWNER.id, BOT.id):
-        msg.reply_text("no u")
+        await msg.reply_text("no u")
     elif u_info.user.is_bot:
-        msg.reply_text("no u, don't tag other bots.")
+        await msg.reply_text("no u, don't tag other bots.")
     elif not u_info.user.username:
-        msg.reply_text("no u, user has no username.")
+        await msg.reply_text("no u, user has no username.")
     else:
-        sent = msg.reply_text("15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
-                              reply_markup=ReplyKeyboardMarkup([[u_info.user.name]]))
-        sleep(15)
-        del_msg(sent)
-        msg.reply_text("Tag9 over, removed reply keyboard and deleted message if no one did so...",
-                       reply_markup=ReplyKeyboardRemove(), quote=False)
+        sent = await msg.reply_text(
+            "15 sec, tag tag tag. Use /remove_keyboard to remove the reply keyboard.",
+            reply_markup=ReplyKeyboardMarkup([[u_info.user.name]])
+        )
+        await asyncio.sleep(15)
+        await del_msg(sent)
+        await msg.reply_text(
+            "Tag9 over, removed reply keyboard and deleted message if no one did so...",
+            reply_markup=ReplyKeyboardRemove(),
+            quote=False
+        )
 
 
-def remove_keyboard(bot: Bot, update: Update) -> None:
+async def remove_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     if msg.chat_id > 0:
-        msg.reply_text("no u")
+        await msg.reply_text("no u")
         return
-    sent = msg.reply_text("Replacing reply keyboard markup if there was an existing one...",
-                          reply_markup=ReplyKeyboardMarkup([["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD "
-                                                             "BUTTONS"]]), quote=False)
-    del_msg(sent)
-    msg.reply_text("Removed reply keyboard...", reply_markup=ReplyKeyboardRemove(), quote=False)
+    sent = await msg.reply_text(
+        "Replacing reply keyboard markup if there was an existing one...",
+        reply_markup=ReplyKeyboardMarkup([["I AM A STUPID ANIMAL THAT LIKES TO CLICK REPLY KEYBOARD BUTTONS"]]),
+        quote=False
+    )
+    await del_msg(sent)
+    await msg.reply_text(
+        "Removed reply keyboard...",
+        reply_markup=ReplyKeyboardRemove(),
+        quote=False
+    )
 
 
-def echo(bot: Bot, update: Update) -> None:
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     rmsg = msg.reply_to_message
     try:
@@ -143,43 +165,43 @@ def echo(bot: Bot, update: Update) -> None:
             if msg.from_user.id != OWNER.id:
                 echo_owner_check(text)
             if rmsg:  # if message has args and replies to another message
-                rmsg.reply_markdown(text, disable_web_page_preview=True)
+                await rmsg.reply_markdown(text, disable_web_page_preview=True)
             else:  # if message has args and does not reply to another message
-                msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
+                await msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
         except AssertionError:
-            msg.reply_text("Tag your mother?!")
+            await msg.reply_text("Tag your mother?!")
         except TimedOut:
             pass
         except TelegramError as e:
-            msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
+            await msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
         else:
-            del_msg(msg)
+            await del_msg(msg)
     except IndexError:
         if not rmsg:  # if message has no arguments and does not reply to another message
-            msg.reply_markdown("no u, use `/r [text]` or reply to a message (or both).")
+            await msg.reply_markdown("no u, use `/r [text]` or reply to a message (or both).")
         elif not rmsg.text:  # if message has no arguments and replied message does not have text
-            msg.reply_text("no u, messages with text only.")
+            await msg.reply_text("no u, messages with text only.")
         else:  # if message has no arguments and replies to a message with text
             text = rmsg.text_markdown
             try:
                 if msg.from_user.id != OWNER.id:
                     echo_owner_check(text)
-                msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
+                await msg.reply_markdown(text, disable_web_page_preview=True, quote=False)
             except AssertionError:
-                msg.reply_text("Tag your mother?!")
+                await msg.reply_text("Tag your mother?!")
             except TimedOut:
                 pass
             except TelegramError as e:
-                msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
+                await msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
             else:
-                del_msg(msg)
+                await del_msg(msg)
 
 
-def stalk(bot: Bot, update: Update) -> None:
+async def stalk(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
     chat = msg.chat
-    chat.send_action(ChatAction.TYPING)  # Fixed: replaced string with constant
+    await chat.send_action(ChatAction.TYPING)
     user = rmsg.forward_from if rmsg and rmsg.forward_from else rmsg.from_user if rmsg else msg.from_user
     title = f"[{chat.title}](t.me/{chat.username})" if chat.username else f"[{chat.title}]({chat.invite_link})" \
         if chat.invite_link else f"*{chat.title}*"
@@ -191,10 +213,10 @@ def stalk(bot: Bot, update: Update) -> None:
         text += f"\nLanguage code: {user.language_code}"
     try:
         assert chat.type in (Chat.GROUP, Chat.SUPERGROUP)
-        nub = chat.get_member(user.id)
+        nub = await chat.get_member(user.id)
         s = nub.status
     except (TelegramError, AssertionError):
-        msg.reply_markdown(text, disable_web_page_preview=True)
+        await msg.reply_markdown(text, disable_web_page_preview=True)
         return
     if s == ChatMember.CREATOR:
         text += f"\n\n*Creator* of {title}"
@@ -219,193 +241,205 @@ def stalk(bot: Bot, update: Update) -> None:
         text += f"\n\n*Not a member* of {title}"
     elif s == ChatMember.KICKED:
         text += f"\n\n*Banned* from {title}"
-    msg.reply_markdown(text, disable_web_page_preview=True)
+    await msg.reply_markdown(text, disable_web_page_preview=True)
 
 
-def get_id(bot: Bot, update: Update) -> None:
+async def get_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
     if rmsg:
         ff = rmsg.forward_from
-        msg.reply_markdown(f"`{ff.id if ff else rmsg.from_user.id}`")
+        await msg.reply_markdown(f"`{ff.id if ff else rmsg.from_user.id}`")
     else:
         user_id = msg.from_user.id
         if msg.chat_id > 0:
-            msg.reply_markdown(f"`{user_id}`")
+            await msg.reply_markdown(f"`{user_id}`")
         else:
-            msg.reply_markdown(f"Chat id: `{msg.chat_id}`\nYour user id: `{user_id}`")
+            await msg.reply_markdown(f"Chat id: `{msg.chat_id}`\nYour user id: `{user_id}`")
 
 
-def get_message_link(bot: Bot, update: Update) -> None:
+async def get_message_link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
     if not rmsg:
-        msg.reply_text("no u, reply to a message")
+        await msg.reply_text("no u, reply to a message")
         return
     chat = msg.chat
     if chat.type == Chat.SUPERGROUP and chat.username:
-        msg.reply_markdown(f"```https://t.me/{chat.username}/{rmsg.id}```")
+        await msg.reply_markdown(f"```https://t.me/{chat.username}/{rmsg.id}```")
     else:
-        msg.reply_markdown(f"no u, can only be used in public supergroup, but the replied message's id is `{rmsg.id}`.")
+        await msg.reply_markdown(f"no u, can only be used in public supergroup, but the replied message's id is `{rmsg.id}`.")
 
 
-def get_file_id(bot: Bot, update: Update) -> None:
+async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
     if not rmsg:
-        msg.reply_text("no u, reply to a message")
+        await msg.reply_text("no u, reply to a message")
         return
     if rmsg.audio:
-        gfi_response(msg, "audio", rmsg.audio.file_id)
+        await gfi_response(msg, "audio", rmsg.audio.file_id)
     elif rmsg.photo:
-        gfi_response(msg, "picture", rmsg.photo[-1].file_id)
+        await gfi_response(msg, "picture", rmsg.photo[-1].file_id)
     elif rmsg.sticker:
-        gfi_response(msg, "sticker", rmsg.sticker.file_id)
+        await gfi_response(msg, "sticker", rmsg.sticker.file_id)
     elif rmsg.video:
-        gfi_response(msg, "video", rmsg.video.file_id)
+        await gfi_response(msg, "video", rmsg.video.file_id)
     elif rmsg.voice:
-        gfi_response(msg, "voice recording", rmsg.voice.file_id)
+        await gfi_response(msg, "voice recording", rmsg.voice.file_id)
     elif rmsg.video_note:
-        gfi_response(msg, "video", rmsg.video_note.file_id)
+        await gfi_response(msg, "video", rmsg.video_note.file_id)
     elif rmsg.document:
-        gfi_response(msg, "document", rmsg.document.file_id)
+        await gfi_response(msg, "document", rmsg.document.file_id)
     else:
-        msg.reply_text("no u, message has no media.")
+        await msg.reply_text("no u, message has no media.")
 
 
-def gfi_response(msg: Message, file_type: str, file_id: str) -> None:
-    msg.reply_markdown(f"File id of this {file_type}: `{file_id}`")
+async def gfi_response(msg: Message, file_type: str, file_id: str) -> None:
+    await msg.reply_markdown(f"File id of this {file_type}: `{file_id}`")
 
 
-def ping(bot: Bot, update: Update) -> None:
-    update.message.reply_markdown("Ping your mother?!")
+async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_markdown("Ping your mother?!")
 
 
-def pinned(bot: Bot, update: Update) -> None:
+async def pinned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     chat = msg.chat
     if chat.type != Chat.SUPERGROUP:
-        msg.reply_text("no u, supergroups only")
+        await msg.reply_text("no u, supergroups only")
         return
-    chat_info = bot.get_chat(chat.id)
+    chat_info = await context.bot.get_chat(chat.id)
     pmsg = chat_info.pinned_message
     if not pmsg:
-        msg.reply_text("No pinned message (sometimes wrong, unstable function)")
+        await msg.reply_text("No pinned message (sometimes wrong, unstable function)")
         return
     p_id = pmsg.message_id
-    if not pmsg.from_user.is_bot or pmsg.from_user.id == bot.id:
-        pmsg.reply_text("⬆️Pinned message⬆️")
+    if not pmsg.from_user.is_bot or pmsg.from_user.id == context.bot.id:
+        await pmsg.reply_text("⬆️Pinned message⬆️")
     elif chat.username:
         link = f"https://t.me/{chat.username}/{p_id}"
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Pinned message", url=link)]])
-        msg.reply_text("⬇️Pinned message⬇️", reply_markup=reply_markup)
+        await msg.reply_text("⬇️Pinned message⬇️", reply_markup=reply_markup)
     else:
-        msg.reply_text(f"no u, sender is bot and group is private, but the pinned message's id is `{p_id}`.")
+        await msg.reply_text(f"no u, sender is bot and group is private, but the pinned message's id is `{p_id}`.")
 
 
-def slap(bot: Bot, update: Update) -> None:
+async def slap(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
-    rmsg.reply_text("Oof!") if rmsg else msg.reply_text("Oof!")
+    if rmsg:
+        await rmsg.reply_text("Oof!")
+    else:
+        await msg.reply_text("Oof!")
 
 
-def owner_edit(bot: Bot, update: Update) -> None:
+async def owner_edit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     rmsg = msg.reply_to_message
     if msg.from_user.id != OWNER.id:
-        msg.reply_text("no u")
+        await msg.reply_text("no u")
     elif not rmsg:
-        msg.reply_text("no u, reply to a message")
-    elif rmsg.from_user.id != BOT.id:
-        msg.reply_text("no u, not my message")
+        await msg.reply_text("no u, reply to a message")
+    elif rmsg.from_user.id != context.bot.id:
+        await msg.reply_text("no u, not my message")
     else:
         try:
-            rmsg.edit_text(msg.text.split(maxsplit=1)[1], parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-            del_msg(msg)
+            await rmsg.edit_text(
+                msg.text.split(maxsplit=1)[1],
+                parse_mode="Markdown",
+                disable_web_page_preview=True
+            )
+            await del_msg(msg)
         except IndexError:
-            msg.reply_text("no u, no args")
+            await msg.reply_text("no u, no args")
         except TimedOut:
             pass
         except TelegramError as e:
-            msg.reply_markdown(escape_markdown(str(e)))
+            await msg.reply_markdown(escape_markdown(str(e)))
 
 
-def owner_delmsg(bot: Bot, update: Update) -> None:
+async def owner_delmsg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     rmsg = msg.reply_to_message
     if msg.from_user.id != OWNER.id:
-        msg.reply_text("no u")
+        await msg.reply_text("no u")
     elif not rmsg:
-        msg.reply_text("no u, reply to a message")
-    elif rmsg.from_user.id != BOT.id:
-        msg.reply_text("no u, not my message")
+        await msg.reply_text("no u, reply to a message")
+    elif rmsg.from_user.id != context.bot.id:
+        await msg.reply_text("no u, not my message")
     else:
-        del_msg(rmsg)
-        del_msg(msg)
+        await del_msg(rmsg)
+        await del_msg(msg)
 
 
-def service_msg_handler(bot: Bot, update: Update) -> None:
+async def service_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     if msg.new_chat_members:
         for nub in msg.new_chat_members:
-            if nub.id == bot.id:
-                msg.reply_markdown(f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
-                                   "suggestions or found typos or errors.", quote=False)
+            if nub.id == context.bot.id:
+                await msg.reply_markdown(
+                    f"Use /help to see my functions. Contact {OWNER_MENTION} if you have questions, "
+                    "suggestions or found typos or errors.",
+                    quote=False
+                )
             elif nub.is_bot:
-                msg.reply_text("Ooh, new bot!")
+                await msg.reply_text("Ooh, new bot!")
             elif msg.chat.id == -1001295361187 and check_number_man(nub):
-                kick_member(msg.chat, nub.id)
+                await kick_member(msg.chat, nub.id)
     elif msg.left_chat_member:
-        msg.reply_text("Bey.")
+        await msg.reply_text("Bey.")
 
 
-def number_man_handler(bot: Bot, update: Update) -> None:
+async def number_man_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
-    kick_member(msg.chat, msg.from_user)
+    await kick_member(msg.chat, msg.from_user)
 
 
-def owner_msg_handler(bot: Bot, update: Update) -> None:
-    update.effective_message.reply_markdown(f"Hi {OWNER_MENTION}! "
-                                            "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?",
-                                            disable_web_page_preview=True)
+async def owner_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.effective_message.reply_markdown(
+        f"Hi {OWNER_MENTION}! "
+        "Would you like JS with Spaghetti or Double Decker JS Hamburger for lunch?",
+        disable_web_page_preview=True
+    )
 
 
-# def voice_handler(bot: Bot, update: Update) -> None:
-#     update.effective_message.reply_sticker("CAADBQADRwADPg6oG0_Q77bKIOH8Ag")
-
-
-def no_u_handler(bot: Bot, update: Update) -> None:
+async def no_u_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
-    no_count = max([p.count("no") for p in  # get maximum count of "no"s in each element                    <------
-                    [s.strip() for s in msg.text.lower().split("u") if "no" in s]])  # split msg by "u" and strip |
-    msg.reply_text(f"{'no '*(no_count + 1)}u") if no_count < 100 else msg.reply_sticker(
-        "CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
+    no_count = max([p.count("no") for p in
+                    [s.strip() for s in msg.text.lower().split("u") if "no" in s]])
+    if no_count < 100:
+        await msg.reply_text(f"{'no ' * (no_count + 1)}u")
+    else:
+        await msg.reply_sticker("CAADBAADSgIAAvkw6QXmVrbEBht6SAI")
 
 
-def other_msg_handler(bot: Bot, update: Update) -> None:
+async def other_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
     user = msg.from_user
     text = msg.text.lower()
     if user.id != OWNER.id and msg.chat_id < 0 and OWNER_USERNAME.lower() in text:
-        msg.reply_text("Tag your mother?!")
+        await msg.reply_text("Tag your mother?!")
     elif text == "js is very on9":
-        msg.reply_text("Your IQ is 500!")
+        await msg.reply_text("Your IQ is 500!")
     elif text == "trainer jono is rubbish":
-        msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
+        await msg.reply_voice("AwADBQADTAADJOWZVNlBR4Cek06kAg")
     elif "but can you do this" in text:
-        msg.reply_sticker("CAADBAADbwIAAvkw6QUeD3c89PLAOAI")
+        await msg.reply_sticker("CAADBAADbwIAAvkw6QUeD3c89PLAOAI")
     elif text == "goodest english":
-        msg.reply_voice("AwADBQADJgAD8KLQVNdHdLAHdLMzAg")
+        await msg.reply_voice("AwADBQADJgAD8KLQVNdHdLAHdLMzAg")
     elif text == "my english is very good":
-        msg.reply_voice("AwADBQADJwAD8KLQVFu-e5gh4i8RAg")
+        await msg.reply_voice("AwADBQADJwAD8KLQVFu-e5gh4i8RAg")
     elif "too good" in text or "very good" in text:
-        msg.reply_voice("AwADBQADKAAD8KLQVHrlKTFsd-qGAg")
-
-def ketchup(bot: Bot, update: Update) -> None:
-    bot.forward_message(-1001312239961, -1001208896598, update.effective_message.message_id)
+        await msg.reply_voice("AwADBQADKAAD8KLQVHrlKTFsd-qGAg")
 
 
-def feedback(bot: Bot, update: Update) -> None:
+async def ketchup(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    msg = update.effective_message
+    await context.bot.forward_message(-1001312239961, -1001208896598, msg.message_id)
+
+
+async def feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.message
     user = msg.from_user
     chat = msg.chat
@@ -418,120 +452,133 @@ def feedback(bot: Bot, update: Update) -> None:
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
-            ADMIN_GROUP.send_message(fb, parse_mode=ParseMode.MARKDOWN,
-                                     reply_markup=reply_markup, disable_web_page_preview=True)
+            await context.bot.send_message(
+                ADMIN_GROUP_ID,
+                fb,
+                parse_mode="Markdown",
+                reply_markup=reply_markup,
+                disable_web_page_preview=True
+            )
         else:
-            ADMIN_GROUP.send_message(fb, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-        msg.reply_text("Feedback sent successfully!")
+            await context.bot.send_message(
+                ADMIN_GROUP_ID,
+                fb,
+                parse_mode="Markdown",
+                disable_web_page_preview=True
+            )
+        await msg.reply_text("Feedback sent successfully!")
     except IndexError:
-        msg.reply_text("no u, put some constructive text behind it")
+        await msg.reply_text("no u, put some constructive text behind it")
 
 
-def error_handler(bot: Bot, update: Update, error: TelegramError):
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logger.error(msg="Exception while handling an update:", exc_info=context.error)
+    
     try:
-        if str(error) == "Timed out":
+        if "Timed out" in str(context.error):
             return
-        logger.warning(f'Update "{update}" caused error "{error}"')
+            
+        if update is None or not hasattr(update, 'message'):
+            return
+            
         msg = update.message
         chat = msg.chat
-        error = escape_markdown(str(error))
-        forwarded = msg.forward(ADMIN_GROUP_ID)
+        error = escape_markdown(str(context.error))
+        forwarded = await msg.forward(ADMIN_GROUP_ID)
         chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
         chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
         text = f"Error occurred in {chat_name}:\n\n{error}"
+        
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
-            forwarded.reply_markdown(text, reply_markup=reply_markup, disable_web_page_preview=True)
+            await forwarded.reply_markdown(text, reply_markup=reply_markup, disable_web_page_preview=True)
         else:
-            forwarded.reply_markdown(text, disable_web_page_preview=True)
-        forwarded.reply_markdown(f"Error: {error}, happened in {chat_name}", quote=True)
-        msg.reply_text(f"This message caused an error: {error}\nThe message was forwarded to the creator and he will "
-                       "try to fix it.")
+            await forwarded.reply_markdown(text, disable_web_page_preview=True)
+        
+        await msg.reply_text(
+            f"This message caused an error: {error}\nThe message was forwarded to the creator and he will "
+            "try to fix it."
+        )
     except TelegramError:
         pass
 
 
-def main():
-    updater = Updater(BOT_TOKEN)
-    dp = updater.dispatcher
-
-    def owner_exec(bot: Bot, update: Update) -> None:
-        msg = update.effective_message
-        if msg.from_user.id != OWNER.id:
-            msg.reply_text("no u")
-            return
-        try:
-            code = msg.text.split(maxsplit=1)[1]
-        except IndexError:
-            if msg.reply_to_message:
-                code = msg.reply_to_message.text
-            else:
-                msg.reply_text("no u")
-                return
-        try:
-            exec(code)
-        except TimedOut:
-            pass
-        except Exception as e:
-            msg.reply_markdown(f"An error occured: `{escape_markdown(str(e))}`")
-
+def main() -> None:
+    application = ApplicationBuilder().token(BOT_TOKEN).build()
+    
     def stop_and_restart():
-        updater.stop()
+        application.stop()
         os.execl(sys.executable, sys.executable, *sys.argv)
-
-    def restart(bot, update):
+    
+    async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         msg = update.message
         if msg.from_user.id != OWNER.id:
-            msg.reply_text("no u")
+            await msg.reply_text("no u")
         else:
-            msg.reply_text("Restarting bot...")
+            await msg.reply_text("Restarting bot...")
             Thread(target=stop_and_restart).start()
-
+    
     # Commands for all users
-    dp.add_handler(CommandHandler("start", start, filters=Filters.private))
-    dp.add_handler(CommandHandler("help", bot_help))
-    dp.add_handler(CommandHandler("tag9", tag9, pass_args=True, allow_edited=True))
-    dp.add_handler(CommandHandler("tag9js", tag9js, allow_edited=True))
-    dp.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
-    dp.add_handler(CommandHandler("r", echo, allow_edited=True))
-    dp.add_handler(CommandHandler("id", get_id))
-    dp.add_handler(CommandHandler("ping", ping))
-    dp.add_handler(CommandHandler("link", get_message_link))
-    dp.add_handler(CommandHandler("pinned", pinned))
-    # dp.add_handler(CommandHandler("dice", dice, pass_args=True, allow_edited=True))
-    dp.add_handler(CommandHandler("file_id", get_file_id))
-    dp.add_handler(CommandHandler(("user_info", "stalk"), stalk))
-    dp.add_handler(CommandHandler("feedback", feedback))
-
+    application.add_handler(CommandHandler("start", start, filters=filters.ChatType.PRIVATE))
+    application.add_handler(CommandHandler("help", bot_help))
+    application.add_handler(CommandHandler("tag9", tag9))
+    application.add_handler(CommandHandler("tag9js", tag9js))
+    application.add_handler(CommandHandler("remove_keyboard", remove_keyboard))
+    application.add_handler(CommandHandler("r", echo))
+    application.add_handler(CommandHandler("id", get_id))
+    application.add_handler(CommandHandler("ping", ping))
+    application.add_handler(CommandHandler("link", get_message_link))
+    application.add_handler(CommandHandler("pinned", pinned))
+    application.add_handler(CommandHandler("file_id", get_file_id))
+    application.add_handler(CommandHandler("stalk", stalk))
+    application.add_handler(CommandHandler("feedback", feedback))
+    
     # Commands for the holy owner
-    dp.add_handler(CommandHandler(("exec", "ex"), owner_exec, allow_edited=True))
-    dp.add_handler(CommandHandler("edit", owner_edit, allow_edited=True))
-    dp.add_handler(CommandHandler("delmsg", owner_delmsg))
-    dp.add_handler(CommandHandler("restart", restart))
-
+    application.add_handler(CommandHandler(["exec", "ex"], owner_exec))
+    application.add_handler(CommandHandler("edit", owner_edit))
+    application.add_handler(CommandHandler("delmsg", owner_delmsg))
+    application.add_handler(CommandHandler("restart", restart))
+    
     # Message handlers
-    dp.add_handler(MessageHandler(Filters.status_update.new_chat_members & Filters.status_update.left_chat_member,
-                                  service_msg_handler))
-    dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & check_number_man_filter & bot_is_admin_filter,
-                                  number_man_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.user(OWNER.id) & Filters.text & Filters.regex(r"(?i)hello"),
-                                  owner_msg_handler, edited_updates=True))
-    # dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.voice, voice_handler, edited_updates=True))
-    dp.add_handler(RegexHandler(r"(?i).*(no)+ u", no_u_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.chat(-1001295361187) & Filters.text, other_msg_handler, edited_updates=True))
-    dp.add_handler(MessageHandler(Filters.chat(-1001208896598), ketchup, edited_updates=True))
-
+    application.add_handler(MessageHandler(
+        filters.StatusUpdate.NEW_CHAT_MEMBERS | filters.StatusUpdate.LEFT_CHAT_MEMBER,
+        service_msg_handler
+    ))
+    application.add_handler(MessageHandler(
+        filters.Chat(-1001295361187) & check_number_man_filter & bot_is_admin_filter,
+        number_man_handler
+    ))
+    application.add_handler(MessageHandler(
+        filters.User(OWNER.id) & filters.TEXT & filters.Regex(r"(?i)hello"),
+        owner_msg_handler
+    ))
+    application.add_handler(MessageHandler(
+        filters.TEXT & filters.Regex(r"(?i).*(no)+ u"),
+        no_u_handler
+    ))
+    application.add_handler(MessageHandler(
+        filters.Chat(-1001295361187) & filters.TEXT,
+        other_msg_handler
+    ))
+    application.add_handler(MessageHandler(
+        filters.Chat(-1001208896598),
+        ketchup
+    ))
+    
     # Error handler
-    dp.add_error_handler(error_handler)
-
+    application.add_error_handler(error_handler)
+    
     debug = os.environ.get("DEBUG")
     if debug != "yes":
-        updater.start_webhook(listen="0.0.0.0", port=int(os.environ.get("PORT", 80)), url_path=BOT_TOKEN, clean=True)
-        updater.bot.set_webhook(f"https://{HEROKU_APP_NAME}.herokuapp.com/{BOT_TOKEN}")
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=int(os.environ.get("PORT", 80)),
+            url_path=BOT_TOKEN,
+            webhook_url=f"https://{HEROKU_APP_NAME}.herokuapp.com/{BOT_TOKEN}"
+        )
     else:
-        updater.start_polling()
-    updater.idle()
+        application.run_polling()
 
 
 if __name__ == "__main__":
