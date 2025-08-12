@@ -19,7 +19,15 @@ from telegram.ext import (
 from telegram.helpers import escape_markdown
 
 import config
-from utils import *
+from utils import (
+    del_msg, 
+    yn_processor, 
+    echo_owner_check, 
+    MARKDOWN_ERROR_TEXT,
+    check_number_man_filter,
+    bot_is_admin_filter,
+    kick_member
+)
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -121,7 +129,7 @@ async def tag9(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def tag9_part2(msg: Message, u_info: ChatMember) -> None:
     if u_info.status in (ChatMember.LEFT, ChatMember.RESTRICTED, ChatMember.KICKED):
         await msg.reply_text("no u, not in group or restricted")
-    elif u_info.user.id in (config.OWNER_ID, context.bot.id):
+    elif u_info.user.id in (config.OWNER_ID, msg.get_bot().id):
         await msg.reply_text("no u")
     elif u_info.user.is_bot:
         await msg.reply_text("no u, don't tag other bots.")
@@ -176,7 +184,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         except TimedOut:
             pass
         except TelegramError as e:
-            await msg.reply_text(config.MARKDOWN_ERROR_TEXT.format(str(e)))
+            await msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
         else:
             await del_msg(msg)
     except IndexError:
@@ -195,7 +203,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             except TimedOut:
                 pass
             except TelegramError as e:
-                await msg.reply_text(config.MARKDOWN_ERROR_TEXT.format(str(e)))
+                await msg.reply_text(MARKDOWN_ERROR_TEXT.format(str(e)))
             else:
                 await del_msg(msg)
 
@@ -388,15 +396,19 @@ async def service_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
                 )
             elif nub.is_bot:
                 await msg.reply_text("Ooh, new bot!")
-            elif msg.chat.id == config.SPECIAL_GROUP_ID and check_number_man(nub):
-                await kick_member(msg.chat, nub.id)
+            elif msg.chat.id == config.SPECIAL_GROUP_ID:
+                # Check if user is a number man
+                if check_number_man(nub):
+                    await kick_member(msg.chat, nub.id)
     elif msg.left_chat_member:
         await msg.reply_text("Bey.")
 
 
 async def number_man_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     msg = update.effective_message
-    await kick_member(msg.chat, msg.from_user)
+    # Check if user is a number man
+    if check_number_man(msg.from_user):
+        await kick_member(msg.chat, msg.from_user.id)
 
 
 async def owner_msg_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -450,7 +462,7 @@ async def feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_link = f"https://t.me/{chat.username}" if chat.username and chat.id < 0 else None
         chat_name = f"[{chat.title}]({chat_link}) (chat id: `{chat.id}`)" if chat.id < 0 else "pm"
         fb = escape_markdown(msg.text.split(maxsplit=1)[1])
-        fb = (f"Feedback for {config.BOT_USERNAME} from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) "
+        fb = (f"Feedback for {context.bot.username} from {user.mention_markdown(user.full_name)} (user id: `{user.id}`) "
               f"sent in {chat_name}:\n\n{fb}")
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"
@@ -495,16 +507,61 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
         if chat_link:
             message_link = f"{chat_link}/{msg.message_id}"
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Message", url=message_link)]])
-            await forwarded.reply_markdown(text, reply_markup=reply_markup, disable_web_page_preview=True)
+            await context.bot.send_message(
+                config.ADMIN_GROUP_ID,
+                text,
+                parse_mode=ParseMode.MARKDOWN,
+                reply_markup=reply_markup,
+                disable_web_page_preview=True
+            )
         else:
-            await forwarded.reply_markdown(text, disable_web_page_preview=True)
+            await context.bot.send_message(
+                config.ADMIN_GROUP_ID,
+                text,
+                parse_mode=ParseMode.MARKDOWN,
+                disable_web_page_preview=True
+            )
         
         await msg.reply_text(
             f"This message caused an error: {error}\nThe message was forwarded to the creator and he will "
             "try to fix it."
         )
-    except TelegramError:
+    except Exception as e:
+        logger.error(f"Error in error_handler: {e}")
+
+
+def stop_and_restart():
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+
+async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    msg = update.message
+    if msg.from_user.id != config.OWNER_ID:
+        await msg.reply_text("no u")
+    else:
+        await msg.reply_text("Restarting bot...")
+        Thread(target=stop_and_restart).start()
+
+
+async def owner_exec(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    msg = update.effective_message
+    if msg.from_user.id != config.OWNER_ID:
+        await msg.reply_text("no u")
+        return
+    try:
+        code = msg.text.split(maxsplit=1)[1]
+    except IndexError:
+        if msg.reply_to_message:
+            code = msg.reply_to_message.text
+        else:
+            await msg.reply_text("no u")
+            return
+    try:
+        exec(code)
+    except TimedOut:
         pass
+    except Exception as e:
+        await msg.reply_markdown(f"An error occured: `{escape_markdown(str(e))}`")
 
 
 async def main() -> None:
@@ -515,19 +572,6 @@ async def main() -> None:
     bot_info = await application.bot.get_me()
     config.BOT_USERNAME = bot_info.username
     logger.info(f"Bot initialized with username: @{config.BOT_USERNAME}")
-    
-    # Define restart function
-    def stop_and_restart():
-        application.stop()
-        os.execl(sys.executable, sys.executable, *sys.argv)
-    
-    async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        msg = update.message
-        if msg.from_user.id != config.OWNER_ID:
-            await msg.reply_text("no u")
-        else:
-            await msg.reply_text("Restarting bot...")
-            Thread(target=stop_and_restart).start()
     
     # Commands for all users
     application.add_handler(CommandHandler("start", start, filters=filters.ChatType.PRIVATE))
@@ -582,9 +626,10 @@ async def main() -> None:
     # Start the bot
     debug = os.environ.get("DEBUG")
     if debug != "yes":
+        port = int(os.environ.get("PORT", 80))
         await application.run_webhook(
             listen="0.0.0.0",
-            port=int(os.environ.get("PORT", 80)),
+            port=port,
             url_path=config.BOT_TOKEN,
             webhook_url=f"https://{config.HEROKU_APP_NAME}.herokuapp.com/{config.BOT_TOKEN}"
         )
